@@ -54,10 +54,10 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     val navController = rememberNavController()
     val systemUiController = rememberSystemUiController()
-    systemUiController.setSystemBarsColor(ColorBlack)
+    systemUiController.setSystemBarsColor(MyColorBlack)
 
     Scaffold(
-        backgroundColor = ColorWhite,
+        backgroundColor = MyColorWhite,
         bottomBar = {
             BottomNavigationBar(
                 navController = navController,
@@ -94,8 +94,8 @@ fun BottomNavigationBar(
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .border(1.dp, ColorBlack, RoundedCornerShape(10.dp))
-                .background(ColorBeige)
+                .border(1.dp, MyColorBlack, RoundedCornerShape(10.dp))
+                .background(MyColorBeige)
         ) {
             Spacer(modifier = Modifier.width(10.dp))
             items.forEach {
@@ -116,8 +116,8 @@ fun RowScope.MyBottomNavItem(
     selected: Boolean,
     onClick: (String) -> Unit
 ) {
-    val background = if (selected) ColorSkyBlue else Color.Transparent
-    val border = BorderStroke(1.dp, if (selected) ColorBlack else Color.Transparent)
+    val background = if (selected) MyColorSkyBlue else Color.Transparent
+    val border = BorderStroke(1.dp, if (selected) MyColorBlack else Color.Transparent)
     val weight = animateFloatAsState(targetValue = if (selected) 1f else 0.4f)
 
     Row(
