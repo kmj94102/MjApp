@@ -18,14 +18,16 @@ import androidx.compose.ui.unit.sp
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.screen.navigation.BottomNavItems
 import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle24
 import com.example.mjapp.util.textStyle24B
 import com.example.mjapp.R
+import com.example.mjapp.ui.custom.Constants
 import com.example.mjapp.ui.custom.OutlineText
 import com.example.mjapp.ui.theme.*
 
 @Composable
-fun GameScreen() {
+fun GameScreen(
+    goToScreen: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,7 +50,7 @@ fun GameScreen() {
                     imageRes = R.drawable.img_pokemon_dex,
                     color = MyColorBeige,
                 ) {
-
+                    goToScreen(Constants.PokemonDex)
                 }
             }
             item {
@@ -57,7 +59,7 @@ fun GameScreen() {
                     imageRes = R.drawable.img_pokemon_counter,
                     color = MyColorTurquoise,
                 ) {
-
+                    goToScreen(Constants.PokemonCounter)
                 }
             }
             item {
@@ -66,7 +68,7 @@ fun GameScreen() {
                     imageRes = R.drawable.img_elsword_introduce,
                     color = MyColorRed,
                 ) {
-
+                    goToScreen(Constants.ElswordIntroduce)
                 }
             }
             item {
@@ -75,7 +77,7 @@ fun GameScreen() {
                     imageRes = R.drawable.img_elsword_counter,
                     color = MyColorPurple,
                 ) {
-
+                    goToScreen(Constants.ElswordCounter)
                 }
             }
         }

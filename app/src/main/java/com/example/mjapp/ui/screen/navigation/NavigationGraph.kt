@@ -1,11 +1,14 @@
 package com.example.mjapp.ui.screen.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.mjapp.ui.custom.Constants
 import com.example.mjapp.ui.screen.calendar.CalendarScreen
 import com.example.mjapp.ui.screen.game.GameScreen
+import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.plant.PlantScreen
@@ -26,29 +29,90 @@ fun NavigationGraph(
         ) {
             HomeScreen()
         }
-        /** 게임 화면 **/
-        composable(
-            route = BottomNavItems.Game.item.routeWithPostFix
-        ) {
-            GameScreen()
-        }
-        /** 달력 화면 **/
-        composable(
-            route = BottomNavItems.Calendar.item.routeWithPostFix
-        ) {
-            CalendarScreen()
-        }
-        /** 식물 화면 **/
-        composable(
-            route = BottomNavItems.Plant.item.routeWithPostFix
-        ) {
-            PlantScreen()
-        }
-        /** 기타 화면 **/
-        composable(
-            route = BottomNavItems.Other.item.routeWithPostFix
-        ) {
-            OtherScreen()
-        }
+        gameScreens(onBackClick, navController)
+        calendarScreens(onBackClick, navController)
+        plantScreens(onBackClick, navController)
+        otherScreens(onBackClick, navController)
+    }
+}
+
+/** 게임 관련 화면 **/
+fun NavGraphBuilder.gameScreens(
+    onBackClick: () -> Unit,
+    navController: NavHostController
+) {
+    /** 게임 화면 **/
+    composable(
+        route = BottomNavItems.Game.item.routeWithPostFix
+    ) {
+        GameScreen(
+            goToScreen = {
+                val route = when(it) {
+                    Constants.PokemonDex -> {
+                        ""
+                    }
+                    Constants.PokemonCounter -> {
+                        ""
+                    }
+                    Constants.ElswordIntroduce -> {
+                        NavScreen.ElswordIntroduce.item.routeWithPostFix
+                    }
+                    Constants.ElswordCounter -> {
+                        ""
+                    }
+                    else -> ""
+                }
+                if (route.isEmpty()) return@GameScreen
+
+                navController.navigate(route)
+            }
+        )
+    }
+    /** 엘소드 캐릭터 소개 **/
+    composable(
+        route = NavScreen.ElswordIntroduce.item.routeWithPostFix
+    ) {
+        ElswordIntroduceScreen(
+            onBackClick = onBackClick
+        )
+    }
+}
+
+/** 달력 관련 화면 **/
+fun NavGraphBuilder.calendarScreens(
+    onBackClick: () -> Unit,
+    navController: NavHostController
+) {
+    /** 달력 화면 **/
+    composable(
+        route = BottomNavItems.Calendar.item.routeWithPostFix
+    ) {
+        CalendarScreen()
+    }
+}
+
+/** 식물 관련 화면 **/
+fun NavGraphBuilder.plantScreens(
+    onBackClick: () -> Unit,
+    navController: NavHostController
+) {
+    /** 식물 화면 **/
+    composable(
+        route = BottomNavItems.Plant.item.routeWithPostFix
+    ) {
+        PlantScreen()
+    }
+}
+
+/** 기타 관련 화면 **/
+fun NavGraphBuilder.otherScreens(
+    onBackClick: () -> Unit,
+    navController: NavHostController
+) {
+    /** 기타 화면 **/
+    composable(
+        route = BottomNavItems.Other.item.routeWithPostFix
+    ) {
+        OtherScreen()
     }
 }

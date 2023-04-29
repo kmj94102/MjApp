@@ -33,7 +33,9 @@ import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
