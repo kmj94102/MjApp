@@ -9,6 +9,7 @@ import com.example.mjapp.ui.custom.Constants
 import com.example.mjapp.ui.screen.calendar.CalendarScreen
 import com.example.mjapp.ui.screen.game.GameScreen
 import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
+import com.example.mjapp.ui.screen.game.pokemon.add.PokemonAddScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.plant.PlantScreen
@@ -54,6 +55,9 @@ fun NavGraphBuilder.gameScreens(
                     Constants.PokemonCounter -> {
                         ""
                     }
+                    Constants.PokemonAdd -> {
+                        NavScreen.PokemonAdd.item.routeWithPostFix
+                    }
                     Constants.ElswordIntroduce -> {
                         NavScreen.ElswordIntroduce.item.routeWithPostFix
                     }
@@ -68,11 +72,19 @@ fun NavGraphBuilder.gameScreens(
             }
         )
     }
-    /** 엘소드 캐릭터 소개 **/
+    /** 엘소드 캐릭터 소개 화면 **/
     composable(
         route = NavScreen.ElswordIntroduce.item.routeWithPostFix
     ) {
         ElswordIntroduceScreen(
+            onBackClick = onBackClick
+        )
+    }
+    /** 포켓몬 추가 화면 **/
+    composable(
+        route = NavScreen.PokemonAdd.item.routeWithPostFix
+    ) {
+        PokemonAddScreen (
             onBackClick = onBackClick
         )
     }

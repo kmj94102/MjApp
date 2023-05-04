@@ -80,6 +80,15 @@ fun GameScreen(
                     goToScreen(Constants.ElswordCounter)
                 }
             }
+            item {
+                GameCard(
+                    text = "포켓몬\n등록",
+                    imageRes = R.drawable.img_pokemon_counter,
+                    color = MyColorTurquoise,
+                ) {
+                    goToScreen(Constants.PokemonAdd)
+                }
+            }
         }
     }
 }
