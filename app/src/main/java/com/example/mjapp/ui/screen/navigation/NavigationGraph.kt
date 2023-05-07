@@ -10,6 +10,7 @@ import com.example.mjapp.ui.screen.calendar.CalendarScreen
 import com.example.mjapp.ui.screen.game.GameScreen
 import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
 import com.example.mjapp.ui.screen.game.pokemon.add.PokemonAddScreen
+import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.plant.PlantScreen
@@ -50,7 +51,7 @@ fun NavGraphBuilder.gameScreens(
             goToScreen = {
                 val route = when(it) {
                     Constants.PokemonDex -> {
-                        ""
+                        NavScreen.PokemonDex.item.routeWithPostFix
                     }
                     Constants.PokemonCounter -> {
                         ""
@@ -85,6 +86,14 @@ fun NavGraphBuilder.gameScreens(
         route = NavScreen.PokemonAdd.item.routeWithPostFix
     ) {
         PokemonAddScreen (
+            onBackClick = onBackClick
+        )
+    }
+    /** 포켓몬 리스트 화면 **/
+    composable(
+        route = NavScreen.PokemonDex.item.routeWithPostFix
+    ) {
+        PokemonDexScreen(
             onBackClick = onBackClick
         )
     }

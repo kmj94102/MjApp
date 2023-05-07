@@ -20,4 +20,11 @@ sealed class NavScreen(val item: MainNavItem) {
             route = "PokemonAdd"
         )
     )
+
+    object PokemonDex: NavScreen(
+        MainNavItem(
+            title = "포켓몬 도감",
+            route = "PokemonDex"
+        )
+    )
 }
