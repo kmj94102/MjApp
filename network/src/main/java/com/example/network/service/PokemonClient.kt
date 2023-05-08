@@ -13,6 +13,11 @@ class PokemonClient @Inject constructor(
         limit: Int = 100
     ) = service.fetchPokemonList(skip, limit)
 
+    /** 포켓몬 상세 조회 **/
+    suspend fun fetchPokemonDetailInfo(
+        number: String
+    ) = service.fetchPokemonDetail(number)
+
     /** 포켓몬 추가 **/
     suspend fun insertPokemon(
         pokemonInfo: PokemonInfo

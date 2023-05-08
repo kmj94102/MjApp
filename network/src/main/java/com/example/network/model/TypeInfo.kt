@@ -27,6 +27,9 @@ enum class TypeInfo (val originalName: String, val koreanName: String, val image
 fun getTypeKoreaName(originalName: String) =
     TypeInfo.values().find { it.originalName == originalName }?.koreanName ?: TypeInfo.Unknown.name
 
+fun getTypeInfo(koreanName: String) =
+    TypeInfo.values().find { it.koreanName == koreanName } ?: TypeInfo.Unknown
+
 fun getTypeImage(koreanName: String) =
     TypeInfo.values().find { it.koreanName == koreanName }?.imageRes ?: TypeInfo.Unknown.imageRes
 

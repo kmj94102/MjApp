@@ -1,11 +1,9 @@
 package com.example.network.repository
 
-import com.example.network.model.CharacteristicInfo
-import com.example.network.model.PokemonInfo
-import com.example.network.model.PokemonSummary
-import com.example.network.model.PokemonSummaryResult
+import com.example.network.model.*
 import com.example.network.service.ExternalClient
 import com.example.network.service.PokemonClient
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -45,5 +43,11 @@ class PokemonRepositoryImpl @Inject constructor(
         )
 
         emit(pokemonSummary)
+    }
+
+    override fun fetchPokemonDetailInfo(number: String) = flow {
+        emit(
+            client.fetchPokemonDetailInfo(number)
+        )
     }
 }

@@ -21,8 +21,14 @@ class PokemonDexViewModel @Inject constructor(
     private val _pokemonList = mutableStateListOf<PokemonSummary>()
     val pokemonList: List<PokemonSummary> = _pokemonList
 
+    private val _selectNumber = mutableStateOf("")
+    val selectNumber: State<String> = _selectNumber
+
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
+
+    private val _isShiny = mutableStateOf(false)
+    val isShiny: State<Boolean> = _isShiny
 
     init {
         fetchPokemonList()
@@ -46,6 +52,14 @@ class PokemonDexViewModel @Inject constructor(
                 _isLoading.value = false
             }
             .launchIn(viewModelScope)
+    }
+
+    fun toggleShinyState() {
+        _isShiny.value = _isShiny.value.not()
+    }
+
+    fun updateSelectNumber(number: String) {
+        _selectNumber.value = number
     }
 
 }

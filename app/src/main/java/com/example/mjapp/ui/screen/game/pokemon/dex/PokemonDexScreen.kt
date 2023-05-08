@@ -5,6 +5,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -19,8 +21,10 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.theme.MyColorBeige
+import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle12B
 import com.example.network.model.PokemonSummary
@@ -31,6 +35,10 @@ fun PokemonDexScreen(
     onBackClick: () -> Unit,
     viewModel: PokemonDexViewModel = hiltViewModel()
 ) {
+    val isDetailDialogShow = remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,10 +53,10 @@ fun PokemonDexScreen(
             Spacer(modifier = Modifier.weight(1f))
             IconBox(
                 iconRes = R.drawable.ic_shiny,
-                iconColor = MyColorRed,
+                iconColor = if (viewModel.isShiny.value) MyColorRed else MyColorGray,
                 boxColor = MyColorWhite
             ) {
-
+                viewModel.toggleShinyState()
             }
             Spacer(modifier = Modifier.width(10.dp))
             IconBox(
@@ -71,10 +79,18 @@ fun PokemonDexScreen(
                 FlowRow(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
                     viewModel.pokemonList.forEach {
-                        PokemonItem(info = it)
+                        PokemonItem(
+                            info = it,
+                            isShiny = viewModel.isShiny.value
+                        ) { number ->
+                            viewModel.updateSelectNumber(number)
+                            isDetailDialogShow.value = true
+                        }
                     }
                 }
             }
@@ -86,21 +102,39 @@ fun PokemonDexScreen(
             CircularProgressIndicator()
         }
     }
+
+    if (isDetailDialogShow.value) {
+        DetailDialog(number = viewModel.selectNumber.value) {
+            isDetailDialogShow.value = false
+        }
+    }
 }
 
 @Composable
-fun PokemonItem(info: PokemonSummary) {
-    Column(modifier = Modifier.width(70.dp)) {
+fun PokemonItem(
+    info: PokemonSummary,
+    isShiny: Boolean,
+    onClick: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(70.dp)
+            .nonRippleClickable {
+                onClick(info.number)
+            }
+    ) {
         DoubleCard(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(info.spotlight)
+                    .data(if (isShiny) info.shinySpotlight else info.spotlight)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.img_egg),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
-                modifier = Modifier.padding(6.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(6.dp)
+                    .fillMaxWidth()
             )
         }
         Text(
