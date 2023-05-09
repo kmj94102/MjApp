@@ -1,10 +1,10 @@
 package com.example.mjapp.ui.screen.game.pokemon.add
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.util.isNumeric
 import com.example.network.model.PokemonInfo
 import com.example.network.repository.ExternalRepository
 import com.example.network.repository.PokemonRepository
@@ -98,10 +98,6 @@ class PokemonAddViewModel @Inject constructor(
         )
 
         _message.value = pokemonRepository.insertPokemon(info)
-    }
-
-    private fun isNumeric(str: String): Boolean {
-        return str.matches("-?\\d+(\\.\\d+)?".toRegex())
     }
 
     companion object {

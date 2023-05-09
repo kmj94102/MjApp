@@ -9,6 +9,7 @@ import com.example.network.model.PokemonDetailInfo
 import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +23,9 @@ class PokemonDetailViewModel @Inject constructor(
     private val _info = mutableStateOf<PokemonDetailInfo?>(null)
     val info: State<PokemonDetailInfo?> = _info
 
+    private val _status = mutableStateOf<Status>(Status.Init)
+    val status: State<Status> = _status
+
     fun fetchPokemonDetail(number: String) {
         repository.fetchPokemonDetailInfo(number)
             .onStart { _isLoading.value = true }
@@ -34,6 +38,27 @@ class PokemonDetailViewModel @Inject constructor(
             }
             .onCompletion { _isLoading.value = false }
             .launchIn(viewModelScope)
+    }
+
+    fun insertCounter() = viewModelScope.launch {
+        val detailInfo = _info.value ?: return@launch
+
+        try {
+            repository.insertPokemonCounter(detailInfo)
+            _status.value = Status.InsertCounterSuccess
+        } catch (e: Exception) {
+            _status.value = Status.Error(e.message ?: "카운터 등록을 실패하였습니다.")
+        }
+    }
+
+    sealed class Status {
+        object Init: Status()
+
+        data class Error(
+            val msg: String
+        ): Status()
+
+        object InsertCounterSuccess: Status()
     }
 
 }

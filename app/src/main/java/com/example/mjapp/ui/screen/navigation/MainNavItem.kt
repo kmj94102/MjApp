@@ -27,4 +27,11 @@ sealed class NavScreen(val item: MainNavItem) {
             route = "PokemonDex"
         )
     )
+
+    object PokemonCounter: NavScreen(
+        MainNavItem(
+            title = "포케몬 카운터",
+            route = "PokemonCounter"
+        )
+    )
 }

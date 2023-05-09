@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ fun DetailDialog(
 ) {
     viewModel.fetchPokemonDetail(number)
     val info = viewModel.info.value
+    val context = LocalContext.current
     val state = remember {
         mutableStateOf(1)
     }
@@ -161,9 +163,23 @@ fun DetailDialog(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_stop_watch),
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier
+                        .size(24.dp)
+                        .nonRippleClickable {
+                            viewModel.insertCounter()
+                        }
                 )
             }
+        }
+    }
+
+    when(val status = viewModel.status.value) {
+        is PokemonDetailViewModel.Status.Init -> {}
+        is PokemonDetailViewModel.Status.Error -> {
+            context.toast(status.msg)
+        }
+        is PokemonDetailViewModel.Status.InsertCounterSuccess -> {
+            context.toast("카운터 등록이 완료되었습니다.")
         }
     }
 }

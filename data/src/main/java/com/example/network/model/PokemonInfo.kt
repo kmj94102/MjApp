@@ -1,5 +1,8 @@
 package com.example.network.model
 
+import com.example.network.database.entity.PokemonCounterEntity
+import java.util.Calendar
+
 data class PokemonInfo(
     val number: String = "",
     val name: String = "",
@@ -53,4 +56,12 @@ data class PokemonDetailInfo(
 
     fun getClassAndCharacter() =
         "${pokemonInfo.classification} | ${pokemonInfo.characteristic.replace(",", ", ")}"
+
+    fun toPokemonCounterEntity() = PokemonCounterEntity(
+        number = pokemonInfo.number,
+        image = pokemonInfo.image,
+        shinyImage = pokemonInfo.shinyImage,
+        count = 0,
+        timestamp = Calendar.getInstance().timeInMillis
+    )
 }

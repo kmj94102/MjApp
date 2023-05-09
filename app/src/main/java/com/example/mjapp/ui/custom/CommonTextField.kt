@@ -1,6 +1,7 @@
 package com.example.mjapp.ui.custom
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,21 +13,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mjapp.util.textStyle16
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CommonTextField(
     value: String,
     onTextChange: (String) -> Unit,
+    textStyle: TextStyle = textStyle16(),
     hint: String = "",
     modifier: Modifier = Modifier,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 5.dp, vertical = 0.dp),
+    readOnly: Boolean = false,
     onSearch: (String) -> Unit = {}
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -37,6 +44,8 @@ fun CommonTextField(
         onValueChange = onTextChange,
         maxLines = 1,
         singleLine = true,
+        readOnly = readOnly,
+        textStyle = textStyle,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
             imeAction = imeAction
@@ -61,6 +70,7 @@ fun CommonTextField(
                 placeholder = {
                     Text(text = hint, fontSize = 12.sp)
                 },
+                contentPadding = contentPadding
             )
         },
         modifier = modifier

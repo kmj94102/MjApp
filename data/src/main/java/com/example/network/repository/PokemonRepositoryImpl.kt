@@ -1,5 +1,6 @@
 package com.example.network.repository
 
+import com.example.network.database.dao.PokemonDao
 import com.example.network.model.*
 import com.example.network.service.ExternalClient
 import com.example.network.service.PokemonClient
@@ -9,7 +10,8 @@ import javax.inject.Inject
 
 class PokemonRepositoryImpl @Inject constructor(
     private val client: PokemonClient,
-    private val externalClient: ExternalClient
+    private val externalClient: ExternalClient,
+    private val dao: PokemonDao
 ) : PokemonRepository {
     override suspend fun insertPokemon(pokemonInfo: PokemonInfo): String {
         val originCharacteristics = pokemonInfo.characteristic.split(",")
@@ -49,5 +51,22 @@ class PokemonRepositoryImpl @Inject constructor(
         emit(
             client.fetchPokemonDetailInfo(number)
         )
+    }
+
+    override suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo) {
+        dao.insertPokemonCounter(
+            pokemonDetailInfo.toPokemonCounterEntity()
+        )
+    }
+
+    override fun fetchPokemonCounter(): Flow<List<PokemonCounter>> =
+        dao.fetchPokemonCounter()
+
+    override suspend fun updateCounter(count: Int, number: String) {
+        dao.updateCounter(count, number)
+    }
+
+    override suspend fun updateCatch(number: String) {
+        dao.updateCatch(number)
     }
 }
