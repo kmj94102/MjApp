@@ -1,7 +1,7 @@
 package com.example.network.model
 
 data class PokemonListResult(
-    val list: List<PokemonListInfo>?,
+    val list: List<PokemonListInfo>,
     val totalSize: Int?
 )
 

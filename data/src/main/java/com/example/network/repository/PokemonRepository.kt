@@ -1,9 +1,7 @@
 package com.example.network.repository
 
-import com.example.network.model.PokemonCounter
-import com.example.network.model.PokemonDetailInfo
-import com.example.network.model.PokemonInfo
-import com.example.network.model.PokemonSummaryResult
+import androidx.paging.PagingData
+import com.example.network.model.*
 import kotlinx.coroutines.flow.Flow
 
 interface PokemonRepository {
@@ -11,7 +9,7 @@ interface PokemonRepository {
     suspend fun insertPokemon(pokemonInfo: PokemonInfo): String
 
     /** 포켓몬 조회 **/
-    fun fetchPokemonList(skip: Int): Flow<PokemonSummaryResult>
+    fun fetchPokemonList(): Flow<PagingData<PokemonSummary>>
 
     /** 포켓몬 상세 조회 **/
     fun fetchPokemonDetailInfo(number: String): Flow<PokemonDetailInfo>

@@ -1,17 +1,24 @@
 package com.example.network.service
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import com.example.network.model.CharacteristicInfo
 import com.example.network.model.PokemonInfo
+import com.example.network.paging_source.PokemonDexPagingSource
 import javax.inject.Inject
 
 class PokemonClient @Inject constructor(
     private val service: PokemonService
 ) {
     /** 포켓몬 조회 **/
-    suspend fun fetchPokemonList(
-        skip: Int = 0,
-        limit: Int = 100
-    ) = service.fetchPokemonList(skip, limit)
+    fun fetchPokemonList() = Pager(
+        config = PagingConfig(
+            pageSize = 100
+        ),
+        pagingSourceFactory = {
+            PokemonDexPagingSource(pokemonService = service)
+        }
+    ).flow
 
     /** 포켓몬 상세 조회 **/
     suspend fun fetchPokemonDetailInfo(

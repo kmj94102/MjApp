@@ -1,7 +1,8 @@
 package com.example.mjapp.ui.screen.game.pokemon.dex
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mjapp.R
@@ -29,7 +31,6 @@ import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle12B
 import com.example.network.model.PokemonSummary
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PokemonDexScreen(
     onBackClick: () -> Unit,
@@ -38,6 +39,7 @@ fun PokemonDexScreen(
     val isDetailDialogShow = remember {
         mutableStateOf(false)
     }
+    val pokemonDex = viewModel.fetchPokemonDex().collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier
@@ -69,29 +71,25 @@ fun PokemonDexScreen(
             Spacer(modifier = Modifier.width(3.dp))
         }
 
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(top = 15.dp, bottom = 50.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            item {
-                FlowRow(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    viewModel.pokemonList.forEach {
-                        PokemonItem(
-                            info = it,
-                            isShiny = viewModel.isShiny.value
-                        ) { number ->
+            items(pokemonDex.itemCount) {
+                pokemonDex[it]?.let { info ->
+                    PokemonItem(
+                        info = info,
+                        isShiny = viewModel.isShiny.value,
+                        onClick = { number ->
                             viewModel.updateSelectNumber(number)
                             isDetailDialogShow.value = true
                         }
-                    }
+                    )
                 }
             }
         }

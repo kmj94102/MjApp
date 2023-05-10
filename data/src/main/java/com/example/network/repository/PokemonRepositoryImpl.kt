@@ -1,7 +1,10 @@
 package com.example.network.repository
 
 import com.example.network.database.dao.PokemonDao
-import com.example.network.model.*
+import com.example.network.model.CharacteristicInfo
+import com.example.network.model.PokemonCounter
+import com.example.network.model.PokemonDetailInfo
+import com.example.network.model.PokemonInfo
 import com.example.network.service.ExternalClient
 import com.example.network.service.PokemonClient
 import kotlinx.coroutines.flow.Flow
@@ -37,15 +40,7 @@ class PokemonRepositoryImpl @Inject constructor(
         return result
     }
 
-    override fun fetchPokemonList(skip: Int) = flow {
-        val result = client.fetchPokemonList(skip = skip)
-        val pokemonSummary = PokemonSummaryResult(
-            list = result.list?.mapNotNull { it.toPokemonSummary() } ?: listOf(),
-            isLast = (result.totalSize ?: 0) <= (result.list?.map { it.index }?.last() ?: 0)
-        )
-
-        emit(pokemonSummary)
-    }
+    override fun fetchPokemonList() = client.fetchPokemonList()
 
     override fun fetchPokemonDetailInfo(number: String) = flow {
         emit(
