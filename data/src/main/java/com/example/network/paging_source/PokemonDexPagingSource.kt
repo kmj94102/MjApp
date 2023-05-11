@@ -6,7 +6,8 @@ import com.example.network.model.PokemonSummary
 import com.example.network.service.PokemonService
 
 class PokemonDexPagingSource(
-    private val pokemonService: PokemonService
+    private val pokemonService: PokemonService,
+    private val name: String
 ): PagingSource<Int, PokemonSummary>() {
     private val limit = 100
     private val initPage = 0
@@ -22,7 +23,7 @@ class PokemonDexPagingSource(
 
         return try {
             val page = params.key ?: initPage
-            val response = pokemonService.fetchPokemonList(skip = page * limit, limit = limit)
+            val response = pokemonService.fetchPokemonList(name = name, skip = page * limit, limit = limit)
             LoadResult.Page(
                 data = response.list.mapNotNull { it.toPokemonSummary() },
                 prevKey = if (page == initPage) null else page - 1,

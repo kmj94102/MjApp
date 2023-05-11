@@ -40,7 +40,7 @@ class PokemonRepositoryImpl @Inject constructor(
         return result
     }
 
-    override fun fetchPokemonList() = client.fetchPokemonList()
+    override fun fetchPokemonList(name: String) = client.fetchPokemonList(name)
 
     override fun fetchPokemonDetailInfo(number: String) = flow {
         emit(

@@ -14,7 +14,11 @@ interface PokemonService {
 
     /** 포켓몬 조회 **/
     @GET("pokemonList")
-    suspend fun fetchPokemonList(@Query("skip") skip: Int, @Query("limit") limit: Int): PokemonListResult
+    suspend fun fetchPokemonList(
+        @Query("name") name: String,
+        @Query("skip") skip: Int,
+        @Query("limit") limit: Int
+    ): PokemonListResult
 
     /** 포켓몬 상세 조회 **/
     @GET("/pokemon/detail/{number}")

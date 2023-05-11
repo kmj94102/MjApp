@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -22,6 +24,7 @@ import coil.request.ImageRequest
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.screen.game.pokemon.search.PokemonSearchDialog
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
@@ -39,7 +42,9 @@ fun PokemonDexScreen(
     val isDetailDialogShow = remember {
         mutableStateOf(false)
     }
-    val pokemonDex = viewModel.fetchPokemonDex().collectAsLazyPagingItems()
+    val isSearchDialogShow = remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier
@@ -66,11 +71,12 @@ fun PokemonDexScreen(
                 iconSize = 19.dp,
                 boxColor = MyColorBeige
             ) {
-
+                isSearchDialogShow.value = true
             }
             Spacer(modifier = Modifier.width(3.dp))
         }
 
+        val pokemonDex = viewModel.fetchPokemonDex().collectAsLazyPagingItems()
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -106,6 +112,16 @@ fun PokemonDexScreen(
             isDetailDialogShow.value = false
         }
     }
+
+    if (isSearchDialogShow.value) {
+        PokemonSearchDialog(
+            onDismiss = { isSearchDialogShow.value = false },
+            onSearch = {
+                viewModel.updateSearchValue(it)
+                isSearchDialogShow.value = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -130,6 +146,11 @@ fun PokemonItem(
                 placeholder = painterResource(id = R.drawable.img_egg),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
+                colorFilter = ColorFilter.colorMatrix(
+                    ColorMatrix().apply {
+                        setToSaturation(if (info.isCatch) 1f else 0f)
+                    }
+                ),
                 modifier = Modifier
                     .padding(6.dp)
                     .fillMaxWidth()

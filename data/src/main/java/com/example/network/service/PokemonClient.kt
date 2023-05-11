@@ -11,12 +11,12 @@ class PokemonClient @Inject constructor(
     private val service: PokemonService
 ) {
     /** 포켓몬 조회 **/
-    fun fetchPokemonList() = Pager(
+    fun fetchPokemonList(name: String) = Pager(
         config = PagingConfig(
             pageSize = 100
         ),
         pagingSourceFactory = {
-            PokemonDexPagingSource(pokemonService = service)
+            PokemonDexPagingSource(pokemonService = service, name = name)
         }
     ).flow
 

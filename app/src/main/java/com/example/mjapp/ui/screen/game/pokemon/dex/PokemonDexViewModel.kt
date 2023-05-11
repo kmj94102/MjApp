@@ -23,8 +23,11 @@ class PokemonDexViewModel @Inject constructor(
     private val _isShiny = mutableStateOf(false)
     val isShiny: State<Boolean> = _isShiny
 
+    private val _search = mutableStateOf("")
+    val search: State<String> = _search
+
     fun fetchPokemonDex() = repository
-        .fetchPokemonList()
+        .fetchPokemonList(_search.value)
         .cachedIn(viewModelScope)
 
     fun toggleShinyState() {
@@ -33,6 +36,10 @@ class PokemonDexViewModel @Inject constructor(
 
     fun updateSelectNumber(number: String) {
         _selectNumber.value = number
+    }
+
+    fun updateSearchValue(value: String) {
+        _search.value = value
     }
 
 }

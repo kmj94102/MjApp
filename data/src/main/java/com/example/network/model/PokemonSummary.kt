@@ -10,7 +10,8 @@ data class PokemonListInfo(
     val number: String?,
     val name: String?,
     val spotlight: String?,
-    val shinySpotlight: String?
+    val shinySpotlight: String?,
+    val isCatch: Boolean?
 ) {
     fun toPokemonSummary(): PokemonSummary? {
         return PokemonSummary(
@@ -18,7 +19,8 @@ data class PokemonListInfo(
             number = number ?: return null,
             name = name ?: return null,
             spotlight = spotlight ?: return null,
-            shinySpotlight = shinySpotlight ?: return null
+            shinySpotlight = shinySpotlight ?: return null,
+            isCatch = isCatch ?: false
         )
     }
 }
@@ -33,5 +35,6 @@ data class PokemonSummary(
     val number: String,
     val name: String,
     val spotlight: String,
-    val shinySpotlight: String
+    val shinySpotlight: String,
+    val isCatch: Boolean
 )
