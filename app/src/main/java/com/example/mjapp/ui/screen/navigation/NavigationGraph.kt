@@ -103,7 +103,10 @@ fun NavGraphBuilder.gameScreens(
         route = NavScreen.PokemonCounter.item.routeWithPostFix
     ) {
         PokemonCounterScreen(
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            goToPokemonDex = {
+                navController.navigate(NavScreen.PokemonDex.item.routeWithPostFix)
+            }
         )
     }
 }

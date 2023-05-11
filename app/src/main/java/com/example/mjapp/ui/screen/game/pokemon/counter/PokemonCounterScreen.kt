@@ -26,6 +26,7 @@ import com.example.mjapp.ui.custom.CommonButton
 import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.theme.*
+import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle24B
 import com.example.network.model.PokemonCounter
@@ -33,6 +34,7 @@ import com.example.network.model.PokemonCounter
 @Composable
 fun PokemonCounterScreen(
     onBackClick: () -> Unit,
+    goToPokemonDex: () -> Unit,
     viewModel: PokemonCounterViewModel = hiltViewModel()
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -44,14 +46,6 @@ fun PokemonCounterScreen(
         ) {
             IconBox {
                 onBackClick()
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconBox(
-                boxColor = MyColorBeige,
-                iconRes = R.drawable.ic_search,
-                iconSize = 19.dp
-            ) {
-
             }
         }
 
@@ -79,7 +73,9 @@ fun PokemonCounterScreen(
             }
 
             item {
-                PokemonCounterEmptyCard()
+                PokemonCounterEmptyCard {
+                    goToPokemonDex()
+                }
             }
         }
     }
@@ -218,13 +214,15 @@ fun PokemonCounterCard(
 
 @Composable
 fun PokemonCounterEmptyCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     DoubleCard(
         bottomCardColor = MyColorRed,
         modifier = modifier
             .fillMaxWidth()
             .height(257.dp)
+            .nonRippleClickable { onClick() }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -248,7 +246,8 @@ fun PokemonCounterEmptyCard(
             Spacer(modifier = Modifier.weight(1f))
             CommonButton(
                 text = "추가",
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onClick
             )
         }
     }
