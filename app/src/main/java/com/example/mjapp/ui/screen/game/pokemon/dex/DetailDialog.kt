@@ -42,7 +42,8 @@ import com.example.network.model.TypeInfo
 fun DetailDialog(
     number: String,
     viewModel: PokemonDetailViewModel = hiltViewModel(),
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onSelectChange: (String) -> Unit
 ) {
     viewModel.fetchPokemonDetail(number)
     val info = viewModel.info.value
@@ -53,6 +54,7 @@ fun DetailDialog(
 
     Dialog(
         onDismissRequest = {
+            viewModel.statusReset()
             onDismiss()
         }
     ) {
@@ -81,7 +83,7 @@ fun DetailDialog(
                     modifier = Modifier
                         .size(28.dp)
                         .nonRippleClickable {
-
+                            viewModel.updateCatch()
                         }
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -119,7 +121,11 @@ fun DetailDialog(
                         } else {
                             PokemonDetailBody(
                                 pokemonDetailInfo = info,
-                                selectState = state.value
+                                selectState = state.value,
+                                onItemClick = {
+                                    if (it == null) return@PokemonDetailBody
+                                    onSelectChange(it)
+                                }
                             )
                         }
                     }
@@ -187,11 +193,15 @@ fun DetailDialog(
 @Composable
 fun PokemonDetailBody(
     pokemonDetailInfo: PokemonDetailInfo,
+    onItemClick: (String?) -> Unit,
     selectState: Int
 ) {
     when (selectState) {
         1 -> {
-            PokemonDescription(pokemonDetailInfo)
+            PokemonDescription(
+                pokemonDetailInfo,
+                onItemClick
+            )
         }
         2 -> {
             PokemonStatusAndEvolution(pokemonDetailInfo)
@@ -200,7 +210,10 @@ fun PokemonDetailBody(
 }
 
 @Composable
-fun PokemonDescription(info: PokemonDetailInfo) {
+fun PokemonDescription(
+    info: PokemonDetailInfo,
+    onItemClick: (String?) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -293,6 +306,9 @@ fun PokemonDescription(info: PokemonDetailInfo) {
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start, (-36).dp)
                         }
+                        .nonRippleClickable {
+                            onItemClick(info.beforeInfo?.number)
+                        }
                 ) {
                     AsyncImage(
                         model = info.beforeInfo?.image,
@@ -325,6 +341,9 @@ fun PokemonDescription(info: PokemonDetailInfo) {
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             end.linkTo(parent.end, (-36).dp)
+                        }
+                        .nonRippleClickable {
+                            onItemClick(info.nextInfo?.number)
                         }
                 ) {
                     AsyncImage(

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.network.model.PokemonDetailInfo
+import com.example.network.model.UpdatePokemonCatch
 import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -49,6 +50,30 @@ class PokemonDetailViewModel @Inject constructor(
         } catch (e: Exception) {
             _status.value = Status.Error(e.message ?: "카운터 등록을 실패하였습니다.")
         }
+    }
+
+    fun updateCatch() = viewModelScope.launch {
+        val info = _info.value?.pokemonInfo ?: return@launch
+        val result = repository.updatePokemonCatch(
+            UpdatePokemonCatch(
+                number = info.number,
+                isCatch = info.isCatch.not()
+            )
+        )
+
+        if (result.contains("완료")) {
+            _info.value = _info.value?.copy(
+                pokemonInfo = info.copy(
+                    isCatch = info.isCatch.not()
+                )
+            )
+        } else {
+            _status.value = Status.Error(result)
+        }
+    }
+
+    fun statusReset() {
+        _status.value = Status.Init
     }
 
     sealed class Status {

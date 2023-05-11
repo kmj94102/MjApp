@@ -1,9 +1,6 @@
 package com.example.network.service
 
-import com.example.network.model.CharacteristicInfo
-import com.example.network.model.PokemonDetailInfo
-import com.example.network.model.PokemonInfo
-import com.example.network.model.PokemonListResult
+import com.example.network.model.*
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -27,6 +24,10 @@ interface PokemonService {
     /** 포켓몬 추가 **/
     @POST("insert/pokemon")
     suspend fun insertPokemon(@Body item: PokemonInfo): String
+
+    /** 포켓몬 잡은 상태 업데이트 **/
+    @POST("/update/pokemon/catch")
+    suspend fun updatePokemonCatch(@Body item: UpdatePokemonCatch): String
 
     /** 특성 추가 **/
     @POST("insert/char")

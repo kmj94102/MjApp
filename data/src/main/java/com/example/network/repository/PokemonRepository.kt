@@ -14,6 +14,9 @@ interface PokemonRepository {
     /** 포켓몬 상세 조회 **/
     fun fetchPokemonDetailInfo(number: String): Flow<PokemonDetailInfo>
 
+    /** 포켓몬 잡은 상태 업데이트 **/
+    suspend fun updatePokemonCatch(pokemonCatch: UpdatePokemonCatch): String
+
     /** 포켓몬 카운터 추가 **/
     suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo)
 

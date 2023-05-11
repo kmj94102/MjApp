@@ -108,9 +108,15 @@ fun PokemonDexScreen(
     }
 
     if (isDetailDialogShow.value) {
-        DetailDialog(number = viewModel.selectNumber.value) {
-            isDetailDialogShow.value = false
-        }
+        DetailDialog(
+            number = viewModel.selectNumber.value,
+            onDismiss = {
+                isDetailDialogShow.value = false
+            },
+            onSelectChange = {
+                viewModel.updateSelectNumber(it)
+            }
+        )
     }
 
     if (isSearchDialogShow.value) {

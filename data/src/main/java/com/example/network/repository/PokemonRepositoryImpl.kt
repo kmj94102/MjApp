@@ -1,10 +1,8 @@
 package com.example.network.repository
 
+import android.util.Log
 import com.example.network.database.dao.PokemonDao
-import com.example.network.model.CharacteristicInfo
-import com.example.network.model.PokemonCounter
-import com.example.network.model.PokemonDetailInfo
-import com.example.network.model.PokemonInfo
+import com.example.network.model.*
 import com.example.network.service.ExternalClient
 import com.example.network.service.PokemonClient
 import kotlinx.coroutines.flow.Flow
@@ -46,6 +44,17 @@ class PokemonRepositoryImpl @Inject constructor(
         emit(
             client.fetchPokemonDetailInfo(number)
         )
+    }
+
+    override suspend fun updatePokemonCatch(
+        pokemonCatch: UpdatePokemonCatch
+    ): String {
+        return try {
+            client.updatePokemonCatch(pokemonCatch)
+        } catch (e: Exception) {
+            Log.e("updatePokemonCatch", "error : ${e.message}")
+            "업데이트 실패"
+        }
     }
 
     override suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo) {
