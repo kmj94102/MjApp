@@ -14,6 +14,20 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
+    object ElswordCounter: NavScreen(
+        MainNavItem(
+            title = "엘소드 카운터",
+            route = "ElswordCounter"
+        )
+    )
+
+    object ElswordCounterAdd: NavScreen(
+        MainNavItem(
+            title = "엘소드 카운터 등록",
+            route = "ElswordCounterAdd"
+        )
+    )
+
     object PokemonAdd: NavScreen(
         MainNavItem(
             title = "포켓몬 추가",

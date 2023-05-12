@@ -1,9 +1,6 @@
 package com.example.network.di
 
-import com.example.network.repository.ExternalRepository
-import com.example.network.repository.ExternalRepositoryIml
-import com.example.network.repository.PokemonRepository
-import com.example.network.repository.PokemonRepositoryImpl
+import com.example.network.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,4 +18,9 @@ interface RepositoryModule {
     fun bindPokemonRepository(
         pokemonRepositoryImpl: PokemonRepositoryImpl
     ): PokemonRepository
+
+    @Binds
+    fun bindElswordRepository(
+        elswordRepositoryImpl: ElswordRepositoryImpl
+    ): ElswordRepository
 }

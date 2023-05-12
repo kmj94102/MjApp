@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import com.example.mjapp.ui.custom.Constants
 import com.example.mjapp.ui.screen.calendar.CalendarScreen
 import com.example.mjapp.ui.screen.game.GameScreen
+import com.example.mjapp.ui.screen.game.elsword.counter.ElswordCounterScreen
+import com.example.mjapp.ui.screen.game.elsword.counter.add.ElswordCounterAddScreen
 import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
 import com.example.mjapp.ui.screen.game.pokemon.add.PokemonAddScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
@@ -64,7 +66,7 @@ fun NavGraphBuilder.gameScreens(
                         NavScreen.ElswordIntroduce.item.routeWithPostFix
                     }
                     Constants.ElswordCounter -> {
-                        ""
+                        NavScreen.ElswordCounter.item.routeWithPostFix
                     }
                     else -> ""
                 }
@@ -79,6 +81,25 @@ fun NavGraphBuilder.gameScreens(
         route = NavScreen.ElswordIntroduce.item.routeWithPostFix
     ) {
         ElswordIntroduceScreen(
+            onBackClick = onBackClick
+        )
+    }
+    /** 엘소드 카운터 **/
+    composable(
+        route = NavScreen.ElswordCounter.item.routeWithPostFix
+    ) {
+        ElswordCounterScreen(
+            onBackClick = onBackClick,
+            goToAdd = {
+                navController.navigate(NavScreen.ElswordCounterAdd.item.routeWithPostFix)
+            }
+        )
+    }
+    /** 엘소드 카운터 등록 **/
+    composable(
+        route = NavScreen.ElswordCounterAdd.item.routeWithPostFix
+    ) {
+        ElswordCounterAddScreen(
             onBackClick = onBackClick
         )
     }

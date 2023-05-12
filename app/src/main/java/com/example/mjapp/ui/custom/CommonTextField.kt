@@ -8,10 +8,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -19,9 +22,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.util.textStyle16
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun CommonTextField(
     value: String,
@@ -33,6 +39,8 @@ fun CommonTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
     contentPadding: PaddingValues = PaddingValues(horizontal = 5.dp, vertical = 0.dp),
+    unfocusedIndicatorColor: Color = Color.Transparent,
+    focusedIndicatorColor: Color = Color.Transparent,
     readOnly: Boolean = false,
     onSearch: (String) -> Unit = {}
 ) {
@@ -68,11 +76,20 @@ fun CommonTextField(
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
                 placeholder = {
-                    Text(text = hint, fontSize = 12.sp)
+                    Text(text = hint, fontSize = 12.sp, color = MyColorGray)
                 },
-                contentPadding = contentPadding
+                contentPadding = contentPadding,
             )
         },
         modifier = modifier
+            .indicatorLine(
+                enabled = true,
+                isError = false,
+                interactionSource = interactionSource,
+                colors = androidx.compose.material3.TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = unfocusedIndicatorColor,
+                    focusedIndicatorColor = focusedIndicatorColor
+                )
+            )
     )
 }

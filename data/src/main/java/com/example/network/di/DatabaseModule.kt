@@ -3,6 +3,7 @@ package com.example.network.di
 import android.app.Application
 import androidx.room.Room
 import com.example.network.database.MjDatabase
+import com.example.network.database.dao.ElswordDao
 import com.example.network.database.dao.PokemonDao
 import dagger.Module
 import dagger.Provides
@@ -28,5 +29,11 @@ object DatabaseModule {
     fun providePokemonDao(
         database: MjDatabase
     ): PokemonDao = database.pokemonDao()
+
+    @Provides
+    @Singleton
+    fun provideElswordDao(
+        database: MjDatabase
+    ): ElswordDao = database.elswordDao()
 
 }
