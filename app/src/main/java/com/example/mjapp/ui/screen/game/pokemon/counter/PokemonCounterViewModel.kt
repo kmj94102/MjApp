@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.network.model.PokemonCounter
+import com.example.network.model.UpdatePokemonCatch
 import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PokemonCounterViewModel @Inject constructor(
     private val repository: PokemonRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _list = mutableStateListOf<PokemonCounter>()
     val list: List<PokemonCounter> = _list
@@ -41,8 +42,21 @@ class PokemonCounterViewModel @Inject constructor(
         repository.updateCounter(value, number)
     }
 
-    fun updateCatch(number: String) = viewModelScope.launch {
-        repository.updateCatch(number)
+    fun updateCustomIncrease(customIncrease: Int, number: String) = viewModelScope.launch {
+        repository.updateCustomIncrease(customIncrease, number)
     }
 
+    fun deleteCounter(number: String) = viewModelScope.launch {
+        repository.deletePokemonCounter(number)
+    }
+
+    fun updateCatch(number: String) = viewModelScope.launch {
+        repository.updateCatch(number)
+        repository.updatePokemonCatch(
+            UpdatePokemonCatch(
+                number = number,
+                isCatch = true
+            )
+        )
+    }
 }

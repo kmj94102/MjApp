@@ -7,4 +7,14 @@ data class PokemonCounter(
     val shinyImage: String,
     val count: Int,
     val customIncrease: Int = 10,
-)
+) {
+    companion object {
+        fun init() = PokemonCounter(
+            index = 0,
+            number = "",
+            image = "",
+            shinyImage = "",
+            count = 0
+        )
+    }
+}

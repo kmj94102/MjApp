@@ -27,6 +27,9 @@ class PokemonDetailViewModel @Inject constructor(
     private val _status = mutableStateOf<Status>(Status.Init)
     val status: State<Status> = _status
 
+    private val _isShiny = mutableStateOf(false)
+    val isShiny: State<Boolean> = _isShiny
+
     fun fetchPokemonDetail(number: String) {
         repository.fetchPokemonDetailInfo(number)
             .onStart { _isLoading.value = true }
@@ -74,6 +77,10 @@ class PokemonDetailViewModel @Inject constructor(
 
     fun statusReset() {
         _status.value = Status.Init
+    }
+
+    fun toggleIsShiny() {
+        _isShiny.value = _isShiny.value.not()
     }
 
     sealed class Status {

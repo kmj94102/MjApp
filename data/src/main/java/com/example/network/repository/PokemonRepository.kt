@@ -23,8 +23,14 @@ interface PokemonRepository {
     /** 포켓몬 카운터 조회 **/
     fun fetchPokemonCounter(): Flow<List<PokemonCounter>>
 
+    /** 포켓몬 카운터 삭제 **/
+    suspend fun deletePokemonCounter(number: String)
+
     /** 카운터 업데이트 **/
     suspend fun updateCounter(count: Int, number: String)
+
+    /** 증가 폭 업데이트 **/
+    suspend fun updateCustomIncrease(customIncrease: Int, number: String)
 
     /** 잡기 상태 업데이트 **/
     suspend fun updateCatch(number: String)

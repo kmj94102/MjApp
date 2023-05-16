@@ -20,7 +20,13 @@ interface PokemonDao {
     @Query("UPDATE PokemonCounterEntity SET count = :count WHERE number = :number")
     suspend fun updateCounter(count: Int, number: String)
 
+    @Query("UPDATE PokemonCounterEntity SET customIncrease = :customIncrease WHERE number = :number")
+    suspend fun updateCustomIncrease(customIncrease: Int, number: String)
+
     @Query("UPDATE PokemonCounterEntity SET isCatch = 1 WHERE number = :number")
     suspend fun updateCatch(number: String)
+
+    @Query("DELETE FROM PokemonCounterEntity WHERE number = :number")
+    suspend fun deleteCounter(number: String)
 
 }

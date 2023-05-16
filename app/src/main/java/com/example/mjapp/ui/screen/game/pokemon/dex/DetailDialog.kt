@@ -21,14 +21,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.example.mjapp.R
+import com.example.mjapp.ui.custom.ConditionAsyncImage
+import com.example.mjapp.ui.custom.ConditionImage
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorLightGray
@@ -38,19 +41,23 @@ import com.example.mjapp.util.*
 import com.example.network.model.PokemonDetailInfo
 import com.example.network.model.TypeInfo
 
+/**
+ * 포켓몬 상세 다이얼로그
+ * @param number 포켓몬 번호
+ * @param onDismiss 다이얼로그 종료 리스너
+ * @param onSelectChange 다른 포켓몬 선택 리스너
+ * **/
 @Composable
 fun DetailDialog(
     number: String,
-    viewModel: PokemonDetailViewModel = hiltViewModel(),
     onDismiss: () -> Unit,
-    onSelectChange: (String) -> Unit
+    onSelectChange: (String) -> Unit,
+    viewModel: PokemonDetailViewModel = hiltViewModel(),
 ) {
     viewModel.fetchPokemonDetail(number)
     val info = viewModel.info.value
     val context = LocalContext.current
-    val state = remember {
-        mutableStateOf(1)
-    }
+    val selectState = remember { mutableStateOf(1) }
 
     Dialog(
         onDismissRequest = {
@@ -71,15 +78,10 @@ fun DetailDialog(
                     .fillMaxWidth()
                     .padding(vertical = 5.dp, horizontal = 20.dp)
             ) {
-                Image(
-                    painter = painterResource(
-                        id = if (info?.pokemonInfo?.isCatch == true) {
-                            R.drawable.img_monster_ballpng
-                        } else {
-                            R.drawable.img_monster_ball_empty
-                        }
-                    ),
-                    contentDescription = null,
+                ConditionImage(
+                    value = info?.pokemonInfo?.isCatch == true,
+                    trueImageRes = R.drawable.img_monster_ballpng,
+                    falseImageRes = R.drawable.img_monster_ball_empty,
                     modifier = Modifier
                         .size(28.dp)
                         .nonRippleClickable {
@@ -109,21 +111,27 @@ fun DetailDialog(
             ) {
                 when (viewModel.isLoading.value) {
                     true -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterHorizontally)
+                        )
                     }
                     false -> {
                         if (info == null) {
                             Text(
                                 text = "정보를 가져오지 못했어요.",
                                 style = textStyle16B().copy(color = MyColorWhite),
-                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .align(Alignment.CenterHorizontally)
                             )
                         } else {
                             PokemonDetailBody(
                                 pokemonDetailInfo = info,
-                                selectState = state.value,
+                                isShiny = viewModel.isShiny.value,
+                                selectState = selectState.value,
                                 onItemClick = {
-                                    if (it == null) return@PokemonDetailBody
                                     onSelectChange(it)
                                 }
                             )
@@ -143,10 +151,10 @@ fun DetailDialog(
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
-                        .background(if (state.value == 1) MyColorRed else MyColorLightGray)
+                        .background(if (selectState.value == 1) MyColorRed else MyColorLightGray)
                         .border(1.dp, MyColorBlack, CircleShape)
                         .nonRippleClickable {
-                            state.value = 1
+                            selectState.value = 1
                         }
                 ) {
                     Text(text = "1", style = textStyle16B())
@@ -157,13 +165,24 @@ fun DetailDialog(
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
-                        .background(if (state.value == 2) MyColorRed else MyColorLightGray)
+                        .background(if (selectState.value == 2) MyColorRed else MyColorLightGray)
                         .border(1.dp, MyColorBlack, CircleShape)
                         .nonRippleClickable {
-                            state.value = 2
+                            selectState.value = 2
                         }
                 ) {
                     Text(text = "2", style = textStyle16B())
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                IconBox(
+                    boxColor = MyColorWhite,
+                    boxShape = CircleShape,
+                    boxSize = DpSize(28.dp, 28.dp),
+                    iconSize = 22.dp,
+                    iconRes = R.drawable.ic_shiny,
+                    iconColor = if (viewModel.isShiny.value) MyColorRed else MyColorLightGray
+                ) {
+                    viewModel.toggleIsShiny()
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
@@ -179,7 +198,7 @@ fun DetailDialog(
         }
     }
 
-    when(val status = viewModel.status.value) {
+    when (val status = viewModel.status.value) {
         is PokemonDetailViewModel.Status.Init -> {}
         is PokemonDetailViewModel.Status.Error -> {
             context.toast(status.msg)
@@ -193,13 +212,15 @@ fun DetailDialog(
 @Composable
 fun PokemonDetailBody(
     pokemonDetailInfo: PokemonDetailInfo,
-    onItemClick: (String?) -> Unit,
+    isShiny: Boolean,
+    onItemClick: (String) -> Unit,
     selectState: Int
 ) {
     when (selectState) {
         1 -> {
             PokemonDescription(
                 pokemonDetailInfo,
+                isShiny,
                 onItemClick
             )
         }
@@ -212,7 +233,8 @@ fun PokemonDetailBody(
 @Composable
 fun PokemonDescription(
     info: PokemonDetailInfo,
-    onItemClick: (String?) -> Unit
+    isShiny: Boolean,
+    onItemClick: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -271,100 +293,111 @@ fun PokemonDescription(
         ) {
             val (beforeInfo, currentInfo, nextInfo, line1, line2) = createRefs()
 
-            Box(
-                contentAlignment = Alignment.Center,
+            CirclePokemonImage(
+                trueImage = info.pokemonInfo.shinyImage,
+                falseImage = info.pokemonInfo.image,
+                isShiny = isShiny,
                 modifier = Modifier
-                    .clip(CircleShape)
-                    .background(Color(0xFF0F3061))
-                    .border(2.dp, MyColorWhite, CircleShape)
-                    .size(178.dp)
                     .constrainAs(currentInfo) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-            ) {
-                AsyncImage(
-                    model = info.pokemonInfo.image,
-                    contentDescription = null,
-                    placeholder = painterResource(id = R.drawable.img_egg),
-                    modifier = Modifier.size(160.dp)
-                )
-            }
+            )
 
             info.beforeInfo?.let {
-                Box(
-                    contentAlignment = Alignment.Center,
+                CirclePokemonImage(
+                    boxColor = Color(0xFF1F769A),
+                    boxSize = 72.dp,
+                    trueImage = it.shinyImage,
+                    falseImage = it.image,
+                    imageSize = 60.dp,
+                    isShiny = isShiny,
                     modifier = Modifier
-                        .clip(CircleShape)
-                        .background(Color(0xFF1F769A))
-                        .border(2.dp, MyColorWhite, CircleShape)
-                        .size(72.dp)
                         .constrainAs(beforeInfo) {
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start, (-36).dp)
                         }
                         .nonRippleClickable {
-                            onItemClick(info.beforeInfo?.number)
+                            onItemClick(it.number)
                         }
-                ) {
-                    AsyncImage(
-                        model = info.beforeInfo?.image,
-                        contentDescription = null,
-                        placeholder = painterResource(id = R.drawable.img_egg),
-                        modifier = Modifier.size(60.dp)
-                    )
-                }
-                Box(modifier = Modifier
-                    .background(MyColorWhite)
-                    .constrainAs(line1) {
-                        start.linkTo(beforeInfo.end)
-                        end.linkTo(currentInfo.start)
-                        top.linkTo(currentInfo.top)
-                        bottom.linkTo(currentInfo.bottom)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.value(2.dp)
-                    })
+                )
+                Box(
+                    modifier = Modifier
+                        .constrainAs(line1) {
+                            start.linkTo(beforeInfo.end)
+                            end.linkTo(currentInfo.start)
+                            top.linkTo(currentInfo.top)
+                            bottom.linkTo(currentInfo.bottom)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.value(2.dp)
+                        }
+                        .background(MyColorWhite)
+                )
             }
 
             info.nextInfo?.let {
-                Box(
-                    contentAlignment = Alignment.Center,
+                CirclePokemonImage(
+                    boxColor = Color(0xFF1F769A),
+                    boxSize = 72.dp,
+                    trueImage = it.shinyImage,
+                    falseImage = it.image,
+                    imageSize = 60.dp,
+                    isShiny = isShiny,
                     modifier = Modifier
-                        .clip(CircleShape)
-                        .background(Color(0xFF1F769A))
-                        .border(2.dp, MyColorWhite, CircleShape)
-                        .size(72.dp)
                         .constrainAs(nextInfo) {
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             end.linkTo(parent.end, (-36).dp)
                         }
                         .nonRippleClickable {
-                            onItemClick(info.nextInfo?.number)
+                            onItemClick(it.number)
                         }
-                ) {
-                    AsyncImage(
-                        model = info.nextInfo?.image,
-                        contentDescription = null,
-                        placeholder = painterResource(id = R.drawable.img_egg),
-                        modifier = Modifier.size(60.dp)
-                    )
-                }
-                Box(modifier = Modifier
-                    .background(MyColorWhite)
-                    .constrainAs(line2) {
-                        start.linkTo(currentInfo.end)
-                        end.linkTo(nextInfo.start)
-                        top.linkTo(currentInfo.top)
-                        bottom.linkTo(currentInfo.bottom)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.value(2.dp)
-                    })
+                )
+                Box(
+                    modifier = Modifier
+                        .constrainAs(line2) {
+                            start.linkTo(currentInfo.end)
+                            end.linkTo(nextInfo.start)
+                            top.linkTo(currentInfo.top)
+                            bottom.linkTo(currentInfo.bottom)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.value(2.dp)
+                        }
+                        .background(MyColorWhite)
+                )
             }
         }
+    }
+}
+
+@Composable
+fun CirclePokemonImage(
+    modifier: Modifier = Modifier,
+    boxColor: Color = Color(0xFF0F3061),
+    boxSize: Dp = 178.dp,
+    trueImage: String,
+    falseImage: String,
+    imageSize: Dp = 160.dp,
+    isShiny: Boolean
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .clip(CircleShape)
+            .background(boxColor)
+            .border(2.dp, MyColorWhite, CircleShape)
+            .size(boxSize)
+    ) {
+        ConditionAsyncImage(
+            value = isShiny,
+            trueImage = trueImage,
+            falseImage = falseImage,
+            placeholder = painterResource(id = R.drawable.img_egg),
+            modifier = Modifier.size(imageSize)
+        )
     }
 }
 
@@ -432,173 +465,61 @@ fun PokemonStatusAndEvolution(info: PokemonDetailInfo) {
                             .height(27.dp)
                             .background(Color(0xFF0F3061))
                     ) {
-                        Text(
-                            text = "HP",
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = "공격",
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = "방어",
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = "특공",
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = "특방",
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = "스피드",
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
+                        PokemonStatusText("HP")
+                        DividingLine()
+                        PokemonStatusText("공격")
+                        DividingLine()
+                        PokemonStatusText("방어")
+                        DividingLine()
+                        PokemonStatusText("특공")
+                        DividingLine()
+                        PokemonStatusText("특방")
+                        DividingLine()
+                        PokemonStatusText("스피드")
                     }
 
                     Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(27.dp)
                     ) {
-                        Text(
-                            text = status[0],
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = status[1],
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = status[2],
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = status[3],
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = status[4],
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp)
-                                .background(MyColorWhite)
-                        )
-                        Text(
-                            text = status[5],
-                            style = textStyle12().copy(
-                                color = MyColorWhite,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f)
-                        )
+                        PokemonStatusText(status[0])
+                        DividingLine()
+                        PokemonStatusText(status[1])
+                        DividingLine()
+                        PokemonStatusText(status[2])
+                        DividingLine()
+                        PokemonStatusText(status[3])
+                        DividingLine()
+                        PokemonStatusText(status[4])
+                        DividingLine()
+                        PokemonStatusText(status[5])
                     }
                 }
             }
         }
-
     }
+}
+
+@Composable
+private fun DividingLine() {
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(1.dp)
+            .background(MyColorWhite)
+    )
+}
+
+@Composable
+private fun RowScope.PokemonStatusText(text: String) {
+    Text(
+        text = text,
+        style = textStyle12().copy(
+            color = MyColorWhite,
+            textAlign = TextAlign.Center
+        ),
+        modifier = Modifier.weight(1f)
+    )
 }

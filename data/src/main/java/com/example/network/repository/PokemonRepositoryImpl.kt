@@ -70,6 +70,14 @@ class PokemonRepositoryImpl @Inject constructor(
         dao.updateCounter(count, number)
     }
 
+    override suspend fun updateCustomIncrease(customIncrease: Int, number: String) {
+        dao.updateCustomIncrease(customIncrease, number)
+    }
+
+    override suspend fun deletePokemonCounter(number: String) {
+        dao.deleteCounter(number)
+    }
+
     override suspend fun updateCatch(number: String) {
         dao.updateCatch(number)
     }

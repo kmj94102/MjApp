@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +31,6 @@ import com.example.mjapp.ui.screen.navigation.NavigationGraph
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -55,34 +53,28 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setSystemBarsColor(MyColorBlack)
 
-    Scaffold(
-        backgroundColor = MyColorWhite,
-        bottomBar = {
-            BottomNavigationBar(
-                navController = navController,
-                onClick = {
-                    navController.navigate(it)
-                }
-            )
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MyColorWhite)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            NavigationGraph(navController = navController)
-        }
+        NavigationGraph(navController = navController)
+        BottomNavigationBar(
+            navController = navController,
+            onClick = { value ->
+                navController.navigate(value)
+            },
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
 @Composable
 fun BottomNavigationBar(
     navController: NavController,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val items = BottomNavItems.values().map { it.item }
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -92,7 +84,7 @@ fun BottomNavigationBar(
 
     if (isVisible) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
                 .clip(RoundedCornerShape(10.dp))

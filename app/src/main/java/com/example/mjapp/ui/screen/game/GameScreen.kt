@@ -28,66 +28,64 @@ import com.example.mjapp.ui.theme.*
 fun GameScreen(
     goToScreen: (String) -> Unit
 ) {
-    Column(
+    LazyColumn(
+        contentPadding = PaddingValues(top = 22.dp, bottom = 70.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier
             .fillMaxSize()
             .background(MyColorWhite)
+            .padding(start = 20.dp, end = 17.dp)
     ) {
-        Text(
-            text = BottomNavItems.Game.item.title,
-            style = textStyle24B().copy(color = MyColorPurple),
-            modifier = Modifier.padding(top = 22.dp, start = 20.dp)
-        )
-
-        LazyColumn(
-            contentPadding = PaddingValues(bottom = 50.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier.padding(top = 10.dp, start = 20.dp, end = 17.dp)
-        ) {
-            item {
-                GameCard(
-                    text = "포켓몬\n도감",
-                    imageRes = R.drawable.img_pokemon_dex,
-                    color = MyColorBeige,
-                ) {
-                    goToScreen(Constants.PokemonDex)
-                }
+        item {
+            Text(
+                text = BottomNavItems.Game.item.title,
+                style = textStyle24B().copy(color = MyColorPurple),
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
+        }
+        item {
+            GameCard(
+                text = "포켓몬\n도감",
+                imageRes = R.drawable.img_pokemon_dex,
+                color = MyColorBeige,
+            ) {
+                goToScreen(Constants.PokemonDex)
             }
-            item {
-                GameCard(
-                    text = "포켓몬\n카운터",
-                    imageRes = R.drawable.img_pokemon_counter,
-                    color = MyColorTurquoise,
-                ) {
-                    goToScreen(Constants.PokemonCounter)
-                }
+        }
+        item {
+            GameCard(
+                text = "포켓몬\n카운터",
+                imageRes = R.drawable.img_pokemon_counter,
+                color = MyColorTurquoise,
+            ) {
+                goToScreen(Constants.PokemonCounter)
             }
-            item {
-                GameCard(
-                    text = "엘소드\n캐릭터 소개",
-                    imageRes = R.drawable.img_elsword_introduce,
-                    color = MyColorRed,
-                ) {
-                    goToScreen(Constants.ElswordIntroduce)
-                }
+        }
+        item {
+            GameCard(
+                text = "엘소드\n캐릭터 소개",
+                imageRes = R.drawable.img_elsword_introduce,
+                color = MyColorRed,
+            ) {
+                goToScreen(Constants.ElswordIntroduce)
             }
-            item {
-                GameCard(
-                    text = "엘소드\n카운터",
-                    imageRes = R.drawable.img_elsword_counter,
-                    color = MyColorPurple,
-                ) {
-                    goToScreen(Constants.ElswordCounter)
-                }
+        }
+        item {
+            GameCard(
+                text = "엘소드\n카운터",
+                imageRes = R.drawable.img_elsword_counter,
+                color = MyColorPurple,
+            ) {
+                goToScreen(Constants.ElswordCounter)
             }
-            item {
-                GameCard(
-                    text = "포켓몬\n등록",
-                    imageRes = R.drawable.img_pokemon_counter,
-                    color = MyColorTurquoise,
-                ) {
-                    goToScreen(Constants.PokemonAdd)
-                }
+        }
+        item {
+            GameCard(
+                text = "포켓몬\n등록",
+                imageRes = R.drawable.img_pokemon_counter,
+                color = MyColorTurquoise,
+            ) {
+                goToScreen(Constants.PokemonAdd)
             }
         }
     }

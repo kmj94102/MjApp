@@ -4,12 +4,12 @@ import androidx.annotation.DrawableRes
 import com.example.mjapp.R
 
 data class BottomNavItem(
-    override val title: String,
-    override val route: String,
-    override val routeWithPostFix: String = route,
+    val title: String,
+    val route: String,
+    val routeWithPostFix: String = route,
     @DrawableRes
     val icon: Int
-): NavItem
+)
 
 enum class BottomNavItems(val item: BottomNavItem) {
     Home(

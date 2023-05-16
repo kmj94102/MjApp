@@ -12,16 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.mjapp.R
+import com.example.mjapp.ui.custom.ConditionAsyncImage
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.screen.game.pokemon.search.PokemonSearchDialog
@@ -32,6 +31,7 @@ import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle12B
+import com.example.mjapp.util.textStyle16B
 import com.example.network.model.PokemonSummary
 
 @Composable
@@ -57,7 +57,13 @@ fun PokemonDexScreen(
             IconBox {
                 onBackClick()
             }
-            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = viewModel.search.value,
+                style = textStyle16B().copy(textAlign = TextAlign.Center),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 40.dp)
+            )
             IconBox(
                 iconRes = R.drawable.ic_shiny,
                 iconColor = if (viewModel.isShiny.value) MyColorRed else MyColorGray,
@@ -144,11 +150,10 @@ fun PokemonItem(
             }
     ) {
         DoubleCard(modifier = Modifier.fillMaxWidth()) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(if (isShiny) info.shinySpotlight else info.spotlight)
-                    .crossfade(true)
-                    .build(),
+            ConditionAsyncImage(
+                value = isShiny,
+                trueImage = info.shinySpotlight,
+                falseImage = info.spotlight,
                 placeholder = painterResource(id = R.drawable.img_egg),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,

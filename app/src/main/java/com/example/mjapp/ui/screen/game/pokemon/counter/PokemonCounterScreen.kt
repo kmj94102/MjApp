@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -37,16 +39,20 @@ fun PokemonCounterScreen(
     goToPokemonDex: () -> Unit,
     viewModel: PokemonCounterViewModel = hiltViewModel()
 ) {
+    val isShow = remember {
+        mutableStateOf(false)
+    }
+    val selectValue = remember {
+        mutableStateOf(PokemonCounter.init())
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
-        Row(
+        IconBox(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(top = 22.dp)
                 .padding(horizontal = 20.dp)
         ) {
-            IconBox {
-                onBackClick()
-            }
+            onBackClick()
         }
 
         LazyVerticalGrid(
@@ -65,8 +71,15 @@ fun PokemonCounterScreen(
                         updateCounter = { value ->
                             viewModel.updateCounter(value, pokemonCounter.number)
                         },
+                        deleteCounter = {
+                            viewModel.deleteCounter(pokemonCounter.number)
+                        },
                         updateCatch = {
                             viewModel.updateCatch(pokemonCounter.number)
+                        },
+                        onSettingClick = {
+                            selectValue.value = pokemonCounter
+                            isShow.value = true
                         }
                     )
                 }
@@ -79,13 +92,29 @@ fun PokemonCounterScreen(
             }
         }
     }
+
+    if (isShow.value) {
+        CustomIncreaseSettingDialog(
+            isShow = isShow.value,
+            selectValue = selectValue.value,
+            onDismiss = {
+                isShow.value = false
+            },
+            onUpdateClick = { customIncrease, number ->
+                viewModel.updateCustomIncrease(customIncrease, number)
+            }
+        )
+    }
+
 }
 
 @Composable
 fun PokemonCounterCard(
     counter: PokemonCounter,
     updateCounter: (Int) -> Unit,
-    updateCatch: () -> Unit
+    deleteCounter: () -> Unit,
+    updateCatch: () -> Unit,
+    onSettingClick: () -> Unit,
 ) {
     DoubleCard(
         bottomCardColor = MyColorTurquoise,
@@ -96,9 +125,11 @@ fun PokemonCounterCard(
                 .fillMaxWidth()
                 .padding(vertical = 10.dp)
         ) {
-            Row(modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 5.dp)) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 5.dp)
+            ) {
                 IconBox(
                     boxColor = MyColorRed,
                     boxShape = CircleShape,
@@ -106,7 +137,7 @@ fun PokemonCounterCard(
                     iconSize = 18.dp,
                     iconRes = R.drawable.ic_setting
                 ) {
-
+                    onSettingClick()
                 }
                 Spacer(modifier = Modifier.width(5.dp))
                 IconBox(
@@ -116,7 +147,7 @@ fun PokemonCounterCard(
                     iconSize = 16.dp,
                     iconRes = R.drawable.ic_close
                 ) {
-
+                    deleteCounter()
                 }
             }
             Spacer(modifier = Modifier.height(7.dp))
@@ -156,9 +187,11 @@ fun PokemonCounterCard(
                 )
             }
             Spacer(modifier = Modifier.height(5.dp))
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+            ) {
                 CommonButton(
                     text = "- 1",
                     backgroundColor = MyColorWhite,
@@ -178,9 +211,11 @@ fun PokemonCounterCard(
                 }
             }
             Spacer(modifier = Modifier.height(5.dp))
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+            ) {
                 CommonButton(
                     text = "+ 1",
                     backgroundColor = MyColorWhite,
