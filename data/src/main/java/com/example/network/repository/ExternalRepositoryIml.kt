@@ -4,6 +4,8 @@ import com.example.network.model.PokemonInfo
 import com.example.network.model.mapper
 import com.example.network.service.ExternalClient
 import kotlinx.coroutines.flow.flow
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 class ExternalRepositoryIml @Inject constructor(
@@ -33,5 +35,47 @@ class ExternalRepositoryIml @Inject constructor(
                 generation = 0
             )
         )
+    }
+
+    override fun fetchHolidays(
+        year: String,
+        month: String
+    ) = flow {
+        val from = convertToRFC5545("$year.$month.01 00:00")
+        val to = convertToRFC5545(getLastDayOfMonth(year, month))
+
+        emit(
+            client.fetchHolidays(from, to).map { it.toHolidayInfo() }
+        )
+    }
+
+    private fun convertToRFC5545(dateTimeString: String, isAllDay: Boolean = false): String {
+        try {
+            val inputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
+            if (isAllDay) {
+                inputFormat.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+            }
+
+            val outputFormat = SimpleDateFormat(
+                if (isAllDay) "yyyy-MM-dd'T'00:00:00'Z'" else "yyyy-MM-dd'T'HH:mm:ss'Z'",
+                Locale.getDefault()
+            )
+            outputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+            val dateTime = inputFormat.parse(dateTimeString) ?: return ""
+
+            return outputFormat.format(dateTime)
+        } catch (e: Exception) {
+            return ""
+        }
+    }
+
+    private fun getLastDayOfMonth(year: String, month: String): String {
+        val calendar = Calendar.getInstance()
+        SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).parse("$year.$month.01")?.let {
+            calendar.time = it
+        }
+        val lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        return "$year.$month.${lastDay.toString().padStart(2, '0')} 23:59"
     }
 }

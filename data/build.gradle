@@ -6,6 +6,9 @@ plugins {
     id "com.google.protobuf" version "0.8.17"
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     namespace 'com.example.network'
     compileSdk 33
@@ -13,6 +16,8 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 33
+
+        buildConfigField "String", "KAKAO_ADMIN_AUTHORIZATION", properties['kakao_admin_authorization']
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
