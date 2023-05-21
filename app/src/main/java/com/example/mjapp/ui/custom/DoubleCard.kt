@@ -1,6 +1,7 @@
 package com.example.mjapp.ui.custom
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,6 +30,7 @@ fun DoubleCard(
     connerSize: Dp = 10.dp,
     topCardColor: Color = MyColorWhite,
     bottomCardColor: Color = MyColorWhite,
+    minHeight: Dp = 10.dp,
     contents: @Composable () -> Unit
 ) {
     ConstraintLayout(modifier = modifier) {
@@ -39,6 +41,7 @@ fun DoubleCard(
             ),
             modifier = Modifier
                 .clip(RoundedCornerShape(connerSize))
+                .heightIn(min = minHeight)
                 .border(1.dp, MyColorBlack, RoundedCornerShape(connerSize))
                 .constrainAs(bottomCard) {
                     top.linkTo(parent.top, 3.dp)
@@ -57,6 +60,7 @@ fun DoubleCard(
             ),
             modifier = Modifier
                 .clip(RoundedCornerShape(connerSize))
+                .heightIn(min = minHeight)
                 .border(1.dp, MyColorBlack, RoundedCornerShape(connerSize))
                 .constrainAs(topCard) {
                     top.linkTo(parent.top)

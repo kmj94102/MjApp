@@ -27,7 +27,8 @@ import com.example.mjapp.util.textStyle24B
 
 @Composable
 fun CalendarScreen(
-    viewModel: CalendarViewHolder = hiltViewModel()
+    viewModel: CalendarViewHolder = hiltViewModel(),
+    goToAdd: (String) -> Unit
 ) {
     val isYearMonthDialogShow = remember {
         mutableStateOf(false)
@@ -108,7 +109,7 @@ fun CalendarScreen(
             )
             Spacer(modifier = Modifier.weight(1f))
             IconBox(boxColor = MyColorRed, iconRes = R.drawable.ic_plus) {
-
+                goToAdd(viewModel.selectDate.value)
             }
         }
     }

@@ -1,13 +1,13 @@
 package com.example.mjapp.ui.screen.calendar.dialog
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,29 +16,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.mjapp.R
+import com.example.mjapp.ui.custom.CommonRadio
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
-import com.example.mjapp.ui.custom.SelectSpinner
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle16B
+import com.example.network.model.Recurrence
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun YearMonthSelectDialog(
-    year: String,
-    month: String,
+fun RecurrenceSelectDialog(
+    initValue: String,
     isShow: Boolean,
     onDismiss: () -> Unit,
-    onSelect: (String, String) -> Unit
+    onSelect: (String) -> Unit
 ) {
     if (isShow) {
-        val yearList = (2020..2050).map { "$it" }
-        val monthList = (1..12).map { it.toString().padStart(2, '0') }
-        val yearState = rememberPagerState()
-        val monthState = rememberPagerState()
+        val checkValue = remember {
+            mutableStateOf(Recurrence.getRecurrenceState(initValue))
+        }
 
         Dialog(onDismissRequest = { onDismiss() }) {
             Column(
@@ -54,7 +52,7 @@ fun YearMonthSelectDialog(
                         .padding(horizontal = 10.dp)
                         .padding(top = 10.dp)
                 ) {
-                    Text(text = "연월 선택", style = textStyle16().copy(fontSize = 18.sp))
+                    Text(text = "반복 설정", style = textStyle16().copy(fontSize = 18.sp))
                     IconBox(
                         boxShape = CircleShape,
                         boxColor = MyColorRed,
@@ -65,27 +63,60 @@ fun YearMonthSelectDialog(
                         onDismiss()
                     }
                 }
+                
+                Spacer(modifier = Modifier.height(30.dp))
 
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 35.dp)
-                ) {
-                    SelectSpinner(
-                        selectList = yearList,
-                        state = yearState,
-                        initValue = year
+                Row(modifier = Modifier.padding(horizontal = 20.dp)) {
+                    CommonRadio(
+                        text = Recurrence.NoRecurrence.koreanName,
+                        check = checkValue.value == Recurrence.NoRecurrence,
+                        onCheckedChange = {
+                            checkValue.value = Recurrence.NoRecurrence
+                        },
+                        modifier = Modifier.weight(1f)
                     )
-
-                    Spacer(modifier = Modifier.width(20.dp))
-
-                    SelectSpinner(
-                        selectList = monthList,
-                        state = monthState,
-                        initValue = month
+                    CommonRadio(
+                        text = Recurrence.Daily.koreanName,
+                        check = checkValue.value == Recurrence.Daily,
+                        onCheckedChange = {
+                            checkValue.value = Recurrence.Daily
+                        },
+                        modifier = Modifier.weight(1f)
                     )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(modifier = Modifier.padding(horizontal = 20.dp)) {
+                    CommonRadio(
+                        text = Recurrence.Weekly.koreanName,
+                        check = checkValue.value == Recurrence.Weekly,
+                        onCheckedChange = {
+                            checkValue.value = Recurrence.Weekly
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    CommonRadio(
+                        text = Recurrence.Monthly.koreanName,
+                        check = checkValue.value == Recurrence.Monthly,
+                        onCheckedChange = {
+                            checkValue.value = Recurrence.Monthly
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(modifier = Modifier.padding(horizontal = 20.dp)) {
+                    CommonRadio(
+                        text = Recurrence.Yearly.koreanName,
+                        check = checkValue.value == Recurrence.Yearly,
+                        onCheckedChange = {
+                            checkValue.value = Recurrence.Yearly
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Spacer(modifier = Modifier.height(23.dp))
 
                 Row(
                     modifier = Modifier
@@ -116,10 +147,7 @@ fun YearMonthSelectDialog(
                         modifier = Modifier
                             .weight(1f)
                             .nonRippleClickable {
-                                onSelect(
-                                    yearList[yearState.currentPage],
-                                    monthList[monthState.currentPage]
-                                )
+                                onSelect(checkValue.value.originName)
                                 onDismiss()
                             }
                     ) {

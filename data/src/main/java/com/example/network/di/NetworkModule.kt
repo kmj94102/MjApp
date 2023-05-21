@@ -1,10 +1,7 @@
 package com.example.network.di
 
 import com.example.network.BuildConfig
-import com.example.network.service.ExternalClient
-import com.example.network.service.ExternalService
-import com.example.network.service.PokemonClient
-import com.example.network.service.PokemonService
+import com.example.network.service.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -96,4 +93,17 @@ object NetworkModule {
     fun providePokemonClient(
         pokemonService: PokemonService
     ): PokemonClient = PokemonClient(pokemonService)
+
+    @Provides
+    @Singleton
+    fun provideCalendarService(
+        @Named("internal") retrofit: Retrofit
+    ): CalendarService =
+        retrofit.create(CalendarService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCalendarClient(
+        calendarService: CalendarService
+    ): CalendarClient = CalendarClient(calendarService)
 }

@@ -41,4 +41,13 @@ sealed class NavScreen(val item: MainNavItem) {
             route = "PokemonCounter"
         )
     )
+
+    object CalendarAdd: NavScreen(
+        MainNavItem(
+            route = "CalendarAdd",
+            routeWithPostFix = "CalendarAdd/{date}"
+        )
+    ) {
+        const val Date = "date"
+    }
 }

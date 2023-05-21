@@ -23,4 +23,9 @@ interface RepositoryModule {
     fun bindElswordRepository(
         elswordRepositoryImpl: ElswordRepositoryImpl
     ): ElswordRepository
+
+    @Binds
+    fun bindCalendarRepository(
+        calendarRepositoryImpl: CalendarRepositoryImpl
+    ): CalendarRepository
 }

@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,21 +27,39 @@ import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle16B
+import java.util.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun YearMonthSelectDialog(
-    year: String,
-    month: String,
+fun DateSelectDialog(
+    date: String,
     isShow: Boolean,
     onDismiss: () -> Unit,
-    onSelect: (String, String) -> Unit
+    onSelect: (String) -> Unit
 ) {
     if (isShow) {
         val yearList = (2020..2050).map { "$it" }
         val monthList = (1..12).map { it.toString().padStart(2, '0') }
+        val dayList = remember {
+            mutableStateOf((1..28).map { it.toString().padStart(2, '0') })
+        }
+
         val yearState = rememberPagerState()
         val monthState = rememberPagerState()
+        val dayState = rememberPagerState()
+
+        val year = date.substring(0, 4)
+        val month = date.substring(5, 7)
+        val day = date.substring(8, 10)
+
+        LaunchedEffect(yearState.currentPage) {
+            dayList.value =
+                getDayList(yearList[yearState.currentPage], monthList[monthState.currentPage])
+        }
+        LaunchedEffect(monthState.currentPage) {
+            dayList.value =
+                getDayList(yearList[yearState.currentPage], monthList[monthState.currentPage])
+        }
 
         Dialog(onDismissRequest = { onDismiss() }) {
             Column(
@@ -54,7 +75,7 @@ fun YearMonthSelectDialog(
                         .padding(horizontal = 10.dp)
                         .padding(top = 10.dp)
                 ) {
-                    Text(text = "연월 선택", style = textStyle16().copy(fontSize = 18.sp))
+                    Text(text = "날짜 선택", style = textStyle16().copy(fontSize = 18.sp))
                     IconBox(
                         boxShape = CircleShape,
                         boxColor = MyColorRed,
@@ -77,13 +98,19 @@ fun YearMonthSelectDialog(
                         state = yearState,
                         initValue = year
                     )
-
                     Spacer(modifier = Modifier.width(20.dp))
 
                     SelectSpinner(
                         selectList = monthList,
                         state = monthState,
                         initValue = month
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    SelectSpinner(
+                        selectList = dayList.value,
+                        state = dayState,
+                        initValue = day
                     )
                 }
 
@@ -117,8 +144,7 @@ fun YearMonthSelectDialog(
                             .weight(1f)
                             .nonRippleClickable {
                                 onSelect(
-                                    yearList[yearState.currentPage],
-                                    monthList[monthState.currentPage]
+                                    "${yearList[yearState.currentPage]}.${monthList[monthState.currentPage]}.${dayList.value[dayState.currentPage]}"
                                 )
                                 onDismiss()
                             }
@@ -138,4 +164,16 @@ fun YearMonthSelectDialog(
             }
         }
     }
+}
+
+fun getDayList(year: String, month: String): List<String> {
+    val calendar = Calendar.getInstance().apply {
+        set(Calendar.YEAR, year.toInt())
+        set(Calendar.MONTH, month.toInt() - 1)
+    }
+
+    return (1..calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+        .map {
+            it.toString().padStart(2, '0')
+        }
 }

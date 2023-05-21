@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.mjapp.R
@@ -27,18 +28,20 @@ import com.example.mjapp.util.textStyle16B
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun YearMonthSelectDialog(
-    year: String,
-    month: String,
+fun TimeSelectDialog(
+    time: String,
     isShow: Boolean,
     onDismiss: () -> Unit,
-    onSelect: (String, String) -> Unit
+    onSelect: (String) -> Unit
 ) {
     if (isShow) {
-        val yearList = (2020..2050).map { "$it" }
-        val monthList = (1..12).map { it.toString().padStart(2, '0') }
-        val yearState = rememberPagerState()
-        val monthState = rememberPagerState()
+        val hourList = (0..24).map { "$it".padStart(2, '0') }
+        val minuteList = (0..59).map { it.toString().padStart(2, '0') }
+        val hourState = rememberPagerState()
+        val minuteState = rememberPagerState()
+
+        val hour = time.substring(0, 2)
+        val minute = time.substring(3, 5)
 
         Dialog(onDismissRequest = { onDismiss() }) {
             Column(
@@ -54,7 +57,7 @@ fun YearMonthSelectDialog(
                         .padding(horizontal = 10.dp)
                         .padding(top = 10.dp)
                 ) {
-                    Text(text = "연월 선택", style = textStyle16().copy(fontSize = 18.sp))
+                    Text(text = "시간 선택", style = textStyle16().copy(fontSize = 18.sp))
                     IconBox(
                         boxShape = CircleShape,
                         boxColor = MyColorRed,
@@ -73,17 +76,17 @@ fun YearMonthSelectDialog(
                         .padding(vertical = 35.dp)
                 ) {
                     SelectSpinner(
-                        selectList = yearList,
-                        state = yearState,
-                        initValue = year
+                        selectList = hourList,
+                        state = hourState,
+                        initValue = hour
                     )
 
                     Spacer(modifier = Modifier.width(20.dp))
 
                     SelectSpinner(
-                        selectList = monthList,
-                        state = monthState,
-                        initValue = month
+                        selectList = minuteList,
+                        state = minuteState,
+                        initValue = minute
                     )
                 }
 
@@ -117,8 +120,7 @@ fun YearMonthSelectDialog(
                             .weight(1f)
                             .nonRippleClickable {
                                 onSelect(
-                                    yearList[yearState.currentPage],
-                                    monthList[monthState.currentPage]
+                                    "${hourList[hourState.currentPage]}:${minuteList[minuteState.currentPage]}"
                                 )
                                 onDismiss()
                             }

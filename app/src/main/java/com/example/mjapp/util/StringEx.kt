@@ -9,3 +9,10 @@ fun getToday(format: String = "yyyy.MM.dd"): String {
 
     return formatter.format(today)
 }
+
+fun makeRouteWithArgs(route: String, vararg args: String): String = buildString {
+    append(route)
+    args.forEach {
+        append("/$it")
+    }
+}

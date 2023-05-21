@@ -1,4 +1,4 @@
-package com.example.mjapp.ui.custom
+package com.example.mjapp.util
 
 object Constants {
     const val PokemonDex = "pokemon_dex"

@@ -20,7 +20,7 @@ import com.example.mjapp.ui.screen.navigation.BottomNavItems
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle24B
 import com.example.mjapp.R
-import com.example.mjapp.ui.custom.Constants
+import com.example.mjapp.util.Constants
 import com.example.mjapp.ui.custom.OutlineText
 import com.example.mjapp.ui.theme.*
 

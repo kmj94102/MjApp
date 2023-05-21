@@ -42,6 +42,8 @@ fun CommonTextField(
     unfocusedIndicatorColor: Color = Color.Transparent,
     focusedIndicatorColor: Color = Color.Transparent,
     readOnly: Boolean = false,
+    singleLine: Boolean = true,
+    maxLines: Int = 1,
     onSearch: (String) -> Unit = {}
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -50,8 +52,8 @@ fun CommonTextField(
     BasicTextField(
         value = value,
         onValueChange = onTextChange,
-        maxLines = 1,
-        singleLine = true,
+        maxLines = maxLines,
+        singleLine = singleLine,
         readOnly = readOnly,
         textStyle = textStyle,
         keyboardOptions = KeyboardOptions(
@@ -76,7 +78,7 @@ fun CommonTextField(
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
                 placeholder = {
-                    Text(text = hint, fontSize = 12.sp, color = MyColorGray)
+                    Text(text = hint, fontSize = textStyle.fontSize, color = MyColorGray)
                 },
                 contentPadding = contentPadding,
             )

@@ -3,10 +3,13 @@ package com.example.mjapp.ui.screen.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.mjapp.ui.custom.Constants
+import androidx.navigation.navArgument
+import com.example.mjapp.util.Constants
 import com.example.mjapp.ui.screen.calendar.CalendarScreen
+import com.example.mjapp.ui.screen.calendar.add.CalendarAddScreen
 import com.example.mjapp.ui.screen.game.GameScreen
 import com.example.mjapp.ui.screen.game.elsword.counter.ElswordCounterScreen
 import com.example.mjapp.ui.screen.game.elsword.counter.add.ElswordCounterAddScreen
@@ -17,6 +20,7 @@ import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.plant.PlantScreen
+import com.example.mjapp.util.makeRouteWithArgs
 
 @Composable
 fun NavigationGraph(
@@ -141,7 +145,25 @@ fun NavGraphBuilder.calendarScreens(
     composable(
         route = BottomNavItems.Calendar.item.routeWithPostFix
     ) {
-        CalendarScreen()
+        CalendarScreen(
+            goToAdd = {
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.CalendarAdd.item.route,
+                        it
+                    )
+                )
+            }
+        )
+    }
+    /** 달력 아이템 추가 화면 **/
+    composable(
+        route = NavScreen.CalendarAdd.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(NavScreen.CalendarAdd.Date) { type = NavType.StringType }
+        )
+    ) {
+        CalendarAddScreen(onBackClick = onBackClick)
     }
 }
 
