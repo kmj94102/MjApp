@@ -106,4 +106,17 @@ object NetworkModule {
     fun provideCalendarClient(
         calendarService: CalendarService
     ): CalendarClient = CalendarClient(calendarService)
+
+    @Provides
+    @Singleton
+    fun provideElswordService(
+        @Named("internal") retrofit: Retrofit
+    ): ElswordService =
+        retrofit.create(ElswordService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideElswordClient(
+        elswordService: ElswordService
+    ): ElswordClient = ElswordClient(elswordService)
 }

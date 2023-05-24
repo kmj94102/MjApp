@@ -1,16 +1,12 @@
 package com.example.network.repository
 
-import com.example.network.model.ElswordCounter
-import kotlinx.coroutines.flow.Flow
+import com.example.network.model.ElswordQuest
+import com.example.network.model.ElswordQuestSimple
 
 interface ElswordRepository {
-    suspend fun insertCounter(name: String, max: Int)
+    suspend fun insertQuest(quest: ElswordQuest): String
 
-    fun fetchCounterTitleList(): Flow<List<String>>
+    suspend fun deleteQuest(id: Int)
 
-    fun fetchCounterList(): Flow<List<ElswordCounter>>
-
-    suspend fun fetchCounter(id: Int): ElswordCounter
-
-    suspend fun deleteCounter(id: Int)
+    suspend fun fetchQuestList(): List<ElswordQuestSimple>
 }
