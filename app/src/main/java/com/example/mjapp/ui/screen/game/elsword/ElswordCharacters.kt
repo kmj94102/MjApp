@@ -1,5 +1,6 @@
 package com.example.mjapp.ui.screen.game.elsword
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import com.example.mjapp.R
 
@@ -162,5 +163,11 @@ enum class ElswordCharacters(
             R.drawable.img_noah_sd_3,
             R.drawable.img_noah_sd_4
         )
-    ),
+    );
+
+    companion object {
+        fun getCharacterColor(characterName: String) =
+            ElswordCharacters.values().find { it.characterName == characterName }?.color ?: Elsword.color
+
+    }
 }

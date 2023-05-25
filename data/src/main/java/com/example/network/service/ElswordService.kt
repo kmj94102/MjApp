@@ -1,7 +1,6 @@
 package com.example.network.service
 
-import com.example.network.model.ElswordQuest
-import com.example.network.model.ElswordQuestSimpleResult
+import com.example.network.model.*
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -17,4 +16,10 @@ interface ElswordService {
 
     @GET("/select/elsword/quest")
     suspend fun fetchQuestList(): List<ElswordQuestSimpleResult>
+
+    @GET("/select/elsword/quest/detail")
+    suspend fun fetchQuestDetailList(): List<ElswordQuestDetailResult>
+
+    @POST("/update/elsword/quest")
+    suspend fun updateQuest(@Body item: ElswordQuestUpdate)
 }

@@ -1,6 +1,7 @@
 package com.example.network.service
 
 import com.example.network.model.ElswordQuest
+import com.example.network.model.ElswordQuestUpdate
 import javax.inject.Inject
 
 class ElswordClient @Inject constructor(
@@ -15,5 +16,11 @@ class ElswordClient @Inject constructor(
 
     suspend fun fetchQuestList() =
         service.fetchQuestList()
+
+    suspend fun fetchQuestDetailList() =
+        service.fetchQuestDetailList()
+
+    suspend fun updateQuest(item: ElswordQuestUpdate) =
+        service.updateQuest(item)
 
 }

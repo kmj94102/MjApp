@@ -17,13 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.ui.theme.MyColorPurple
+import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.util.textStyle12B
 
 @Composable
 fun CommonProgressBar(
     modifier: Modifier = Modifier,
     percent: Int,
-    progressColor: Color = MyColorPurple,
+    progressColor: Color = MyColorRed,
 ) {
     val width = percent / 100.0f
     val isStart = remember { mutableStateOf(false) }

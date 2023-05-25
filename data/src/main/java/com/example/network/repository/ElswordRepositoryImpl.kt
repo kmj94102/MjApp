@@ -1,7 +1,9 @@
 package com.example.network.repository
 
 import com.example.network.model.ElswordQuest
+import com.example.network.model.ElswordQuestDetail
 import com.example.network.model.ElswordQuestSimple
+import com.example.network.model.ElswordQuestUpdate
 import com.example.network.service.ElswordClient
 import javax.inject.Inject
 
@@ -34,6 +36,25 @@ class ElswordRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
+        }
+    }
+
+    override suspend fun fetchQuestDetailList(): List<ElswordQuestDetail> {
+        return try {
+            client.fetchQuestDetailList().mapNotNull {
+                it.toElswordQuestDetail()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    override suspend fun updateQuest(item: ElswordQuestUpdate) {
+        return try {
+            client.updateQuest(item)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
