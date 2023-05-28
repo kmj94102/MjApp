@@ -3,48 +3,30 @@ package com.example.network.model
 import java.util.*
 
 /**
- * 일정
- * @param id 일정 아이디
- * @param title 일정 제목
- * @param startAt 일정 시작 시간
- * @param endAt 일정 종료 시간
- * @param isAllDay 하루 종일 여부
- * @param isHoliday 공휴일 여부
- * @param group 일정 그룹 : 0 - 공휴일, 1 - 등록한 일정
- * **/
-data class Schedule(
-    val id: String,
-    val title: String,
-    val startAt: String,
-    val endAt: String,
-    val isAllDay: Boolean,
-    val isHoliday: Boolean,
-    val group: Int
-)
-
-/**
  * 달력 아이템
  * @param date 날짜
  * @param isHoliday 공휴일 여부
+ * @param isSpecialDay 특별일 여부
  * @param dateInfo 날짜 정보 (ex : 추석, 설날)
  * @param dayOfWeek 요일
  * @param detailDate 상세 날짜
- * @param scheduleList 일정 리스트
+ * @param itemList 일정 리스트
  * **/
-data class CalendarItem(
+data class MyCalendar(
     val date: String = "",
     val isHoliday: Boolean = false,
+    val isSpecialDay: Boolean = false,
     val dateInfo: String = "",
     val dayOfWeek: String = "",
     val detailDate: String = "",
-    val scheduleList: MutableList<Schedule> = mutableListOf(),
+    val itemList: MutableList<CalendarItem> = mutableListOf(),
 )
 
 /** 달력 정보 생성 **/
-fun fetchCalendarInfo(
+fun fetchMyCalendarByMonth(
     year: Int,
     month: Int
-): List<CalendarItem> {
+): List<MyCalendar> {
     val calendar = Calendar.getInstance().apply {
         set(Calendar.YEAR, year)
         set(Calendar.MONTH, month - 1)
@@ -59,10 +41,10 @@ fun fetchCalendarInfo(
     return (0..lastIndex)
         .map {
             if (it < firstDay - 1 || it > lastDayIndex) {
-                CalendarItem()
+                MyCalendar()
             } else {
                 val date = (it - firstDay + 2).toString()
-                CalendarItem(
+                MyCalendar(
                     date = date,
                     dayOfWeek = getDayOfWeek(it),
                     detailDate = getDetailDate(year, month, date)
@@ -78,3 +60,74 @@ private fun getDayOfWeek(index: Int): String {
 
 private fun getDetailDate(year: Int, month: Int, date: String) =
     "$year.${month.toString().padStart(2, '0')}.${date.padStart(2, '0')}"
+
+data class CalendarResult(
+    val date: String,
+    val calendarInfoList: List<CalendarInfo>,
+    val scheduleInfoList: List<CalendarItem.ScheduleInfo>,
+    val planInfoList: List<CalendarItem.PlanInfo>
+) {
+    fun toMyCalendarInfo(): MyCalendarInfo {
+        val isHoliday = calendarInfoList.any { it.isHoliday }
+        val isSpecialDay = calendarInfoList.any { it.isSpecialDay }
+        val info = if (calendarInfoList.isNotEmpty()) {
+            calendarInfoList.map { it.info }.reduce { acc, s -> "$acc, $s" }
+        } else ""
+
+        return MyCalendarInfo(
+            date = date.replace("-", "."),
+            info = info,
+            isHoliday = isHoliday,
+            isSpecialDay = isSpecialDay,
+            list = scheduleInfoList + planInfoList
+        )
+    }
+}
+
+data class MyCalendarInfo(
+    val date: String,
+    val info: String,
+    val isHoliday: Boolean,
+    val isSpecialDay: Boolean,
+    val list: List<CalendarItem>
+)
+
+data class CalendarInfo(
+    val id: Int,
+    val info: String,
+    val isHoliday: Boolean,
+    val isSpecialDay: Boolean
+)
+
+sealed class CalendarItem(val type: String) {
+
+    data class ScheduleInfo(
+        val id: Int,
+        val startTime: String,
+        val endTime: String,
+        val recurrenceType: String,
+        val recurrenceEndDate: String?,
+        val scheduleContent : String,
+        val scheduleTitle: String,
+        val recurrenceId: Int?
+    ): CalendarItem(Schedule) {
+        fun getTime() = "${startTime.substring(11, 16)} ~ ${endTime.substring(11, 16)}"
+    }
+
+    data class PlanInfo(
+        val id: Int,
+        val title: String,
+        val taskList: List<TaskInfo>
+    ): CalendarItem(Plan)
+
+    data class TaskInfo(
+        val id: Int,
+        val contents: String,
+        val isCompleted: Boolean
+    )
+
+    companion object {
+        const val Schedule = "schedule"
+        const val Plan = "plan"
+    }
+}

@@ -1,6 +1,6 @@
 package com.example.network.service
 
-import com.example.network.model.MyCalendarItem
+import com.example.network.model.ScheduleItem
 import javax.inject.Inject
 
 class CalendarClient @Inject constructor(
@@ -8,7 +8,12 @@ class CalendarClient @Inject constructor(
 ) {
 
     suspend fun insertSchedule(
-        item: MyCalendarItem
+        item: ScheduleItem
     ) = service.insertSchedule(item)
+
+    suspend fun fetchCalendar(
+        year: Int,
+        month: Int
+    ) = service.fetchCalendar(year, month)
 
 }

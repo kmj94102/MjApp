@@ -24,13 +24,13 @@ import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
-import com.example.network.model.CalendarItem
 import com.example.mjapp.R
+import com.example.network.model.MyCalendar
 
 @Composable
 fun MonthCalendar(
     today: String,
-    calendarInfo: List<CalendarItem>,
+    calendarInfo: List<MyCalendar>,
     selectDate: String,
     onSelectChange: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -86,7 +86,7 @@ fun WeekLabel() {
 
 @Composable
 fun DateCard(
-    calendarItem: CalendarItem,
+    calendarItem: MyCalendar,
     selectDate: String,
     today: String,
     onClick: (String) -> Unit
@@ -129,7 +129,7 @@ fun DateCard(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.padding(top = 2.dp)
         ) {
-            val maxItemCount = minOf(calendarItem.scheduleList.size, 3)
+            val maxItemCount = minOf(calendarItem.itemList.size, 3)
             for (i in 0 until maxItemCount) {
                 Box(
                     modifier = Modifier
@@ -138,7 +138,7 @@ fun DateCard(
                         .background(MyColorRed)
                 )
             }
-            if (calendarItem.scheduleList.size > 3) {
+            if (calendarItem.itemList.size > 3) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_plus_small),
                     contentDescription = null,

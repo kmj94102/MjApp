@@ -49,7 +49,7 @@ fun CommonRadio(
 
         Box(
             modifier = Modifier
-                .size(20.dp)
+                .size(12.dp)
                 .clip(CircleShape)
                 .border(1.dp, borderColor.value, CircleShape)
                 .background(fillColor.value)

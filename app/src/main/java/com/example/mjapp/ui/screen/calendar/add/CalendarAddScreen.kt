@@ -19,20 +19,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.screen.calendar.dialog.DateSelectDialog
+import com.example.mjapp.ui.screen.calendar.dialog.RecurrenceSelectDialog
+import com.example.mjapp.ui.screen.calendar.dialog.TimeSelectDialog
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle16B
-import com.example.mjapp.R
-import com.example.mjapp.ui.screen.calendar.dialog.DateSelectDialog
-import com.example.mjapp.ui.screen.calendar.dialog.RecurrenceSelectDialog
-import com.example.mjapp.ui.screen.calendar.dialog.TimeSelectDialog
 import com.example.mjapp.util.toast
-import com.example.network.model.ScheduleItem
 import com.example.network.model.Recurrence
+import com.example.network.model.ScheduleModifier
 
 @Composable
 fun CalendarAddScreen(
@@ -102,20 +102,20 @@ fun CalendarAddScreen(
         when (viewModel.isSchedule.value) {
             true -> {
                 ScheduleAddContainer(
-                    scheduleItem = viewModel.scheduleItem.value,
+                    scheduleModifier = viewModel.scheduleModifier.value,
                     onDateSelect = { isDate ->
                         selectDate.value = if (isDate) {
-                            viewModel.scheduleItem.value.date.ifEmpty { "2020.01.01" } to true
+                            viewModel.scheduleModifier.value.date.ifEmpty { "2020.01.01" } to true
                         } else {
-                            viewModel.scheduleItem.value.recurrenceEndDate.ifEmpty { "2020.01.01" } to false
+                            viewModel.scheduleModifier.value.recurrenceEndDate.ifEmpty { "2020.01.01" } to false
                         }
                         isDateSelectDialogShow.value = true
                     },
                     onTimeSelect = { isStart ->
                         selectTime.value = if (isStart) {
-                            viewModel.scheduleItem.value.startTime.ifEmpty { "00:00" } to true
+                            viewModel.scheduleModifier.value.startTime.ifEmpty { "00:00" } to true
                         } else {
-                            viewModel.scheduleItem.value.endTime.ifEmpty { "00:00" } to false
+                            viewModel.scheduleModifier.value.endTime.ifEmpty { "00:00" } to false
                         }
                         isTimeSelectDialogShow.value = true
                     },
@@ -132,7 +132,7 @@ fun CalendarAddScreen(
             }
             false -> {
                 PlanAddContainer(
-                    scheduleItem = viewModel.scheduleItem.value,
+                    scheduleModifier = viewModel.scheduleModifier.value,
                     planList = viewModel.planList,
                     addPlanListener = {
                         viewModel.addPlanItem()
@@ -171,7 +171,8 @@ fun CalendarAddScreen(
         }
     }
 
-    when(val status = viewModel.status.collectAsState(initial = CalendarAddViewModel.Status.Init).value) {
+    when (val status =
+        viewModel.status.collectAsState(initial = CalendarAddViewModel.Status.Init).value) {
         is CalendarAddViewModel.Status.Init -> {}
         is CalendarAddViewModel.Status.Success -> {
             context.toast(status.msg)
@@ -207,7 +208,7 @@ fun CalendarAddScreen(
     )
 
     RecurrenceSelectDialog(
-        initValue = viewModel.scheduleItem.value.recurrenceType,
+        initValue = viewModel.scheduleModifier.value.recurrenceType,
         isShow = isRecurrenceSelectDialogShow.value,
         onDismiss = {
             isRecurrenceSelectDialogShow.value = false
@@ -220,7 +221,7 @@ fun CalendarAddScreen(
 
 @Composable
 fun ColumnScope.ScheduleAddContainer(
-    scheduleItem: ScheduleItem,
+    scheduleModifier: ScheduleModifier,
     onDateSelect: (Boolean) -> Unit,
     onTimeSelect: (Boolean) -> Unit,
     onRecurrenceSelect: () -> Unit,
@@ -244,9 +245,9 @@ fun ColumnScope.ScheduleAddContainer(
                     }
             ) {
                 Text(
-                    text = scheduleItem.date.ifEmpty { "날짜 선택" },
+                    text = scheduleModifier.date.ifEmpty { "날짜 선택" },
                     style = textStyle16().copy(
-                        color = isEmptyColor(scheduleItem.date.isEmpty())
+                        color = isEmptyColor(scheduleModifier.date.isEmpty())
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -266,9 +267,9 @@ fun ColumnScope.ScheduleAddContainer(
                         }
                 ) {
                     Text(
-                        text = scheduleItem.startTime.ifEmpty { "시작 시간" },
+                        text = scheduleModifier.startTime.ifEmpty { "시작 시간" },
                         style = textStyle16().copy(
-                            color = isEmptyColor(scheduleItem.startTime.isEmpty())
+                            color = isEmptyColor(scheduleModifier.startTime.isEmpty())
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -285,9 +286,9 @@ fun ColumnScope.ScheduleAddContainer(
                         }
                 ) {
                     Text(
-                        text = scheduleItem.endTime.ifEmpty { "종료 시간" },
+                        text = scheduleModifier.endTime.ifEmpty { "종료 시간" },
                         style = textStyle16().copy(
-                            color = isEmptyColor(scheduleItem.endTime.isEmpty())
+                            color = isEmptyColor(scheduleModifier.endTime.isEmpty())
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -303,7 +304,7 @@ fun ColumnScope.ScheduleAddContainer(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = scheduleItem.getRecurrenceInfo(),
+                    text = scheduleModifier.getRecurrenceInfo(),
                     style = textStyle16(),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -315,7 +316,7 @@ fun ColumnScope.ScheduleAddContainer(
             }
         }
 
-        if (scheduleItem.recurrenceType != Recurrence.NoRecurrence.originName) {
+        if (scheduleModifier.recurrenceType != Recurrence.NoRecurrence.originName) {
             item {
                 DoubleCard(
                     bottomCardColor = MyColorPurple,
@@ -326,9 +327,9 @@ fun ColumnScope.ScheduleAddContainer(
                         }
                 ) {
                     Text(
-                        text = scheduleItem.recurrenceEndDate.ifEmpty { "반복 종료 시간" },
+                        text = scheduleModifier.recurrenceEndDate.ifEmpty { "반복 종료 시간" },
                         style = textStyle16().copy(
-                            color = isEmptyColor(scheduleItem.recurrenceEndDate.isEmpty())
+                            color = isEmptyColor(scheduleModifier.recurrenceEndDate.isEmpty())
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -340,7 +341,7 @@ fun ColumnScope.ScheduleAddContainer(
 
         item {
             DoubleCardTextField(
-                value = scheduleItem.scheduleTitle,
+                value = scheduleModifier.scheduleTitle,
                 onTextChange = {
                     updateTitle(it)
                 },
@@ -354,7 +355,7 @@ fun ColumnScope.ScheduleAddContainer(
 
         item {
             DoubleCardTextField(
-                value = scheduleItem.scheduleContent,
+                value = scheduleModifier.scheduleContent,
                 onTextChange = {
                     updateContent(it)
                 },
@@ -374,7 +375,7 @@ fun ColumnScope.ScheduleAddContainer(
 
 @Composable
 fun ColumnScope.PlanAddContainer(
-    scheduleItem: ScheduleItem,
+    scheduleModifier: ScheduleModifier,
     planList: List<String>,
     addPlanListener: () -> Unit,
     removePlanListener: (Int) -> Unit,
@@ -399,9 +400,9 @@ fun ColumnScope.PlanAddContainer(
                     }
             ) {
                 Text(
-                    text = scheduleItem.date.ifEmpty { "날짜 선택" },
+                    text = scheduleModifier.date.ifEmpty { "날짜 선택" },
                     style = textStyle16().copy(
-                        color = isEmptyColor(scheduleItem.date.isEmpty())
+                        color = isEmptyColor(scheduleModifier.date.isEmpty())
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -412,7 +413,7 @@ fun ColumnScope.PlanAddContainer(
 
         item {
             DoubleCardTextField(
-                value = scheduleItem.scheduleTitle,
+                value = scheduleModifier.scheduleTitle,
                 onTextChange = {
                     updateTitle(it)
                 },

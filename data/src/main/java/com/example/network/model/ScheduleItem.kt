@@ -3,44 +3,16 @@ package com.example.network.model
 import java.text.SimpleDateFormat
 import java.util.*
 
-data class MyCalendarItemResult(
-    val startTime: String?,
-    val endTime: String?,
-    val recurrenceType: String?,
-    val recurrenceEndDate: String?,
-    val scheduleContent: String?,
-    val scheduleTitle: String?,
-    val scheduleType: String?
-) {
-    fun toMyCalendarItem(): MyCalendarItem? {
-        return MyCalendarItem(
-            startTime = startTime ?: return null,
-            endTime = endTime ?: return null,
-            recurrenceType = recurrenceType ?: return null,
-            recurrenceEndDate = recurrenceEndDate,
-            scheduleContent = scheduleContent ?: return null,
-            scheduleTitle = scheduleTitle ?: return null,
-            scheduleType = scheduleType ?: return null,
-        )
-    }
-}
-
-data class MyCalendarItem(
+data class ScheduleItem(
     val startTime: String,
     val endTime: String,
     val recurrenceType: String,
     val recurrenceEndDate: String?,
     val scheduleContent: String,
     val scheduleTitle: String,
-    val scheduleType: String
-) {
-    companion object {
-        const val Plan = "plan"
-        const val Schedule = "schedule"
-    }
-}
+)
 
-data class ScheduleItem(
+data class ScheduleModifier(
     val date: String = "",
     val startTime: String = "",
     val endTime: String = "",
@@ -48,19 +20,16 @@ data class ScheduleItem(
     val recurrenceEndDate: String = "",
     val scheduleContent: String = "",
     val scheduleTitle: String = "",
-    val scheduleType: String = "",
-    val planList: MutableList<String> = mutableListOf("")
 ) {
     fun getRecurrenceInfo() = Recurrence.getRecurrenceKoreanName(recurrenceType)
 
-    fun toMyCalendarItem() = MyCalendarItem(
+    fun toMyCalendarItem() = ScheduleItem(
         startTime = toDateTimeFormat(date, startTime),
         endTime = toDateTimeFormat(date, endTime),
         recurrenceType = recurrenceType,
         recurrenceEndDate = getRecurrenceEndDate(recurrenceEndDate),
         scheduleContent = scheduleContent,
         scheduleTitle = scheduleTitle,
-        scheduleType = MyCalendarItem.Schedule
     )
 
     private fun toDateTimeFormat(date: String, time: String) =

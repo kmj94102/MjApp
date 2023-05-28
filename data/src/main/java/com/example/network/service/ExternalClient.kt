@@ -16,12 +16,4 @@ class ExternalClient @Inject constructor(
     suspend fun fetchAbility(
         ability: String
     ) = service.fetchAbility(ability)
-
-    suspend fun fetchHolidays(from: String, to: String) =
-        try {
-            service.fetchHolidays(from = from, to = to).events
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
 }
