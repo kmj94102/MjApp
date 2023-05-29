@@ -1,6 +1,7 @@
 package com.example.network.repository
 
 import com.example.network.model.MyCalendarInfo
+import com.example.network.model.PlanTasks
 import com.example.network.model.ScheduleModifier
 import kotlinx.coroutines.flow.Flow
 
@@ -16,4 +17,11 @@ interface CalendarRepository {
         year: Int,
         month: Int
     ): Flow<List<MyCalendarInfo>>
+
+    suspend fun insertPlan(
+        item: PlanTasks,
+        onSuccess: (String) -> Unit,
+        onFailure: (String) -> Unit
+    )
+
 }

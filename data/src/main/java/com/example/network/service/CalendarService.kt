@@ -1,6 +1,7 @@
 package com.example.network.service
 
 import com.example.network.model.CalendarResult
+import com.example.network.model.PlanTasks
 import com.example.network.model.ScheduleItem
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -16,5 +17,8 @@ interface CalendarService {
         @Query("year") year: Int,
         @Query("month") month: Int
     ): List<CalendarResult>
+
+    @POST("/insert/plan-tasks")
+    suspend fun insertPlan(@Body item: PlanTasks)
 
 }

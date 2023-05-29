@@ -1,6 +1,7 @@
 package com.example.network.repository
 
 import com.example.network.model.MyCalendarInfo
+import com.example.network.model.PlanTasks
 import com.example.network.model.ScheduleModifier
 import com.example.network.service.CalendarClient
 import kotlinx.coroutines.flow.Flow
@@ -40,5 +41,19 @@ class CalendarRepositoryImpl @Inject constructor(
             emit(emptyList())
         }
 
+    }
+
+    override suspend fun insertPlan(
+        item: PlanTasks,
+        onSuccess: (String) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        try {
+            client.insertPlan(item)
+            onSuccess("계획 등록 완료")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onFailure("계획 등록 실패")
+        }
     }
 }

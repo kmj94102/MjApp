@@ -127,7 +127,7 @@ fun CalendarAddScreen(
             false -> {
                 PlanAddContainer(
                     scheduleModifier = viewModel.scheduleModifier.value,
-                    planList = viewModel.planList,
+                    planList = viewModel.taskList,
                     addPlanListener = {
                         viewModel.addPlanItem()
                     },
@@ -152,7 +152,11 @@ fun CalendarAddScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .nonRippleClickable {
-                    viewModel.insertSchedule()
+                    if (viewModel.isSchedule.value) {
+                        viewModel.insertSchedule()
+                    } else {
+                        viewModel.insertPlan()
+                    }
                 }
         ) {
             Text(

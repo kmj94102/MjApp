@@ -7,7 +7,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.screen.navigation.NavScreen
+import com.example.network.model.PlanTasks
 import com.example.network.model.ScheduleModifier
+import com.example.network.model.TaskItem
 import com.example.network.repository.CalendarRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,8 +26,8 @@ class CalendarAddViewModel @Inject constructor(
     private val _isSchedule = mutableStateOf(true)
     val isSchedule: State<Boolean> = _isSchedule
 
-    private val _planList = mutableStateListOf("")
-    val planList: List<String> = _planList
+    private val _taskList = mutableStateListOf("")
+    val taskList: List<String> = _taskList
 
     private val _scheduleModifier = mutableStateOf(ScheduleModifier())
     val scheduleModifier: State<ScheduleModifier> = _scheduleModifier
@@ -89,14 +91,14 @@ class CalendarAddViewModel @Inject constructor(
     }
 
     fun addPlanItem() {
-        _planList.add("")
+        _taskList.add("")
     }
 
     fun removePlanItem(index: Int) {
         try {
-            _planList.removeAt(index)
-            if (_planList.size == 0) {
-                _planList.add("")
+            _taskList.removeAt(index)
+            if (_taskList.size == 0) {
+                _taskList.add("")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -105,7 +107,7 @@ class CalendarAddViewModel @Inject constructor(
 
     fun updatePlanContents(index: Int, value: String) {
         try {
-            _planList[index] = value
+            _taskList[index] = value
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -120,6 +122,24 @@ class CalendarAddViewModel @Inject constructor(
 
         repository.insertSchedule(
             item = _scheduleModifier.value,
+            onSuccess = {
+                _status.value = Status.Success(it)
+            },
+            onFailure = {
+                _status.value = Status.Failure(it)
+            }
+        )
+    }
+
+    fun insertPlan() = viewModelScope.launch {
+        val planTasks = PlanTasks(
+            title = _scheduleModifier.value.scheduleTitle,
+            planDate = "${_scheduleModifier.value.date.replace(".", "-")}T00:00:00.000Z",
+            taskList = _taskList.filter { it.isNotEmpty() }.map { TaskItem(contents = it) }
+        )
+
+        repository.insertPlan(
+            item = planTasks,
             onSuccess = {
                 _status.value = Status.Success(it)
             },
