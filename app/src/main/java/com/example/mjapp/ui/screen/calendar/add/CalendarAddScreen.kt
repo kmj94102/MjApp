@@ -39,15 +39,9 @@ fun CalendarAddScreen(
     onBackClick: () -> Unit,
     viewModel: CalendarAddViewModel = hiltViewModel()
 ) {
-    val isDateSelectDialogShow = remember {
-        mutableStateOf(false)
-    }
-    val isTimeSelectDialogShow = remember {
-        mutableStateOf(false)
-    }
-    val isRecurrenceSelectDialogShow = remember {
-        mutableStateOf(false)
-    }
+    val isDateSelectDialogShow = remember { mutableStateOf(false) }
+    val isTimeSelectDialogShow = remember { mutableStateOf(false) }
+    val isRecurrenceSelectDialogShow = remember { mutableStateOf(false) }
     val selectDate = remember {
         mutableStateOf("2020.01.01" to true)
     }

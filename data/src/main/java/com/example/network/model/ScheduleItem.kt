@@ -39,11 +39,17 @@ data class ScheduleModifier(
         if (recurrenceType == "none" || recurrenceEndDate.isEmpty()) null
         else "${recurrenceEndDate.replace(".", "-")}T23:59:59.000Z"
 
-    fun checkValidity(): Boolean {
-        if (recurrenceType != "none" && compareTime(recurrenceEndDate, date) >= 0) return false
-        if (compareTime(startTime, endTime, "HH:mm") > 0) return false
-        if (scheduleContent.isEmpty() || scheduleTitle.isEmpty()) return false
-        return true
+    fun checkValidity(): String {
+        if (recurrenceType != "none" && compareTime(date, recurrenceEndDate) >= 0) {
+            return "반복 설정 시 종료 시간은 일정 등록일 이후로 설정해야 합니다."
+        }
+        if (compareTime(startTime, endTime, "HH:mm") > 0) {
+            return "시작 시간 또는 종료 시간을 확인해주세요."
+        }
+        if (scheduleContent.isEmpty() || scheduleTitle.isEmpty()) {
+            return "일정 제목 도는 내용을 추가해주세요."
+        }
+        return ""
     }
 
     private fun compareTime(

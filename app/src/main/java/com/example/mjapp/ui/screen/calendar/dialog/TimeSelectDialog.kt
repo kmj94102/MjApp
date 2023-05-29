@@ -35,7 +35,7 @@ fun TimeSelectDialog(
     onSelect: (String) -> Unit
 ) {
     if (isShow) {
-        val hourList = (0..24).map { "$it".padStart(2, '0') }
+        val hourList = (0..23).map { "$it".padStart(2, '0') }
         val minuteList = (0..59).map { it.toString().padStart(2, '0') }
         val hourState = rememberPagerState()
         val minuteState = rememberPagerState()

@@ -38,12 +38,6 @@ fun DateSelectDialog(
     onSelect: (String) -> Unit
 ) {
     if (isShow) {
-        val yearList = (2020..2050).map { "$it" }
-        val monthList = (1..12).map { it.toString().padStart(2, '0') }
-        val dayList = remember {
-            mutableStateOf((1..28).map { it.toString().padStart(2, '0') })
-        }
-
         val yearState = rememberPagerState()
         val monthState = rememberPagerState()
         val dayState = rememberPagerState()
@@ -51,6 +45,12 @@ fun DateSelectDialog(
         val year = date.substring(0, 4)
         val month = date.substring(5, 7)
         val day = date.substring(8, 10)
+
+        val yearList = (2020..2050).map { "$it" }
+        val monthList = (1..12).map { it.toString().padStart(2, '0') }
+        val dayList = remember {
+            mutableStateOf(getDayList(year, month))
+        }
 
         LaunchedEffect(yearState.currentPage) {
             dayList.value =

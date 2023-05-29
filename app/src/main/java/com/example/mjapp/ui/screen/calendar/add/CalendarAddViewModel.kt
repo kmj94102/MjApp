@@ -112,10 +112,12 @@ class CalendarAddViewModel @Inject constructor(
     }
 
     fun insertSchedule() = viewModelScope.launch {
-        if (_scheduleModifier.value.checkValidity().not()) {
-            _status.value = Status.Failure("데이터를 확인해주세요.")
+        val validityResult = _scheduleModifier.value.checkValidity()
+        if (validityResult.isNotEmpty()) {
+            _status.value = Status.Failure(validityResult)
             return@launch
         }
+
         repository.insertSchedule(
             item = _scheduleModifier.value,
             onSuccess = {
