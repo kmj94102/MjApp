@@ -12,13 +12,27 @@ class CalendarClient @Inject constructor(
         item: ScheduleItem
     ) = service.insertSchedule(item)
 
-    suspend fun fetchCalendar(
+    suspend fun fetchCalendarByMonth(
         year: Int,
         month: Int
-    ) = service.fetchCalendar(year, month)
+    ) = service.fetchCalendarByMonth(year, month)
+
+    suspend fun fetchCalendarByDate(
+        year: Int,
+        month: Int,
+        date: Int
+    ) = service.fetchCalendarByDate(year, month, date)
 
     suspend fun insertPlan(
         item: PlanTasks
     ) = service.insertPlan(item)
+
+    suspend fun deleteSchedule(
+        id: Int
+    ) = service.deleteSchedule(id)
+
+    suspend fun deletePlanTasks(
+        id: Int
+    ) = service.deletePlanTasks(id)
 
 }

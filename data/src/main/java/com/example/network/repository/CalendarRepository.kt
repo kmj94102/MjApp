@@ -13,15 +13,23 @@ interface CalendarRepository {
         onFailure: (String) -> Unit
     )
 
-    fun fetchCalendar(
+    fun fetchCalendarByMonth(
         year: Int,
         month: Int
     ): Flow<List<MyCalendarInfo>>
+
+    suspend fun fetchCalendarByDate(
+        currentDate: String
+    ): MyCalendarInfo?
 
     suspend fun insertPlan(
         item: PlanTasks,
         onSuccess: (String) -> Unit,
         onFailure: (String) -> Unit
     )
+
+    suspend fun deleteSchedule(id: Int)
+
+    suspend fun deletePlanTasks(id: Int)
 
 }

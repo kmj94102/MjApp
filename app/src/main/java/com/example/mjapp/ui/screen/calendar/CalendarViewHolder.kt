@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.util.getToday
 import com.example.network.model.MyCalendar
+import com.example.network.model.MyCalendarInfo
 import com.example.network.model.fetchMyCalendarByMonth
 import com.example.network.repository.CalendarRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -63,27 +65,66 @@ class CalendarViewHolder @Inject constructor(
 
     private fun fetchCalendarItems() {
         repository
-            .fetchCalendar(
+            .fetchCalendarByMonth(
                 year = _year.value.toInt(),
                 month = _month.value.toInt()
             )
             .onEach {
                 it.forEach { item ->
-                    val index = _calendarItemList.indexOfFirst { myCalendar ->
-                        myCalendar.detailDate == item.date
-                    }
-
-                    if (index != -1) {
-                        _calendarItemList[index] = _calendarItemList[index].copy(
-                            isHoliday = item.isHoliday,
-                            isSpecialDay = item.isSpecialDay,
-                            dateInfo = item.info,
-                            itemList = item.list.toMutableList()
-                        )
-                    }
+                    setCalendarItem(item)
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun fetchCalendarItem() = viewModelScope.launch {
+        val item = repository.fetchCalendarByDate(_selectDate.value)
+        if (item == null) {
+            setCalendarItemClear(_selectDate.value)
+            return@launch
+        }
+
+        setCalendarItem(item)
+    }
+
+    private fun setCalendarItem(item: MyCalendarInfo) {
+        val index = _calendarItemList.indexOfFirst { myCalendar ->
+            myCalendar.detailDate == item.date
+        }
+
+        if (index != -1) {
+            _calendarItemList[index] = _calendarItemList[index].copy(
+                isHoliday = item.isHoliday,
+                isSpecialDay = item.isSpecialDay,
+                dateInfo = item.info,
+                itemList = item.list.toMutableList()
+            )
+        }
+    }
+
+    private fun setCalendarItemClear(date: String) {
+        val index = _calendarItemList.indexOfFirst { myCalendar ->
+            myCalendar.detailDate == date
+        }
+
+        if (index != -1) {
+            _calendarItemList[index] = _calendarItemList[index].copy(
+                isHoliday = false,
+                isSpecialDay = false,
+                dateInfo = "",
+                itemList = mutableListOf()
+            )
+        }
+    }
+
+    fun deleteSchedule(id: Int) = viewModelScope.launch {
+        repository.deleteSchedule(id)
+        fetchCalendarItem()
+    }
+
+    fun deletePlanTasks(id: Int) = viewModelScope.launch {
+        repository.deletePlanTasks(id)
+        fetchCalendarItem()
     }
 
 }

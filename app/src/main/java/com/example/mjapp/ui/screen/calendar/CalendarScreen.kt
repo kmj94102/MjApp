@@ -146,13 +146,16 @@ fun CalendarScreen(
                     return@let
                 }
 
-                it.itemList.forEach { calendarItem ->
+                it.itemList.forEachIndexed { index, calendarItem ->
                     when (calendarItem) {
                         is CalendarItem.PlanInfo -> {
                             item {
                                 PlanContainer(
                                     info = calendarItem,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
+                                    deleteListener = { id ->
+                                        viewModel.deletePlanTasks(id)
+                                    }
                                 )
                             }
                         }
@@ -160,7 +163,10 @@ fun CalendarScreen(
                             item {
                                 ScheduleContainer(
                                     info = calendarItem,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
+                                    deleteListener = { id ->
+                                        viewModel.deleteSchedule(id)
+                                    }
                                 )
                             }
                         }
@@ -186,6 +192,7 @@ fun CalendarScreen(
 @Composable
 fun ScheduleContainer(
     info: CalendarItem.ScheduleInfo,
+    deleteListener: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     DoubleCard(
@@ -225,7 +232,7 @@ fun ScheduleContainer(
                     iconRes = R.drawable.ic_close,
                     iconSize = 18.dp
                 ) {
-
+                    deleteListener(info.id)
                 }
             }
             Box(
@@ -253,6 +260,7 @@ fun ScheduleContainer(
 @Composable
 fun PlanContainer(
     info: CalendarItem.PlanInfo,
+    deleteListener: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     DoubleCard(
@@ -292,7 +300,7 @@ fun PlanContainer(
                     iconRes = R.drawable.ic_close,
                     iconSize = 18.dp
                 ) {
-
+                    deleteListener(info.id)
                 }
             }
             Box(

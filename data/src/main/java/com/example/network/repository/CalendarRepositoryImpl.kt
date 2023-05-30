@@ -27,20 +27,33 @@ class CalendarRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun fetchCalendar(
+    override fun fetchCalendarByMonth(
         year: Int,
         month: Int
     ): Flow<List<MyCalendarInfo>> = flow {
 
         try {
             emit(
-                client.fetchCalendar(year, month).map { it.toMyCalendarInfo() }
+                client.fetchCalendarByMonth(year, month).map { it.toMyCalendarInfo() }
             )
         } catch (e: Exception) {
             e.printStackTrace()
             emit(emptyList())
         }
 
+    }
+
+    override suspend fun fetchCalendarByDate(currentDate: String): MyCalendarInfo? {
+        return try {
+            val year = currentDate.substring(0, 4).toInt()
+            val month = currentDate.substring(5, 7).toInt()
+            val date = currentDate.substring(8, 10).toInt()
+
+            client.fetchCalendarByDate(year, month, date)?.toMyCalendarInfo()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     override suspend fun insertPlan(
@@ -54,6 +67,22 @@ class CalendarRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             onFailure("계획 등록 실패")
+        }
+    }
+
+    override suspend fun deleteSchedule(id: Int) {
+        try {
+            client.deleteSchedule(id)
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override suspend fun deletePlanTasks(id: Int) {
+        try {
+            client.deletePlanTasks(id)
+        } catch (e: Exception){
+            e.printStackTrace()
         }
     }
 }
