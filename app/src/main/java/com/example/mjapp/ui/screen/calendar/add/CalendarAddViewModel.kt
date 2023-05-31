@@ -1,13 +1,13 @@
 package com.example.mjapp.ui.screen.calendar.add
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.screen.calendar.PlanTasksModify
 import com.example.mjapp.ui.screen.navigation.NavScreen
-import com.example.network.model.PlanTasks
+import com.example.mjapp.util.getToday
 import com.example.network.model.ScheduleModifier
 import com.example.network.model.TaskItem
 import com.example.network.repository.CalendarRepository
@@ -26,11 +26,19 @@ class CalendarAddViewModel @Inject constructor(
     private val _isSchedule = mutableStateOf(true)
     val isSchedule: State<Boolean> = _isSchedule
 
-    private val _taskList = mutableStateListOf("")
-    val taskList: List<String> = _taskList
-
     private val _scheduleModifier = mutableStateOf(ScheduleModifier())
     val scheduleModifier: State<ScheduleModifier> = _scheduleModifier
+
+    private val _planTasks = mutableStateOf(PlanTasksModify())
+    val planTasks: State<PlanTasksModify> = _planTasks
+
+    private val _selectDate = mutableStateOf("2020.01.01")
+    val selectDate: State<String> = _selectDate
+
+    private val _selectTime = mutableStateOf("00:00")
+    val selectTime: State<String> = _selectTime
+
+    private val selectItem = mutableStateOf(ScheduleDate)
 
     private val _status = MutableStateFlow<Status>(Status.Init)
     val status: StateFlow<Status> = _status
@@ -38,8 +46,10 @@ class CalendarAddViewModel @Inject constructor(
     init {
         savedStateHandle.get<String>(NavScreen.CalendarAdd.Date)?.let {
             _scheduleModifier.value = _scheduleModifier.value.copy(
-                date = it,
-                recurrenceEndDate = it
+                date = it
+            )
+            _planTasks.value = _planTasks.value.copy(
+                planDate = it
             )
         }
     }
@@ -48,57 +58,98 @@ class CalendarAddViewModel @Inject constructor(
         _isSchedule.value = value
     }
 
-    fun updateDate(value: String, isDate: Boolean) {
-        if (isDate) {
-            _scheduleModifier.value = _scheduleModifier.value.copy(
-                date = value
-            )
-        } else {
-            _scheduleModifier.value = _scheduleModifier.value.copy(
-                recurrenceEndDate = value
-            )
+    fun updateItem(
+        value: String = "",
+        type: String
+    ) {
+        selectItem.value = type
+        when (type) {
+            ScheduleDate -> {
+                _selectDate.value = _scheduleModifier.value.date.ifEmpty { getToday() }
+            }
+            StartTime -> {
+                _selectTime.value = _scheduleModifier.value.startTime.ifEmpty { "00:00" }
+            }
+            EndTime -> {
+                _selectTime.value = _scheduleModifier.value.endTime
+                    .ifEmpty { _scheduleModifier.value.startTime.ifEmpty { "00:00" } }
+            }
+            RecurrenceType -> {
+                _scheduleModifier.value = _scheduleModifier.value.copy(
+                    recurrenceType = value
+                )
+            }
+            RecurrenceEndDate -> {
+                _selectDate.value = _scheduleModifier.value.recurrenceEndDate
+                    .ifEmpty { _scheduleModifier.value.date.ifEmpty { getToday() } }
+            }
+            ScheduleContent -> {
+                _scheduleModifier.value = _scheduleModifier.value.copy(
+                    scheduleContent = value
+                )
+            }
+            ScheduleTitle -> {
+                _scheduleModifier.value = _scheduleModifier.value.copy(
+                    scheduleTitle = value
+                )
+            }
+            PlanDate -> {
+                _planTasks.value = _planTasks.value.copy(
+                    planDate = value
+                )
+            }
+            PlanTitle -> {
+                _planTasks.value = _planTasks.value.copy(
+                    title = value
+                )
+            }
         }
     }
 
-    fun updateTime(value: String, isStart: Boolean) {
-        if (isStart) {
-            _scheduleModifier.value = _scheduleModifier.value.copy(
-                startTime = value
-            )
-        } else {
-            _scheduleModifier.value = _scheduleModifier.value.copy(
-                endTime = value
-            )
+    fun updateDate(value: String) {
+        when (selectItem.value) {
+            ScheduleDate -> {
+                _scheduleModifier.value = _scheduleModifier.value.copy(
+                    date = value
+                )
+            }
+            RecurrenceEndDate -> {
+                _scheduleModifier.value = _scheduleModifier.value.copy(
+                    recurrenceEndDate = value
+                )
+            }
+            PlanDate -> {
+                _planTasks.value = _planTasks.value.copy(
+                    planDate = value
+                )
+            }
         }
     }
 
-    fun updateTitle(value: String) {
-        _scheduleModifier.value = _scheduleModifier.value.copy(
-            scheduleTitle = value
-        )
-    }
-
-    fun updateContent(value: String) {
-        _scheduleModifier.value = _scheduleModifier.value.copy(
-            scheduleContent = value
-        )
-    }
-
-    fun updateRecurrenceType(type: String) {
-        _scheduleModifier.value = _scheduleModifier.value.copy(
-            recurrenceType = type
-        )
+    fun updateTime(value: String) {
+        when (selectItem.value) {
+            StartTime -> {
+                _scheduleModifier.value = _scheduleModifier.value.copy(
+                    startTime = value
+                )
+            }
+            EndTime -> {
+                _scheduleModifier.value = _scheduleModifier.value.copy(
+                    endTime = value
+                )
+            }
+        }
     }
 
     fun addPlanItem() {
-        _taskList.add("")
+        _planTasks.value.taskList.add(TaskItem(contents = ""))
     }
 
     fun removePlanItem(index: Int) {
         try {
-            _taskList.removeAt(index)
-            if (_taskList.size == 0) {
-                _taskList.add("")
+            _planTasks.value.taskList.removeAt(index)
+            if ( _planTasks.value.taskList.size == 0) {
+                _planTasks.value.taskList.add(TaskItem(contents = ""))
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -107,7 +158,7 @@ class CalendarAddViewModel @Inject constructor(
 
     fun updatePlanContents(index: Int, value: String) {
         try {
-            _taskList[index] = value
+            _planTasks.value.taskList[index] = TaskItem(contents = value)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -132,14 +183,15 @@ class CalendarAddViewModel @Inject constructor(
     }
 
     fun insertPlan() = viewModelScope.launch {
-        val planTasks = PlanTasks(
-            title = _scheduleModifier.value.scheduleTitle,
-            planDate = "${_scheduleModifier.value.date.replace(".", "-")}T00:00:00.000Z",
-            taskList = _taskList.filter { it.isNotEmpty() }.map { TaskItem(contents = it) }
-        )
+        val validityResult = _planTasks.value.checkValidity()
+
+        if (validityResult.isNotEmpty()) {
+            _status.value = Status.Failure(validityResult)
+            return@launch
+        }
 
         repository.insertPlan(
-            item = planTasks,
+            item = _planTasks.value.toPlanTasks(),
             onSuccess = {
                 _status.value = Status.Success(it)
             },
@@ -163,6 +215,19 @@ class CalendarAddViewModel @Inject constructor(
         data class Failure(
             val msg: String
         ) : Status()
+    }
+
+    companion object {
+        const val ScheduleDate = "scheduleDate"
+        const val StartTime = "startTime"
+        const val EndTime = "endTime"
+        const val RecurrenceType = "recurrenceType"
+        const val RecurrenceEndDate = "recurrenceEndDate"
+        const val ScheduleContent = "scheduleContent"
+        const val ScheduleTitle = "scheduleTitle"
+
+        const val PlanDate = "planDate"
+        const val PlanTitle = "planTitle"
     }
 }
 

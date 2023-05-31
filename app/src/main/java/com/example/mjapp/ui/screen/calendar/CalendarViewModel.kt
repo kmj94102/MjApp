@@ -17,23 +17,23 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CalendarViewHolder @Inject constructor(
+class CalendarViewModel @Inject constructor(
     private val repository: CalendarRepository
 ) : ViewModel() {
 
+    private val _calendarItemList = mutableStateListOf<MyCalendar>()
+    val calendarItemList: List<MyCalendar> = _calendarItemList
+
     private val _today = getToday("yyyy.MM.dd")
-
-    private val _year = mutableStateOf(_today.substring(0, 4))
-    val year: State<String> = _year
-
-    private val _month = mutableStateOf(_today.substring(5, 7))
-    val month: State<String> = _month
 
     private val _selectDate = mutableStateOf(_today)
     val selectDate: State<String> = _selectDate
 
-    private val _calendarItemList = mutableStateListOf<MyCalendar>()
-    val calendarItemList: List<MyCalendar> = _calendarItemList
+    val year
+        get() = run { _selectDate.value.substring(0, 4) }
+
+    val month
+        get() = run { _selectDate.value.substring(5, 7) }
 
     val selectItem
         get() = run { _calendarItemList.find { it.detailDate == _selectDate.value } }
@@ -49,8 +49,6 @@ class CalendarViewHolder @Inject constructor(
     }
 
     fun updateYearMonth(year: String, month: String) {
-        _year.value = year
-        _month.value = month
         _selectDate.value = "$year.$month.01"
         fetchCalendar()
     }
@@ -58,7 +56,7 @@ class CalendarViewHolder @Inject constructor(
     private fun fetchCalendar() {
         _calendarItemList.clear()
         _calendarItemList.addAll(
-            fetchMyCalendarByMonth(_year.value.toInt(), month = _month.value.toInt())
+            fetchMyCalendarByMonth(year.toInt(), month = month.toInt())
         )
         fetchCalendarItems()
     }
@@ -66,8 +64,8 @@ class CalendarViewHolder @Inject constructor(
     private fun fetchCalendarItems() {
         repository
             .fetchCalendarByMonth(
-                year = _year.value.toInt(),
-                month = _month.value.toInt()
+                year = year.toInt(),
+                month = month.toInt()
             )
             .onEach {
                 it.forEach { item ->

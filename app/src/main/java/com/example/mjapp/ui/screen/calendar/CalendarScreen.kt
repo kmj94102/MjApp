@@ -31,12 +31,10 @@ import com.example.network.model.CalendarItem
 
 @Composable
 fun CalendarScreen(
-    viewModel: CalendarViewHolder = hiltViewModel(),
+    viewModel: CalendarViewModel = hiltViewModel(),
     goToAdd: (String) -> Unit
 ) {
-    val isYearMonthDialogShow = remember {
-        mutableStateOf(false)
-    }
+    val isYearMonthDialogShow = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -50,7 +48,7 @@ fun CalendarScreen(
                 .padding(top = 21.dp, bottom = 10.dp)
         ) {
             Text(
-                text = "${viewModel.year.value}.${viewModel.month.value}",
+                text = "${viewModel.year}.${viewModel.month}",
                 style = textStyle24B().copy(color = MyColorPurple),
                 modifier = Modifier.nonRippleClickable {
                     isYearMonthDialogShow.value = true
@@ -146,7 +144,7 @@ fun CalendarScreen(
                     return@let
                 }
 
-                it.itemList.forEachIndexed { index, calendarItem ->
+                it.itemList.forEach { calendarItem ->
                     when (calendarItem) {
                         is CalendarItem.PlanInfo -> {
                             item {
@@ -177,8 +175,8 @@ fun CalendarScreen(
     }
 
     YearMonthSelectDialog(
-        year = viewModel.year.value,
-        month = viewModel.month.value,
+        year = viewModel.year,
+        month = viewModel.month,
         isShow = isYearMonthDialogShow.value,
         onDismiss = {
             isYearMonthDialogShow.value = false

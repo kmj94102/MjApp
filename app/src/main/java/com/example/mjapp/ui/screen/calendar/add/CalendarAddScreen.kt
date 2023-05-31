@@ -23,6 +23,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.screen.calendar.PlanTasksModify
 import com.example.mjapp.ui.screen.calendar.dialog.DateSelectDialog
 import com.example.mjapp.ui.screen.calendar.dialog.RecurrenceSelectDialog
 import com.example.mjapp.ui.screen.calendar.dialog.TimeSelectDialog
@@ -42,12 +43,6 @@ fun CalendarAddScreen(
     val isDateSelectDialogShow = remember { mutableStateOf(false) }
     val isTimeSelectDialogShow = remember { mutableStateOf(false) }
     val isRecurrenceSelectDialogShow = remember { mutableStateOf(false) }
-    val selectDate = remember {
-        mutableStateOf("2020.01.01" to true)
-    }
-    val selectTime = remember {
-        mutableStateOf("00:00" to true)
-    }
 
     val context = LocalContext.current
 
@@ -98,36 +93,39 @@ fun CalendarAddScreen(
                 ScheduleAddContainer(
                     scheduleModifier = viewModel.scheduleModifier.value,
                     onDateSelect = { isDate ->
-                        selectDate.value = if (isDate) {
-                            viewModel.scheduleModifier.value.date.ifEmpty { "2020.01.01" } to true
-                        } else {
-                            viewModel.scheduleModifier.value.recurrenceEndDate.ifEmpty { "2020.01.01" } to false
-                        }
+                        viewModel.updateItem(
+                            type = if (isDate) {
+                                CalendarAddViewModel.ScheduleDate
+                            } else {
+                                CalendarAddViewModel.RecurrenceEndDate
+                            }
+                        )
                         isDateSelectDialogShow.value = true
                     },
                     onTimeSelect = { isStart ->
-                        selectTime.value = if (isStart) {
-                            viewModel.scheduleModifier.value.startTime.ifEmpty { "00:00" } to true
-                        } else {
-                            viewModel.scheduleModifier.value.endTime.ifEmpty { "00:00" } to false
-                        }
+                        viewModel.updateItem(
+                            type = if (isStart) {
+                                CalendarAddViewModel.StartTime
+                            } else {
+                                CalendarAddViewModel.EndTime
+                            }
+                        )
                         isTimeSelectDialogShow.value = true
                     },
                     onRecurrenceSelect = {
                         isRecurrenceSelectDialogShow.value = true
                     },
                     updateTitle = {
-                        viewModel.updateTitle(it)
+                        viewModel.updateItem(value = it, type = CalendarAddViewModel.ScheduleTitle)
                     },
                     updateContent = {
-                        viewModel.updateContent(it)
+                        viewModel.updateItem(value = it, type = CalendarAddViewModel.ScheduleContent)
                     }
                 )
             }
             false -> {
                 PlanAddContainer(
-                    scheduleModifier = viewModel.scheduleModifier.value,
-                    planList = viewModel.taskList,
+                    planTasks = viewModel.planTasks.value,
                     addPlanListener = {
                         viewModel.addPlanItem()
                     },
@@ -141,7 +139,7 @@ fun CalendarAddScreen(
                         isDateSelectDialogShow.value = true
                     },
                     updateTitle = {
-                        viewModel.updateTitle(it)
+                        viewModel.updateItem(value = it, type = CalendarAddViewModel.PlanTitle)
                     }
                 )
             }
@@ -184,24 +182,24 @@ fun CalendarAddScreen(
     }
 
     DateSelectDialog(
-        date = selectDate.value.first,
+        date = viewModel.selectDate.value,
         isShow = isDateSelectDialogShow.value,
         onDismiss = {
             isDateSelectDialogShow.value = false
         },
         onSelect = {
-            viewModel.updateDate(it, selectDate.value.second)
+            viewModel.updateDate(it)
         }
     )
 
     TimeSelectDialog(
-        time = selectTime.value.first,
+        time = viewModel.selectTime.value,
         isShow = isTimeSelectDialogShow.value,
         onDismiss = {
             isTimeSelectDialogShow.value = false
         },
         onSelect = {
-            viewModel.updateTime(it, selectTime.value.second)
+            viewModel.updateTime(it)
         }
     )
 
@@ -211,8 +209,8 @@ fun CalendarAddScreen(
         onDismiss = {
             isRecurrenceSelectDialogShow.value = false
         },
-        onSelect = { type ->
-            viewModel.updateRecurrenceType(type)
+        onSelect = { value ->
+            viewModel.updateItem(value = value, type = CalendarAddViewModel.RecurrenceType)
         }
     )
 }
@@ -373,8 +371,7 @@ fun ColumnScope.ScheduleAddContainer(
 
 @Composable
 fun ColumnScope.PlanAddContainer(
-    scheduleModifier: ScheduleModifier,
-    planList: List<String>,
+    planTasks: PlanTasksModify,
     addPlanListener: () -> Unit,
     removePlanListener: (Int) -> Unit,
     onPlanContentsChange: (Int, String) -> Unit,
@@ -398,9 +395,9 @@ fun ColumnScope.PlanAddContainer(
                     }
             ) {
                 Text(
-                    text = scheduleModifier.date.ifEmpty { "날짜 선택" },
+                    text = planTasks.planDate.ifEmpty { "날짜 선택" },
                     style = textStyle16().copy(
-                        color = isEmptyColor(scheduleModifier.date.isEmpty())
+                        color = isEmptyColor(planTasks.planDate.isEmpty())
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -411,7 +408,7 @@ fun ColumnScope.PlanAddContainer(
 
         item {
             DoubleCardTextField(
-                value = scheduleModifier.scheduleTitle,
+                value = planTasks.title,
                 onTextChange = {
                     updateTitle(it)
                 },
@@ -422,10 +419,10 @@ fun ColumnScope.PlanAddContainer(
             )
         }
 
-        planList.forEachIndexed { index, value ->
+        planTasks.taskList.forEachIndexed { index, task ->
             item {
                 DoubleCardTextField(
-                    value = value,
+                    value = task.contents,
                     onTextChange = {
                         onPlanContentsChange(index, it)
                     },
