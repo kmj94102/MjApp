@@ -33,7 +33,6 @@ fun SelectSpinner(
 ) {
     Box(modifier = modifier) {
         VerticalPager(
-            pageCount = selectList.size,
             contentPadding = PaddingValues(vertical = 60.dp),
             state = state,
             modifier = Modifier

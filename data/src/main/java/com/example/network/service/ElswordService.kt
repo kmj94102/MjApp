@@ -22,4 +22,10 @@ interface ElswordService {
 
     @POST("/update/elsword/quest")
     suspend fun updateQuest(@Body item: ElswordQuestUpdate)
+
+    @GET("/select/elsword/counter")
+    suspend fun fetchQuestCounter(): List<ElswordCounterResult>
+
+    @POST("/update/elsword/counter")
+    suspend fun updateQuestCounter(@Body item: ElswordCounterUpdateItem): Int
 }

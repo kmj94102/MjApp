@@ -16,3 +16,9 @@ fun makeRouteWithArgs(route: String, vararg args: String): String = buildString 
         append("/$it")
     }
 }
+
+fun Calendar.toStringFormat(): String {
+    val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA)
+
+    return formatter.format(time)
+}

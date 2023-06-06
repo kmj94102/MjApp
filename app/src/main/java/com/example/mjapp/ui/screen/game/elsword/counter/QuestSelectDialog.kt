@@ -35,7 +35,7 @@ fun QuestSelectDialog(
     onSelect: (String) -> Unit
 ) {
     if (isShow) {
-        val state = rememberPagerState()
+        val state = rememberPagerState { list.size }
 
         Dialog(onDismissRequest = onDismiss) {
             Column(

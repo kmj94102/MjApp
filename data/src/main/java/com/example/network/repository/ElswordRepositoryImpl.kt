@@ -1,10 +1,9 @@
 package com.example.network.repository
 
-import com.example.network.model.ElswordQuest
-import com.example.network.model.ElswordQuestDetail
-import com.example.network.model.ElswordQuestSimple
-import com.example.network.model.ElswordQuestUpdate
+import com.example.network.model.*
 import com.example.network.service.ElswordClient
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ElswordRepositoryImpl @Inject constructor(
@@ -56,6 +55,28 @@ class ElswordRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun fetchQuestCounter() = flow {
+        try {
+            emit(
+                client.fetchQuestCounter().mapNotNull {
+                    it.toElswordCounter()
+                }
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(emptyList())
+        }
+    }
+
+    override suspend fun updateQuestCounter(
+        item: ElswordCounterUpdateItem
+    ) = try {
+        client.updateQuestCounter(item)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        0
     }
 
 }

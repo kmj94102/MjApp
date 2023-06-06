@@ -21,6 +21,9 @@ class CalendarViewModel @Inject constructor(
     private val repository: CalendarRepository
 ) : ViewModel() {
 
+    private val _mode = mutableStateOf(ModeCalendar)
+    val mode: State<String> = _mode
+
     private val _calendarItemList = mutableStateListOf<MyCalendar>()
     val calendarItemList: List<MyCalendar> = _calendarItemList
 
@@ -53,6 +56,10 @@ class CalendarViewModel @Inject constructor(
         fetchCalendar()
     }
 
+    fun updateMode(isCalendar: Boolean) {
+        _mode.value =  if (isCalendar) ModeCalendar else ModeList
+    }
+
     private fun fetchCalendar() {
         _calendarItemList.clear()
         _calendarItemList.addAll(
@@ -61,7 +68,7 @@ class CalendarViewModel @Inject constructor(
         fetchCalendarItems()
     }
 
-    private fun fetchCalendarItems() {
+    fun fetchCalendarItems() {
         repository
             .fetchCalendarByMonth(
                 year = year.toInt(),
@@ -123,6 +130,11 @@ class CalendarViewModel @Inject constructor(
     fun deletePlanTasks(id: Int) = viewModelScope.launch {
         repository.deletePlanTasks(id)
         fetchCalendarItem()
+    }
+
+    companion object {
+        const val ModeCalendar = "mode calendar"
+        const val ModeList = "mode list"
     }
 
 }

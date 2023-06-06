@@ -36,8 +36,8 @@ fun GenerateSelectDialog(
     okClickListener: (String) -> Unit,
     cancelClickListener: () -> Unit
 ) {
-    val pagerState = rememberPagerState()
     val generateList = (1..9).toList().map { "$it" }
+    val pagerState = rememberPagerState { generateList.size }
 
     if (isShow.value) {
         Dialog(onDismissRequest = {}) {

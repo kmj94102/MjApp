@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.mjapp.R
@@ -37,8 +36,8 @@ fun TimeSelectDialog(
     if (isShow) {
         val hourList = (0..23).map { "$it".padStart(2, '0') }
         val minuteList = (0..59).map { it.toString().padStart(2, '0') }
-        val hourState = rememberPagerState()
-        val minuteState = rememberPagerState()
+        val hourState = rememberPagerState { hourList.size }
+        val minuteState = rememberPagerState { minuteList.size }
 
         val hour = time.substring(0, 2)
         val minute = time.substring(3, 5)

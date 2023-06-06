@@ -43,6 +43,19 @@ class CalendarRepositoryImpl @Inject constructor(
 
     }
 
+    override fun fetchCalendarByWeek(start: String, end: String) = flow {
+        try {
+            emit(
+                client
+                    .fetchCalendarByWeek(start, end)
+                    .map { it.toMyCalendarInfo() }
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(emptyList())
+        }
+    }
+
     override suspend fun fetchCalendarByDate(currentDate: String): MyCalendarInfo? {
         return try {
             val year = currentDate.substring(0, 4).toInt()

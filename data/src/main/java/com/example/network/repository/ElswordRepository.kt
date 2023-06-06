@@ -1,9 +1,7 @@
 package com.example.network.repository
 
-import com.example.network.model.ElswordQuest
-import com.example.network.model.ElswordQuestDetail
-import com.example.network.model.ElswordQuestSimple
-import com.example.network.model.ElswordQuestUpdate
+import com.example.network.model.*
+import kotlinx.coroutines.flow.Flow
 
 interface ElswordRepository {
     suspend fun insertQuest(quest: ElswordQuest): String
@@ -15,5 +13,9 @@ interface ElswordRepository {
     suspend fun fetchQuestDetailList(): List<ElswordQuestDetail>
 
     suspend fun updateQuest(item: ElswordQuestUpdate)
+
+    fun fetchQuestCounter(): Flow<List<ElswordCounter>>
+
+    suspend fun updateQuestCounter(item: ElswordCounterUpdateItem): Int
 
 }

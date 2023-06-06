@@ -37,8 +37,8 @@ fun YearMonthSelectDialog(
     if (isShow) {
         val yearList = (2020..2050).map { "$it" }
         val monthList = (1..12).map { it.toString().padStart(2, '0') }
-        val yearState = rememberPagerState()
-        val monthState = rememberPagerState()
+        val yearState = rememberPagerState { yearList.size }
+        val monthState = rememberPagerState { monthList.size }
 
         Dialog(onDismissRequest = { onDismiss() }) {
             Column(

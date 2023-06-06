@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonRadio
 import com.example.mjapp.ui.custom.DoubleCard
@@ -35,6 +37,7 @@ fun CalendarScreen(
     goToAdd: (String) -> Unit
 ) {
     val isYearMonthDialogShow = remember { mutableStateOf(false) }
+    val lifecycleEvent = rememberLifecycleEvent()
 
     Column(
         modifier = Modifier
@@ -56,21 +59,69 @@ fun CalendarScreen(
             )
             Spacer(modifier = Modifier.weight(1f))
             IconBox(
-                boxColor = MyColorPurple,
+                boxColor = if (viewModel.mode.value == CalendarViewModel.ModeCalendar) MyColorPurple else MyColorWhite,
                 iconSize = 22.dp,
                 iconRes = R.drawable.ic_calendar
             ) {
-
+                viewModel.updateMode(isCalendar = true)
             }
             Spacer(modifier = Modifier.width(5.dp))
             IconBox(
-                boxColor = MyColorWhite,
+                boxColor = if (viewModel.mode.value == CalendarViewModel.ModeList) MyColorPurple else MyColorWhite,
                 iconSize = 22.dp,
                 iconRes = R.drawable.ic_lists
             ) {
-
+                viewModel.updateMode(isCalendar = false)
             }
         }
+        when (viewModel.mode.value) {
+            CalendarViewModel.ModeCalendar -> {
+                CalendarContainer(
+                    viewModel = viewModel,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    goToAdd = goToAdd
+                )
+            }
+            CalendarViewModel.ModeList -> {
+                ListContainer(
+                    viewModel = viewModel,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    goToAdd = goToAdd
+                )
+            }
+        }
+    }
+
+    YearMonthSelectDialog(
+        year = viewModel.year,
+        month = viewModel.month,
+        isShow = isYearMonthDialogShow.value,
+        onDismiss = {
+            isYearMonthDialogShow.value = false
+        },
+        onSelect = { year, month ->
+            viewModel.updateYearMonth(year, month)
+        }
+    )
+
+    LaunchedEffect(lifecycleEvent) {
+        if (lifecycleEvent == Lifecycle.Event.ON_RESUME) {
+            viewModel.fetchCalendarItems()
+        }
+    }
+}
+
+@Composable
+private fun CalendarContainer(
+    viewModel: CalendarViewModel,
+    modifier: Modifier,
+    goToAdd: (String) -> Unit
+) {
+    Column(modifier = modifier) {
         DoubleCard(
             bottomCardColor = MyColorPurple,
             modifier = Modifier
@@ -100,7 +151,7 @@ fun CalendarScreen(
             val item = viewModel.selectItem ?: return@Row
             Text(
                 text = buildAnnotatedString {
-                    append("${item.date}(${item.dayOfWeek})")
+                    append("${item.date.padStart(2, '0')}(${item.dayOfWeek})")
                     if (item.dateInfo.isNotEmpty()) {
                         withStyle(style = SpanStyle(color = MyColorGray, fontSize = 16.sp)) {
                             append(" ${item.dateInfo}")
@@ -148,7 +199,7 @@ fun CalendarScreen(
                     when (calendarItem) {
                         is CalendarItem.PlanInfo -> {
                             item {
-                                PlanContainer(
+                                CalendarPlanContainer(
                                     info = calendarItem,
                                     modifier = Modifier.fillMaxWidth(),
                                     deleteListener = { id ->
@@ -159,7 +210,7 @@ fun CalendarScreen(
                         }
                         is CalendarItem.ScheduleInfo -> {
                             item {
-                                ScheduleContainer(
+                                CalendarScheduleContainer(
                                     info = calendarItem,
                                     modifier = Modifier.fillMaxWidth(),
                                     deleteListener = { id ->
@@ -173,22 +224,10 @@ fun CalendarScreen(
             }
         }
     }
-
-    YearMonthSelectDialog(
-        year = viewModel.year,
-        month = viewModel.month,
-        isShow = isYearMonthDialogShow.value,
-        onDismiss = {
-            isYearMonthDialogShow.value = false
-        },
-        onSelect = { year, month ->
-            viewModel.updateYearMonth(year, month)
-        }
-    )
 }
 
 @Composable
-fun ScheduleContainer(
+fun CalendarScheduleContainer(
     info: CalendarItem.ScheduleInfo,
     deleteListener: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -256,7 +295,7 @@ fun ScheduleContainer(
 }
 
 @Composable
-fun PlanContainer(
+fun CalendarPlanContainer(
     info: CalendarItem.PlanInfo,
     deleteListener: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -322,5 +361,95 @@ fun PlanContainer(
             }
             Spacer(modifier = Modifier.height(10.dp))
         }
+    }
+}
+
+@Composable
+private fun ListContainer(
+    viewModel: CalendarViewModel,
+    modifier: Modifier,
+    goToAdd: (String) -> Unit
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(bottom = 50.dp, start = 20.dp, end = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        modifier = modifier
+            .padding(bottom = 20.dp)
+    ) {
+        viewModel.calendarItemList.filter { it.itemList.isNotEmpty() }.forEach { myCalendar ->
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .background(MyColorPurple)
+                ) {
+                    Text(text = myCalendar.detailDate)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ListScheduleContainer(
+    info: CalendarItem.ScheduleInfo,
+    deleteListener: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MyColorPurple)
+                .padding(horizontal = 10.dp, vertical = 5.dp)
+        ) {
+            Text(
+                text = info.scheduleTitle,
+                style = textStyle16B().copy(fontSize = 18.sp),
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 10.dp)
+            )
+            IconBox(
+                boxSize = DpSize(24.dp, 24.dp),
+                boxColor = MyColorRed,
+                boxShape = CircleShape,
+                iconRes = R.drawable.ic_modify,
+                iconSize = 18.dp
+            ) {
+
+            }
+            Spacer(modifier = Modifier.width(5.dp))
+            IconBox(
+                boxSize = DpSize(24.dp, 24.dp),
+                boxColor = MyColorRed,
+                boxShape = CircleShape,
+                iconRes = R.drawable.ic_close,
+                iconSize = 18.dp
+            ) {
+                deleteListener(info.id)
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(MyColorBlack)
+        )
+        Text(
+            text = info.getTime(),
+            style = textStyle12().copy(MyColorGray),
+            modifier = Modifier.padding(top = 5.dp, start = 10.dp)
+        )
+        Text(
+            text = info.scheduleContent,
+            style = textStyle16(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp, end = 10.dp, bottom = 5.dp)
+        )
     }
 }

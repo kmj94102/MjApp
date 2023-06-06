@@ -15,6 +15,12 @@ interface CalendarService {
         @Query("month") month: Int
     ): List<CalendarResult>
 
+    @GET("/select/calendar/week")
+    suspend fun fetchCalendarByWeek(
+        @Query("start") start: String,
+        @Query("end") end: String
+    ): List<CalendarResult>
+
     @GET("/select/calendar/date")
     suspend fun fetchCalendarByDate(
         @Query("year") year: Int,

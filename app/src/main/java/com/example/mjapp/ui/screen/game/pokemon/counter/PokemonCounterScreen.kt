@@ -80,7 +80,8 @@ fun PokemonCounterScreen(
                         onSettingClick = {
                             selectValue.value = pokemonCounter
                             isShow.value = true
-                        }
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
@@ -115,10 +116,11 @@ fun PokemonCounterCard(
     deleteCounter: () -> Unit,
     updateCatch: () -> Unit,
     onSettingClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     DoubleCard(
         bottomCardColor = MyColorTurquoise,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier
