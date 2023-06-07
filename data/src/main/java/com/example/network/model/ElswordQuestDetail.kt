@@ -14,7 +14,7 @@ data class ElswordQuestDetailResult(
             id = id ?: return null,
             name = name ?: return null,
             progress = progress?.toInt() ?: return null,
-            characters = characters?.groupBy { it.group } ?: return null
+            characters = characters?.toMutableList() ?: return null
         )
     }
 }
@@ -23,8 +23,10 @@ data class ElswordQuestDetail(
     val id: Int,
     val name: String,
     val progress: Int,
-    val characters: Map<String, List<ElswordCharacter>>
-)
+    val characters: MutableList<ElswordCharacter>
+) {
+    fun getCharactersWithGroup() = characters.groupBy { it.group }
+}
 
 data class ElswordCharacter(
     val name: String,
@@ -32,4 +34,27 @@ data class ElswordCharacter(
     val group: String,
     val isComplete: Boolean,
     val isOngoing: Boolean
-)
+) {
+    fun updateCopy(type: String): ElswordCharacter {
+        return when(type) {
+            "complete" -> {
+                this.copy(
+                    isComplete = this.isComplete.not(),
+                    isOngoing = false
+                )
+            }
+            "ongoing" -> {
+                this.copy(
+                    isOngoing = this.isOngoing.not(),
+                    isComplete = false
+                )
+            }
+            else -> {
+                this.copy(
+                    isComplete = false,
+                    isOngoing = false
+                )
+            }
+        }
+    }
+}

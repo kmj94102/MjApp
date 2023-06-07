@@ -34,7 +34,30 @@ class ElswordCounterViewModel @Inject constructor(
 
     fun updateQuest(update: ElswordQuestUpdate) = viewModelScope.launch {
         repository.updateQuest(update)
-        fetchQuestDetail()
+        listUpdate(update)
+    }
+
+    private fun listUpdate(update: ElswordQuestUpdate) {
+        val index = _selectCounter.value
+        if (index >= _list.size) {
+            return
+        }
+
+        val updatedList = _list.toMutableList()
+        val updatedCharacters = updatedList[index].characters.toMutableList()
+        val characterIndex = updatedCharacters.indexOfFirst {
+            it.name == update.name
+        }
+        if (characterIndex == -1) {
+            return
+        }
+
+        updatedCharacters[characterIndex] =
+            updatedCharacters[characterIndex].updateCopy(update.type)
+        updatedList[index] = updatedList[index].copy(characters = updatedCharacters)
+
+        _list.clear()
+        _list.addAll(updatedList)
     }
 
     fun chaneSelector(value: String) {

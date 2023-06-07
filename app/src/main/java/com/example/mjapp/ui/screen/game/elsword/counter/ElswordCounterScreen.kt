@@ -38,15 +38,9 @@ fun ElswordCounterScreen(
     goToAdd: () -> Unit,
     viewModel: ElswordCounterViewModel = hiltViewModel()
 ) {
-    val selectName = remember {
-        mutableStateOf("")
-    }
-    val isStatusChangeShow = remember {
-        mutableStateOf(false)
-    }
-    val isQuestSelectShow = remember {
-        mutableStateOf(false)
-    }
+    val selectName = remember { mutableStateOf("") }
+    val isStatusChangeShow = remember { mutableStateOf(false) }
+    val isQuestSelectShow = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -192,7 +186,7 @@ fun ElswordCounterContents(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.weight(1f)
         ) {
-            detailInfo.characters.forEach { (group, characters) ->
+            detailInfo.getCharactersWithGroup().forEach { (group, characters) ->
                 item {
                     ElswordQuestItem(group, characters, onSelect)
                 }
