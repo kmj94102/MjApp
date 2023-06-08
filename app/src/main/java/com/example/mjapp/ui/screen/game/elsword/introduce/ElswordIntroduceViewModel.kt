@@ -35,7 +35,7 @@ class ElswordIntroduceViewModel @Inject constructor(
 
     fun nextSelector() {
         val index = _selectCharacter.value
-        if (index >= characterList.size - 2) {
+        if (index >= characterList.size - 1) {
             _selectCharacter.value = 0
         } else {
             _selectCharacter.value = index + 1

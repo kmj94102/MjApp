@@ -125,10 +125,10 @@ enum class ElswordCharacters(
         Color(0xFFF0C429),
         R.drawable.img_rose_sd,
         listOf(
-            R.drawable.img_luciel_sd_1,
-            R.drawable.img_luciel_sd_2,
-            R.drawable.img_luciel_sd_3,
-            R.drawable.img_luciel_sd_4
+            R.drawable.img_rose_sd_1,
+            R.drawable.img_rose_sd_2,
+            R.drawable.img_rose_sd_3,
+            R.drawable.img_rose_sd_4
         )
     ),
     Ain(
