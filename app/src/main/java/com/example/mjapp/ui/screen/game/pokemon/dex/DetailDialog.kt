@@ -51,6 +51,7 @@ import com.example.network.model.TypeInfo
 fun DetailDialog(
     number: String,
     onDismiss: () -> Unit,
+    onCatchStateChange: (Boolean) -> Unit,
     onSelectChange: (String) -> Unit,
     viewModel: PokemonDetailViewModel = hiltViewModel(),
 ) {
@@ -205,6 +206,9 @@ fun DetailDialog(
         }
         is PokemonDetailViewModel.Status.InsertCounterSuccess -> {
             context.toast("카운터 등록이 완료되었습니다.")
+        }
+        is PokemonDetailViewModel.Status.CatchUpdateSuccess -> {
+            onCatchStateChange(info?.pokemonInfo?.isCatch == true)
         }
     }
 }

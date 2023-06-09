@@ -3,7 +3,11 @@ package com.example.network.model
 data class PokemonListResult(
     val list: List<PokemonListInfo>,
     val totalSize: Int?
-)
+) {
+    fun getMappingList() = list.mapNotNull { it.toPokemonSummary() }
+
+    fun getIsMoreData(currentIndex: Int) = (totalSize ?: 0) > currentIndex
+}
 
 data class PokemonListInfo(
     val index: Int?,

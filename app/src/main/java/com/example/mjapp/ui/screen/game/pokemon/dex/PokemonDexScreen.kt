@@ -3,9 +3,11 @@ package com.example.mjapp.ui.screen.game.pokemon.dex
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -18,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.ConditionAsyncImage
 import com.example.mjapp.ui.custom.DoubleCard
@@ -39,12 +40,9 @@ fun PokemonDexScreen(
     onBackClick: () -> Unit,
     viewModel: PokemonDexViewModel = hiltViewModel()
 ) {
-    val isDetailDialogShow = remember {
-        mutableStateOf(false)
-    }
-    val isSearchDialogShow = remember {
-        mutableStateOf(false)
-    }
+    val isDetailDialogShow = remember { mutableStateOf(false) }
+    val isSearchDialogShow = remember { mutableStateOf(false) }
+    val state = rememberLazyGridState()
 
     Column(
         modifier = Modifier
@@ -82,9 +80,9 @@ fun PokemonDexScreen(
             Spacer(modifier = Modifier.width(3.dp))
         }
 
-        val pokemonDex = viewModel.fetchPokemonDex().collectAsLazyPagingItems()
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
+            state = state,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(top = 15.dp, bottom = 50.dp),
@@ -92,18 +90,22 @@ fun PokemonDexScreen(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            items(pokemonDex.itemCount) {
-                pokemonDex[it]?.let { info ->
-                    PokemonItem(
-                        info = info,
-                        isShiny = viewModel.isShiny.value,
-                        onClick = { number ->
-                            viewModel.updateSelectNumber(number)
-                            isDetailDialogShow.value = true
-                        }
-                    )
-                }
+            items(viewModel.list.size) {
+                PokemonItem(
+                    info = viewModel.list[it],
+                    isShiny = viewModel.isShiny.value,
+                    onClick = { number ->
+                        viewModel.updateSelectNumber(number)
+                        isDetailDialogShow.value = true
+                    }
+                )
             }
+        }
+    }
+
+    LaunchedEffect(state.firstVisibleItemIndex) {
+        if (viewModel.isMoreDate.value) {
+            viewModel.fetchMoreData(state.firstVisibleItemIndex)
         }
     }
 
@@ -116,6 +118,9 @@ fun PokemonDexScreen(
     if (isDetailDialogShow.value) {
         DetailDialog(
             number = viewModel.selectNumber.value,
+            onCatchStateChange = {
+                viewModel.updateCatchState(it)
+            },
             onDismiss = {
                 isDetailDialogShow.value = false
             },

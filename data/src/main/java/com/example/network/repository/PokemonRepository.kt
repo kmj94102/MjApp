@@ -9,7 +9,12 @@ interface PokemonRepository {
     suspend fun insertPokemon(pokemonInfo: PokemonInfo): String
 
     /** 포켓몬 조회 **/
-    fun fetchPokemonList(name: String): Flow<PagingData<PokemonSummary>>
+    suspend fun fetchPokemonList(
+        name: String,
+        skip: Int,
+        limit: Int,
+        onResult: (Boolean, List<PokemonSummary>) -> Unit
+    )
 
     /** 포켓몬 상세 조회 **/
     fun fetchPokemonDetailInfo(number: String): Flow<PokemonDetailInfo>

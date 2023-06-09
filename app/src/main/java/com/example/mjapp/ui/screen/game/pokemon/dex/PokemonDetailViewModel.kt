@@ -70,6 +70,7 @@ class PokemonDetailViewModel @Inject constructor(
                     isCatch = info.isCatch.not()
                 )
             )
+            _status.value = Status.CatchUpdateSuccess
         } else {
             _status.value = Status.Error(result)
         }
@@ -91,6 +92,8 @@ class PokemonDetailViewModel @Inject constructor(
         ): Status()
 
         object InsertCounterSuccess: Status()
+
+        object CatchUpdateSuccess: Status()
     }
 
 }

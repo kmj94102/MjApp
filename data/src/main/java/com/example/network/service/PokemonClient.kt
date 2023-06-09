@@ -12,14 +12,23 @@ class PokemonClient @Inject constructor(
     private val service: PokemonService
 ) {
     /** 포켓몬 조회 **/
-    fun fetchPokemonList(name: String) = Pager(
-        config = PagingConfig(
-            pageSize = 100
-        ),
-        pagingSourceFactory = {
-            PokemonDexPagingSource(pokemonService = service, name = name)
-        }
-    ).flow
+//    fun fetchPokemonList(name: String) = Pager(
+//        config = PagingConfig(
+//            pageSize = 100
+//        ),
+//        pagingSourceFactory = {
+//            PokemonDexPagingSource(pokemonService = service, name = name)
+//        }
+//    ).flow
+    suspend fun fetchPokemonList(
+        name: String,
+        skip: Int,
+        limit: Int
+    ) = service.fetchPokemonList(
+        name = name,
+        skip = skip,
+        limit = limit
+    )
 
     /** 포켓몬 상세 조회 **/
     suspend fun fetchPokemonDetailInfo(

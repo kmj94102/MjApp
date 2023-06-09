@@ -38,7 +38,19 @@ class PokemonRepositoryImpl @Inject constructor(
         return result
     }
 
-    override fun fetchPokemonList(name: String) = client.fetchPokemonList(name)
+    override suspend fun fetchPokemonList(
+        name: String,
+        skip: Int,
+        limit: Int,
+        onResult: (Boolean, List<PokemonSummary>) -> Unit
+    ) {
+        val result = client.fetchPokemonList(name, skip * limit, limit)
+
+        onResult(
+            result.getIsMoreData(skip * limit),
+            result.getMappingList()
+        )
+    }
 
     override fun fetchPokemonDetailInfo(number: String) = flow {
         emit(
