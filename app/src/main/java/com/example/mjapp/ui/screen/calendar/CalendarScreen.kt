@@ -22,10 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import com.example.mjapp.R
-import com.example.mjapp.ui.custom.CommonRadio
-import com.example.mjapp.ui.custom.DoubleCard
-import com.example.mjapp.ui.custom.IconBox
-import com.example.mjapp.ui.custom.MonthCalendar
+import com.example.mjapp.ui.custom.*
 import com.example.mjapp.ui.screen.calendar.dialog.YearMonthSelectDialog
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.*
@@ -90,7 +87,6 @@ fun CalendarScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    goToAdd = goToAdd
                 )
             }
         }
@@ -368,7 +364,6 @@ fun CalendarPlanContainer(
 private fun ListContainer(
     viewModel: CalendarViewModel,
     modifier: Modifier,
-    goToAdd: (String) -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(bottom = 50.dp, start = 20.dp, end = 20.dp),
@@ -378,13 +373,95 @@ private fun ListContainer(
     ) {
         viewModel.calendarItemList.filter { it.itemList.isNotEmpty() }.forEach { myCalendar ->
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .background(MyColorPurple)
+                DoubleCard(
+                    bottomCardColor = MyColorPurple,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = myCalendar.detailDate)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MyColorPurple)
+                        ) {
+                            Text(
+                                text = buildAnnotatedString {
+                                    append(
+                                        "${
+                                            myCalendar.date.padStart(
+                                                2,
+                                                '0'
+                                            )
+                                        } (${myCalendar.dayOfWeek})"
+                                    )
+                                    if (myCalendar.dateInfo.isNotEmpty()) {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                color = MyColorGray,
+                                                fontSize = 14.sp
+                                            )
+                                        ) {
+                                            append(" ${myCalendar.dateInfo}")
+                                        }
+                                    }
+                                },
+                                style = textStyle16B().copy(color = MyColorBlack),
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                            )
+
+                            IconBox(
+                                boxShape = CircleShape,
+                                boxColor = MyColorRed,
+                                boxSize = DpSize(24.dp, 24.dp),
+                                iconRes = R.drawable.ic_modify,
+                                iconSize = 16.dp
+                            ) {
+
+                            }
+
+                            IconBox(
+                                boxShape = CircleShape,
+                                boxColor = MyColorRed,
+                                boxSize = DpSize(24.dp, 24.dp),
+                                iconRes = R.drawable.ic_close,
+                                iconSize = 16.dp,
+                                modifier = Modifier.padding(start = 5.dp, end = 10.dp)
+                            ) {
+
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(MyColorBlack)
+                        )
+
+                        myCalendar.itemList.forEachIndexed { index, item ->
+                            when (item) {
+                                is CalendarItem.PlanInfo -> {
+                                    ListPlanContainer(
+                                        info = item
+                                    )
+                                }
+                                is CalendarItem.ScheduleInfo -> {
+                                    ListScheduleContainer(
+                                        info = item
+                                    )
+                                }
+                            }
+                            if (myCalendar.itemList.size > index) {
+                                DashLine(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -394,62 +471,54 @@ private fun ListContainer(
 @Composable
 fun ListScheduleContainer(
     info: CalendarItem.ScheduleInfo,
-    deleteListener: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MyColorPurple)
-                .padding(horizontal = 10.dp, vertical = 5.dp)
-        ) {
-            Text(
-                text = info.scheduleTitle,
-                style = textStyle16B().copy(fontSize = 18.sp),
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 10.dp)
-            )
-            IconBox(
-                boxSize = DpSize(24.dp, 24.dp),
-                boxColor = MyColorRed,
-                boxShape = CircleShape,
-                iconRes = R.drawable.ic_modify,
-                iconSize = 18.dp
-            ) {
-
-            }
-            Spacer(modifier = Modifier.width(5.dp))
-            IconBox(
-                boxSize = DpSize(24.dp, 24.dp),
-                boxColor = MyColorRed,
-                boxShape = CircleShape,
-                iconRes = R.drawable.ic_close,
-                iconSize = 18.dp
-            ) {
-                deleteListener(info.id)
-            }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(MyColorBlack)
-        )
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ) {
         Text(
             text = info.getTime(),
             style = textStyle12().copy(MyColorGray),
-            modifier = Modifier.padding(top = 5.dp, start = 10.dp)
+        )
+        Text(
+            text = info.scheduleTitle,
+            style = textStyle16B().copy(fontSize = 18.sp),
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth()
         )
         Text(
             text = info.scheduleContent,
             style = textStyle16(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp, bottom = 5.dp)
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth()
         )
+    }
+}
+
+@Composable
+fun ListPlanContainer(
+    info: CalendarItem.PlanInfo,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ) {
+        Text(text = info.title, style = textStyle16B().copy(fontSize = 18.sp))
+        info.taskList.forEach {
+            CommonRadio(
+                text = it.contents,
+                check = it.isCompleted,
+                onCheckedChange = {
+
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            )
+        }
     }
 }
