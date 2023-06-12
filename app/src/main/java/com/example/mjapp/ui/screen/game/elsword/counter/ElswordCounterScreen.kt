@@ -1,15 +1,18 @@
 package com.example.mjapp.ui.screen.game.elsword.counter
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
@@ -209,19 +212,9 @@ fun ElswordQuestItem(
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             characters.forEachIndexed { index, character ->
-                AsyncImage(
-                    model = character.image,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    colorFilter = ColorFilter.colorMatrix(
-                        ColorMatrix().apply {
-                            if (character.isOngoing) {
-                                setToSaturation(0.5f)
-                            } else {
-                                setToSaturation(if (character.isComplete) 1f else 0f)
-                            }
-                        }
-                    ),
+                ElswordQuestImage(
+                    character = character,
+                    color = color,
                     modifier = Modifier
                         .height(145.dp)
                         .weight(1f)
@@ -236,6 +229,52 @@ fun ElswordQuestItem(
                             .background(MyColorBlack)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ElswordQuestImage(
+    character: ElswordCharacter,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 0.5f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 1000
+            },
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    Box(modifier = modifier) {
+        AsyncImage(
+            model = character.image,
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+            colorFilter = ColorFilter.colorMatrix(
+                ColorMatrix().apply {
+                    setToSaturation(if (character.isComplete) 1f else 0f)
+                }
+            ),
+            modifier = Modifier.fillMaxSize()
+        )
+        if (character.isOngoing) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color.copy(alpha = alpha))
+            ) {
+                Text(
+                    text = "진행중",
+                    style = textStyle24B().copy(color = MyColorWhite.copy(alpha = alpha))
+                )
             }
         }
     }
