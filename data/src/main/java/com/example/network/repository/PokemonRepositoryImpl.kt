@@ -93,4 +93,29 @@ class PokemonRepositoryImpl @Inject constructor(
     override suspend fun updateCatch(number: String) {
         dao.updateCatch(number)
     }
+
+    override fun fetchBriefPokemonList(search: String) = flow {
+        try {
+            emit(
+                client.fetchBriefPokemonList(search).mapNotNull { it.toBriefPokemonItem() }
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(emptyList())
+        }
+    }
+
+    override suspend fun insertPokemonEvolution(
+        evolutions: List<PokemonEvolution>,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    ) {
+        try {
+            client.insertPokemonEvolution(evolutions)
+            onSuccess()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onFailure()
+        }
+    }
 }

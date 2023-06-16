@@ -33,4 +33,16 @@ interface PokemonService {
     @POST("insert/char")
     suspend fun insertCharacteristic(@Body item: CharacteristicInfo): String
 
+    /**
+     * 포켓몬 간략한 조회 (진화 추가용)
+     * **/
+    @GET("/select/pokemon/brief-list/{search}")
+    suspend fun fetchBriefPokemonList(@Path("search") search: String): List<BriefPokemonInfo>
+
+    /**
+     * 포켓몬 진화 추가
+     **/
+    @POST("/insert/pokemon/evolution")
+    suspend fun insertPokemonEvolution(@Body item: List<PokemonEvolution>): String
+
 }

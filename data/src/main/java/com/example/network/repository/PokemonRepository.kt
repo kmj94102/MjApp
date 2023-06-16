@@ -1,6 +1,5 @@
 package com.example.network.repository
 
-import androidx.paging.PagingData
 import com.example.network.model.*
 import kotlinx.coroutines.flow.Flow
 
@@ -39,4 +38,14 @@ interface PokemonRepository {
 
     /** 잡기 상태 업데이트 **/
     suspend fun updateCatch(number: String)
+
+    /** 포켓몬 간략한 조회 (진화 추가용) **/
+    fun fetchBriefPokemonList(search: String): Flow<List<BriefPokemonItem>>
+
+    /** 포켓몬 진화 추가 **/
+    suspend fun insertPokemonEvolution(
+        evolutions: List<PokemonEvolution>,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    )
 }

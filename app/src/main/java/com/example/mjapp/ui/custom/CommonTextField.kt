@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mjapp.ui.theme.MyColorGray
+import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.util.textStyle16
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class,
@@ -78,7 +79,7 @@ fun CommonTextField(
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
                 placeholder = {
-                    Text(text = hint, fontSize = textStyle.fontSize, color = MyColorGray)
+                    Text(text = hint, fontSize = textStyle.fontSize, color = MyColorLightGray)
                 },
                 contentPadding = contentPadding,
             )

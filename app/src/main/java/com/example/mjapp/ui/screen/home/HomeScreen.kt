@@ -226,7 +226,7 @@ fun ElswordCounterContainer(
             AsyncImage(
                 model = elswordCounter.image,
                 contentDescription = null,
-                contentScale = ContentScale.FillHeight,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(128.dp)

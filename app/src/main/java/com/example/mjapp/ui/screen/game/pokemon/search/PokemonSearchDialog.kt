@@ -28,7 +28,7 @@ import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
 
 @Composable
-fun PokemonSearchDialog(
+fun PokemonNameSearchDialog(
     onDismiss: () -> Unit,
     onSearch: (String) -> Unit
 ) {

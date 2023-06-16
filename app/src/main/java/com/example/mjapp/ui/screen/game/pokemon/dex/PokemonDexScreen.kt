@@ -24,7 +24,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.ConditionAsyncImage
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
-import com.example.mjapp.ui.screen.game.pokemon.search.PokemonSearchDialog
+import com.example.mjapp.ui.screen.game.pokemon.search.PokemonNameSearchDialog
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
@@ -131,7 +131,7 @@ fun PokemonDexScreen(
     }
 
     if (isSearchDialogShow.value) {
-        PokemonSearchDialog(
+        PokemonNameSearchDialog(
             onDismiss = { isSearchDialogShow.value = false },
             onSearch = {
                 viewModel.updateSearchValue(it)
