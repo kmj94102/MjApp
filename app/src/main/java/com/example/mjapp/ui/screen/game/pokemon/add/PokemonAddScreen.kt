@@ -149,6 +149,7 @@ fun PokemonAddScreen(
         PokemonAddViewModel.Status.Success -> {
             context.toast("등록 완료")
             viewModel.clearItems()
+            viewModel.updateInitStatus()
         }
         is PokemonAddViewModel.Status.Failure -> {
             context.toast(status.msg)

@@ -18,6 +18,15 @@ data class PokemonInfo(
     val isCatch: Boolean = false
 )
 
+data class EvolutionInfo(
+    val beforeDot: String,
+    val beforeShinyDot: String,
+    val afterDot: String,
+    val afterShinyDot: String,
+    val evolutionImage: String,
+    val evolutionCondition: String
+)
+
 data class PokemonImageInfo(
     val number: String,
     val image: String,
@@ -27,7 +36,8 @@ data class PokemonImageInfo(
 data class PokemonDetailInfo(
     val pokemonInfo: PokemonInfo,
     val beforeInfo: PokemonImageInfo?,
-    val nextInfo: PokemonImageInfo?
+    val nextInfo: PokemonImageInfo?,
+    val evolutionInfo: List<EvolutionInfo>
 ) {
     fun getWeekImageList(): List<Int> {
         val attributeList = pokemonInfo.attribute

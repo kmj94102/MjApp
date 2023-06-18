@@ -1,10 +1,8 @@
 package com.example.mjapp.ui.screen.game.pokemon.dex
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -29,6 +27,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.ConditionAsyncImage
 import com.example.mjapp.ui.custom.ConditionImage
@@ -38,6 +37,7 @@ import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.*
+import com.example.network.model.EvolutionInfo
 import com.example.network.model.PokemonDetailInfo
 import com.example.network.model.TypeInfo
 
@@ -229,7 +229,10 @@ fun PokemonDetailBody(
             )
         }
         2 -> {
-            PokemonStatusAndEvolution(pokemonDetailInfo)
+            PokemonStatusAndEvolution(
+                pokemonDetailInfo,
+                isShiny
+            )
         }
     }
 }
@@ -433,73 +436,118 @@ fun PokemonTypeClip(typeInfo: TypeInfo) {
 }
 
 @Composable
-fun PokemonStatusAndEvolution(info: PokemonDetailInfo) {
-    Column(
+fun PokemonStatusAndEvolution(
+    info: PokemonDetailInfo,
+    isShiny: Boolean
+) {
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
-        Text(
-            text = "No.${info.pokemonInfo.number}",
-            style = textStyle16().copy(fontSize = 18.sp, color = MyColorWhite),
-            modifier = Modifier.padding(top = 17.dp)
-        )
-        Text(
-            text = info.pokemonInfo.name,
-            style = textStyle24B().copy(color = MyColorWhite),
-            modifier = Modifier.padding(top = 10.dp)
-        )
+        item {
+            Text(
+                text = "No.${info.pokemonInfo.number}",
+                style = textStyle16().copy(fontSize = 18.sp, color = MyColorWhite),
+                modifier = Modifier.padding(top = 17.dp)
+            )
+            Text(
+                text = info.pokemonInfo.name,
+                style = textStyle24B().copy(color = MyColorWhite),
+                modifier = Modifier.padding(top = 10.dp)
+            )
+        }
+
         val status = info.pokemonInfo.status.split(",")
         if (status.size == 6) {
-            OutlinedCard(
-                shape = RoundedCornerShape(5.dp),
-                border = BorderStroke(1.dp, MyColorWhite),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 15.dp)
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(27.dp)
-                            .background(Color(0xFF0F3061))
-                    ) {
-                        PokemonStatusText("HP")
-                        DividingLine()
-                        PokemonStatusText("공격")
-                        DividingLine()
-                        PokemonStatusText("방어")
-                        DividingLine()
-                        PokemonStatusText("특공")
-                        DividingLine()
-                        PokemonStatusText("특방")
-                        DividingLine()
-                        PokemonStatusText("스피드")
-                    }
+            item {
+                OutlinedCard(
+                    shape = RoundedCornerShape(5.dp),
+                    border = BorderStroke(1.dp, MyColorWhite),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 15.dp)
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(27.dp)
+                                .background(Color(0xFF0F3061))
+                        ) {
+                            PokemonStatusText("HP")
+                            DividingLine()
+                            PokemonStatusText("공격")
+                            DividingLine()
+                            PokemonStatusText("방어")
+                            DividingLine()
+                            PokemonStatusText("특공")
+                            DividingLine()
+                            PokemonStatusText("특방")
+                            DividingLine()
+                            PokemonStatusText("스피드")
+                        }
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(27.dp)
+                        ) {
+                            PokemonStatusText(status[0])
+                            DividingLine()
+                            PokemonStatusText(status[1])
+                            DividingLine()
+                            PokemonStatusText(status[2])
+                            DividingLine()
+                            PokemonStatusText(status[3])
+                            DividingLine()
+                            PokemonStatusText(status[4])
+                            DividingLine()
+                            PokemonStatusText(status[5])
+                        }
+                    }
+                }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(25.dp))
+        }
+        if (info.evolutionInfo.isEmpty()) {
+            item {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.img_pokemon_empty_2),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(211.dp, 197.dp)
+                            .padding(bottom = 10.dp)
+                    )
+                    Text(
+                        text = "진화 정보가 없습니다",
+                        style = textStyle16B().copy(color = MyColorLightGray)
+                    )
+                }
+
+            }
+        } else {
+            item {
+                info.evolutionInfo.forEach {
+                    PokemonEvolutionContainer(
+                        evolutionInfo = it,
+                        isShiny = isShiny,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(27.dp)
-                    ) {
-                        PokemonStatusText(status[0])
-                        DividingLine()
-                        PokemonStatusText(status[1])
-                        DividingLine()
-                        PokemonStatusText(status[2])
-                        DividingLine()
-                        PokemonStatusText(status[3])
-                        DividingLine()
-                        PokemonStatusText(status[4])
-                        DividingLine()
-                        PokemonStatusText(status[5])
-                    }
+                            .padding(bottom = 10.dp)
+                    )
                 }
             }
         }
@@ -526,4 +574,88 @@ private fun RowScope.PokemonStatusText(text: String) {
         ),
         modifier = Modifier.weight(1f)
     )
+}
+
+@Composable
+fun PokemonEvolutionContainer(
+    evolutionInfo: EvolutionInfo,
+    isShiny: Boolean,
+    modifier: Modifier = Modifier
+) {
+    ConstraintLayout(modifier = modifier) {
+        val (before, after, evolutionIcon, condition, line) = createRefs()
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(100.dp)
+                .border(1.dp, MyColorWhite, CircleShape)
+                .constrainAs(before) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                }
+        ) {
+            AsyncImage(
+                model = if (isShiny) evolutionInfo.beforeShinyDot else evolutionInfo.beforeDot,
+                contentDescription = null,
+                placeholder = painterResource(id = R.drawable.img_egg),
+                modifier = Modifier.size(72.dp)
+            )
+        }
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(100.dp)
+                .border(1.dp, MyColorWhite, CircleShape)
+                .constrainAs(after) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                }
+        ) {
+            AsyncImage(
+                model = if (isShiny) evolutionInfo.afterShinyDot else evolutionInfo.afterDot,
+                contentDescription = null,
+                placeholder = painterResource(id = R.drawable.img_egg),
+                modifier = Modifier.size(72.dp)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .height(1.dp)
+                .background(MyColorWhite)
+                .constrainAs(line) {
+                    top.linkTo(before.top)
+                    bottom.linkTo(before.bottom)
+                    start.linkTo(before.end)
+                    end.linkTo(after.start)
+                    width = Dimension.fillToConstraints
+                }
+        )
+
+        AsyncImage(
+            model = evolutionInfo.evolutionImage,
+            contentDescription = null,
+            modifier = Modifier
+                .size(35.dp)
+                .constrainAs(evolutionIcon) {
+                    bottom.linkTo(line.top, 5.dp)
+                    start.linkTo(before.end)
+                    end.linkTo(after.start)
+                }
+        )
+
+        Text(
+            text = evolutionInfo.evolutionCondition,
+            style = textStyle16B().copy(color = MyColorWhite),
+            modifier = Modifier.constrainAs(condition) {
+                top.linkTo(line.bottom, 5.dp)
+                start.linkTo(before.end, 5.dp)
+                end.linkTo(after.start, 5.dp)
+                width = Dimension.fillToConstraints
+            }
+        )
+
+    }
 }

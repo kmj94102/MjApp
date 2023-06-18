@@ -72,6 +72,10 @@ data class PokemonEvolutionCondition(
                 image = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/soothe-bell.png"
             ),
             PokemonEvolutionCondition(
+                name = "통신교환",
+                image = "https://github.com/kmj94102/PokemonDex/blob/master/app/src/main/res/drawable/img_communication_evolution.png?raw=true"
+            ),
+            PokemonEvolutionCondition(
                 name = "가라두구머리장식",
                 image = "https://static.wikia.nocookie.net/pokemon/images/3/3a/%EB%8F%84%ED%8A%B8_%EC%95%84%EC%9D%B4%EC%BD%98_%EA%B0%80%EB%9D%BC%EB%91%90%EA%B5%AC%EB%A8%B8%EB%A6%AC%EC%9E%A5%EC%8B%9D.png/revision/latest?cb=20201122142600&path-prefix=ko"
             ),
@@ -82,6 +86,10 @@ data class PokemonEvolutionCondition(
             PokemonEvolutionCondition(
                 name = "각성의 돌",
                 image = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dawn-stone.png"
+            ),
+            PokemonEvolutionCondition(
+                name = "검은휘석",
+                image = "https://static.wikia.nocookie.net/pokemon/images/c/c3/%EC%95%84%EC%9D%B4%EC%BD%98_%EA%B2%80%EC%9D%80%ED%9C%98%EC%84%9D_9%EC%84%B8%EB%8C%80.png/revision/latest?cb=20221210190752&path-prefix=ko"
             ),
             PokemonEvolutionCondition(
                 name = "고운비늘",
@@ -208,12 +216,12 @@ data class PokemonEvolutionCondition(
                 image = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sun-stone.png"
             ),
             PokemonEvolutionCondition(
-                name = "통신진화",
-                image = "https://github.com/kmj94102/PokemonDex/blob/master/app/src/main/res/drawable/img_communication_evolution.png?raw=true"
-            ),
-            PokemonEvolutionCondition(
                 name = "프로텍터",
                 image = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/protector.png"
+            ),
+            PokemonEvolutionCondition(
+                name = "피트블록",
+                image = "https://static.wikia.nocookie.net/pokemon/images/e/e9/%EC%95%84%EC%9D%B4%EC%BD%98_%ED%94%BC%ED%8A%B8%EB%B8%94%EB%A1%9D_9%EC%84%B8%EB%8C%80.png/revision/latest?cb=20221210195534&path-prefix=ko"
             ),
             PokemonEvolutionCondition(
                 name = "향기주머니",
