@@ -48,6 +48,7 @@ fun PokemonCounterScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         IconBox(
+            boxColor = MyColorRed,
             modifier = Modifier
                 .padding(top = 22.dp)
                 .padding(horizontal = 20.dp)
@@ -119,7 +120,7 @@ fun PokemonCounterCard(
     modifier: Modifier = Modifier
 ) {
     DoubleCard(
-        bottomCardColor = MyColorTurquoise,
+        bottomCardColor = MyColorRed,
         modifier = modifier
     ) {
         Column(
@@ -133,7 +134,7 @@ fun PokemonCounterCard(
                     .padding(end = 5.dp)
             ) {
                 IconBox(
-                    boxColor = MyColorRed,
+                    boxColor = MyColorTurquoise,
                     boxShape = CircleShape,
                     boxSize = DpSize(24.dp, 24.dp),
                     iconSize = 18.dp,
@@ -143,7 +144,7 @@ fun PokemonCounterCard(
                 }
                 Spacer(modifier = Modifier.width(5.dp))
                 IconBox(
-                    boxColor = MyColorTurquoise,
+                    boxColor = MyColorRed,
                     boxShape = CircleShape,
                     boxSize = DpSize(24.dp, 24.dp),
                     iconSize = 16.dp,
@@ -239,6 +240,7 @@ fun PokemonCounterCard(
             Spacer(modifier = Modifier.height(5.dp))
             CommonButton(
                 text = "GET",
+                backgroundColor = MyColorRed,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
@@ -255,7 +257,7 @@ fun PokemonCounterEmptyCard(
     onClick: () -> Unit
 ) {
     DoubleCard(
-        bottomCardColor = MyColorRed,
+        topCardColor = MyColorRed,
         modifier = modifier
             .fillMaxWidth()
             .height(257.dp)
@@ -275,7 +277,7 @@ fun PokemonCounterEmptyCard(
                 text = "잡을 포켓몬을\n추가해주세요.",
                 style = textStyle12().copy(
                     fontSize = 14.sp,
-                    color = MyColorGray,
+                    color = MyColorWhite,
                     textAlign = TextAlign.Center
                 ),
                 modifier = Modifier.padding(top = 10.dp)
@@ -283,6 +285,7 @@ fun PokemonCounterEmptyCard(
             Spacer(modifier = Modifier.weight(1f))
             CommonButton(
                 text = "추가",
+                backgroundColor = MyColorWhite,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onClick
             )

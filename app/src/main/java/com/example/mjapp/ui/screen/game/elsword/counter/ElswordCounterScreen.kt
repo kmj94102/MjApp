@@ -241,9 +241,20 @@ fun ElswordQuestImage(
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition()
-    val alpha by infiniteTransition.animateFloat(
+    val imageAlpha by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 0.5f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 1000
+            },
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    val textAlpha by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1.0f,
         animationSpec = infiniteRepeatable(
             animation = keyframes {
                 durationMillis = 1000
@@ -269,11 +280,11 @@ fun ElswordQuestImage(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color.copy(alpha = alpha))
+                    .background(color.copy(alpha = imageAlpha))
             ) {
                 Text(
                     text = "진행중",
-                    style = textStyle24B().copy(color = MyColorWhite.copy(alpha = alpha))
+                    style = textStyle24B().copy(color = MyColorWhite.copy(alpha = textAlpha))
                 )
             }
         }

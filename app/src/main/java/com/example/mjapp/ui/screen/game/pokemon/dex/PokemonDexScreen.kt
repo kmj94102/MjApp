@@ -52,7 +52,9 @@ fun PokemonDexScreen(
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            IconBox {
+            IconBox(
+                boxColor = MyColorRed
+            ) {
                 onBackClick()
             }
             Text(

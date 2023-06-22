@@ -146,7 +146,7 @@ fun CalendarAddScreen(
         }
 
         DoubleCard(
-            topCardColor = MyColorRed,
+            topCardColor = MyColorPurple,
             modifier = Modifier
                 .fillMaxWidth()
                 .nonRippleClickable {
@@ -159,7 +159,7 @@ fun CalendarAddScreen(
         ) {
             Text(
                 text = "등록하기",
-                style = textStyle16().copy(textAlign = TextAlign.Center),
+                style = textStyle16B().copy(textAlign = TextAlign.Center),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp)
@@ -432,7 +432,7 @@ fun ColumnScope.PlanAddContainer(
                     bottomCardColor = MyColorPurple,
                     tailIcon = {
                         IconBox(
-                            boxColor = MyColorBeige,
+                            boxColor = MyColorRed,
                             boxShape = CircleShape,
                             iconRes = R.drawable.ic_close,
                             iconSize = 16.dp,
@@ -454,7 +454,7 @@ fun ColumnScope.PlanAddContainer(
             ) {
                 IconBox(
                     boxShape = CircleShape,
-                    boxColor = MyColorBeige,
+                    boxColor = MyColorRed,
                     iconRes = R.drawable.ic_plus,
                 ) {
                     addPlanListener()

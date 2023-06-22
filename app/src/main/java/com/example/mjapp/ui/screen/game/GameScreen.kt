@@ -39,7 +39,7 @@ fun GameScreen(
         item {
             Text(
                 text = BottomNavItems.Game.item.title,
-                style = textStyle24B().copy(color = MyColorPurple),
+                style = textStyle24B().copy(color = MyColorRed),
                 modifier = Modifier.padding(bottom = 10.dp)
             )
         }

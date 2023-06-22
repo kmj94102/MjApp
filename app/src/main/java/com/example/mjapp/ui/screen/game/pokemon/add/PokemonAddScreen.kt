@@ -45,7 +45,10 @@ fun PokemonAddScreen(
     val isEvolutionDialogShow = remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        IconBox(modifier = Modifier.padding(top = 22.dp, start = 20.dp)) {
+        IconBox(
+            boxColor = MyColorRed,
+            modifier = Modifier.padding(top = 22.dp, start = 20.dp)
+        ) {
             onBackClick()
         }
 

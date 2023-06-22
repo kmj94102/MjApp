@@ -19,6 +19,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonRadio
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.theme.MyColorPurple
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
@@ -143,7 +144,7 @@ fun RecurrenceSelectDialog(
                     Spacer(modifier = Modifier.width(6.dp))
 
                     DoubleCard(
-                        topCardColor = MyColorRed,
+                        topCardColor = MyColorPurple,
                         modifier = Modifier
                             .weight(1f)
                             .nonRippleClickable {
