@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 
 /**
@@ -17,7 +16,6 @@ import androidx.compose.ui.text.TextStyle
  * @param outlineColor Outline 색상
  * @param modifier Modifier
  * **/
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun OutlineText(
     text: String,
@@ -26,16 +24,16 @@ fun OutlineText(
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
-        Text(text = text, style = style)
         Text(
             text = text,
             style = style.merge(
                 TextStyle(
                     color = outlineColor,
                     fontSize = style.fontSize,
-                    drawStyle = Stroke(width = 4f, join = StrokeJoin.Round)
+                    drawStyle = Stroke(width = 10f, join = StrokeJoin.Round)
                 )
             )
         )
+        Text(text = text, style = style)
     }
 }
