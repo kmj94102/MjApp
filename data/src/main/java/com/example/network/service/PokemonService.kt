@@ -45,4 +45,16 @@ interface PokemonService {
     @POST("/insert/pokemon/evolution")
     suspend fun insertPokemonEvolution(@Body item: List<PokemonEvolution>): String
 
+    /**
+     * 포켓몬 기존 spotlight 조회
+     * **/
+    @POST("/select/pokemon/before-image-info")
+    suspend fun fetchPokemonBeforeSpotlights(): List<PokemonSpotlightItem>
+
+    /**
+     * 포켓몬 spotlight 업데이트
+     * **/
+    @POST("/update/pokemon/image")
+    suspend fun updatePokemonSpotlight(@Body item: PokemonSpotlightItem): String
+
 }

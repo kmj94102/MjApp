@@ -28,8 +28,6 @@ fun ElswordIntroduceScreen(
     onBackClick: () -> Unit,
     viewModel: ElswordIntroduceViewModel = hiltViewModel()
 ) {
-    val list = viewModel.characterList
-
     Column(modifier = Modifier.fillMaxSize()) {
         IconBox(
             boxColor = MyColorRed,
@@ -121,13 +119,13 @@ fun ElswordIntroduceScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
         ) {
-            list.forEachIndexed { index, character ->
+            viewModel.getNameList().forEachIndexed { index, name ->
                 Text(
-                    text = character.characterName,
+                    text = name,
                     style = textStyle12B().copy(
                         fontSize = 14.sp,
                         color = if (index == viewModel.selectCharacter.value) {
-                            character.color
+                            viewModel.currentCharacter.color
                         } else {
                             MyColorBlack
                         }

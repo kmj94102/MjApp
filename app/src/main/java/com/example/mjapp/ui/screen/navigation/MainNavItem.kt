@@ -42,6 +42,12 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
+    object PokemonImageChange: NavScreen(
+        MainNavItem(
+            route = "PokemonImageChange"
+        )
+    )
+
     object CalendarAdd: NavScreen(
         MainNavItem(
             route = "CalendarAdd",

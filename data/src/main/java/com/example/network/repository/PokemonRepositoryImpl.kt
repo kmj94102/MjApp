@@ -122,4 +122,21 @@ class PokemonRepositoryImpl @Inject constructor(
             onFailure()
         }
     }
+
+    override fun fetchPokemonBeforeSpotlights() = flow {
+        runCatching {
+            emit(client.fetchPokemonBeforeSpotlights())
+        }.onFailure {
+            it.printStackTrace()
+        }
+    }
+
+    override suspend fun updatePokemonSpotlight(item: PokemonSpotlightItem): String {
+        return runCatching {
+            client.updatePokemonSpotlight(item)
+        }.getOrElse {
+            it.printStackTrace()
+            "업데이트 실패"
+        }
+    }
 }

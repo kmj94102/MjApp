@@ -15,6 +15,7 @@ import com.example.mjapp.ui.screen.game.elsword.counter.ElswordCounterScreen
 import com.example.mjapp.ui.screen.game.elsword.counter.add.ElswordCounterAddScreen
 import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
 import com.example.mjapp.ui.screen.game.pokemon.add.PokemonAddScreen
+import com.example.mjapp.ui.screen.game.pokemon.change.PokemonImageChangeScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
@@ -65,6 +66,9 @@ fun NavGraphBuilder.gameScreens(
                     }
                     Constants.PokemonAdd -> {
                         NavScreen.PokemonAdd.item.routeWithPostFix
+                    }
+                    Constants.PokemonImageChange -> {
+                        NavScreen.PokemonImageChange.item.routeWithPostFix
                     }
                     Constants.ElswordIntroduce -> {
                         NavScreen.ElswordIntroduce.item.routeWithPostFix
@@ -132,6 +136,14 @@ fun NavGraphBuilder.gameScreens(
             goToPokemonDex = {
                 navController.navigate(NavScreen.PokemonDex.item.routeWithPostFix)
             }
+        )
+    }
+    /** 포켓몬 이미지 수정 **/
+    composable(
+        route = NavScreen.PokemonImageChange.item.routeWithPostFix
+    ) {
+        PokemonImageChangeScreen(
+            onBackClick = onBackClick
         )
     }
 }

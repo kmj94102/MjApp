@@ -12,13 +12,15 @@ class ElswordIntroduceViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    val characterList = ElswordCharacters.values()
+    private val characterList = ElswordCharacters.values()
 
     private val _selectCharacter = mutableStateOf(0)
     val selectCharacter: State<Int> = _selectCharacter
 
     val currentCharacter: ElswordCharacters
         get() = characterList[_selectCharacter.value]
+
+    fun getNameList() = characterList.map { it.characterName }
 
     fun updateSelector(index: Int) {
         _selectCharacter.value = index

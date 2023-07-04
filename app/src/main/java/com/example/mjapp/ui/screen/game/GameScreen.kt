@@ -88,6 +88,15 @@ fun GameScreen(
                 goToScreen(Constants.PokemonAdd)
             }
         }
+        item {
+            GameCard(
+                text = "포켓몬 이미지\n수정",
+                imageRes = R.drawable.img_pokemon_dex,
+                color = MyColorBeige
+            ) {
+                goToScreen(Constants.PokemonImageChange)
+            }
+        }
     }
 }
 

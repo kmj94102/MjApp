@@ -48,4 +48,16 @@ interface PokemonRepository {
         onSuccess: () -> Unit,
         onFailure: () -> Unit
     )
+
+    /**
+     * 포켓몬 기존 spotlight 조회
+     * **/
+    fun fetchPokemonBeforeSpotlights(): Flow<List<PokemonSpotlightItem>>
+
+    /**
+     * 포켓몬 spotlight 업데이트
+     * **/
+    suspend fun updatePokemonSpotlight(
+        item: PokemonSpotlightItem
+    ): String
 }

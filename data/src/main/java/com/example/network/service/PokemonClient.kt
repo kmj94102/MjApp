@@ -1,9 +1,6 @@
 package com.example.network.service
 
-import com.example.network.model.CharacteristicInfo
-import com.example.network.model.PokemonEvolution
-import com.example.network.model.PokemonInfo
-import com.example.network.model.UpdatePokemonCatch
+import com.example.network.model.*
 import javax.inject.Inject
 
 class PokemonClient @Inject constructor(
@@ -57,4 +54,18 @@ class PokemonClient @Inject constructor(
     suspend fun insertPokemonEvolution(
         evolutions: List<PokemonEvolution>
     ) = service.insertPokemonEvolution(item = evolutions)
+
+    /**
+     * 포켓몬 기존 spotlight 조회
+     * **/
+    suspend fun fetchPokemonBeforeSpotlights() =
+        service.fetchPokemonBeforeSpotlights()
+
+    /**
+     * 포켓몬 spotlight 업데이트
+     * **/
+    suspend fun updatePokemonSpotlight(
+        item: PokemonSpotlightItem
+    ) = service.updatePokemonSpotlight(item)
+
 }
