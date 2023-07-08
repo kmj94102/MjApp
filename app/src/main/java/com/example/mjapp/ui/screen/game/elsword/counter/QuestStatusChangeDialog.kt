@@ -1,149 +1,190 @@
 package com.example.mjapp.ui.screen.game.elsword.counter
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
 import com.example.mjapp.R
+import com.example.mjapp.ui.custom.CommonRadio
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
-import com.example.mjapp.ui.theme.MyColorBeige
-import com.example.mjapp.ui.theme.MyColorRed
-import com.example.mjapp.ui.theme.MyColorTurquoise
-import com.example.mjapp.ui.theme.MyColorWhite
-import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle16
-import com.example.mjapp.util.textStyle16B
+import com.example.mjapp.ui.theme.*
+import com.example.mjapp.util.*
 import com.example.network.model.ElswordQuestUpdate
+import com.example.network.model.ElswordQuestUpdateInfo
 
 @Composable
 fun QuestStatusChangeDialog(
+    item: ElswordQuestUpdateInfo?,
     isShow: Boolean,
     onDismiss: () -> Unit,
-    onUpdate: (String) -> Unit
+    onUpdate: (String, String, Int) -> Unit
 ) {
-    if (isShow) {
-        Dialog(
-            onDismissRequest = onDismiss,
+    if (item == null) return
+    if (isShow.not()) return
+
+    var state by remember {
+        mutableStateOf(item.progress.toFloat())
+    }
+    var type by remember {
+        mutableStateOf(item.type)
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(25.dp))
+                .background(MyColorWhite)
         ) {
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(25.dp))
-                    .background(MyColorWhite)
+                    .padding(top = 10.dp, start = 10.dp, end = 10.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+                Text(
+                    text = "상태 업데이트",
+                    style = textStyle16().copy(fontSize = 18.sp),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+                IconBox(
+                    boxColor = MyColorRed,
+                    boxShape = CircleShape,
+                    iconRes = R.drawable.ic_close,
+                    iconSize = 21.dp,
+                    modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
-                    Text(
-                        text = "상태 업데이트",
-                        style = textStyle16().copy(fontSize = 18.sp),
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                    IconBox(
-                        boxColor = MyColorRed,
-                        boxShape = CircleShape,
-                        iconRes = R.drawable.ic_close,
-                        iconSize = 21.dp,
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        onDismiss()
-                    }
+                    onDismiss()
                 }
+            }
 
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                border = BorderStroke(1.dp, MyColorBlack),
+                colors = CardDefaults.cardColors(
+                    containerColor = MyColorWhite
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)
+            ) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 25.dp)
-                        .padding(start = 20.dp, end = 17.dp)
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    DoubleCard(
-                        topCardColor = MyColorBeige,
-                        minHeight = 100.dp,
+                    AsyncImage(
+                        model = item.image,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillHeight,
+                        modifier = Modifier.size(width = 81.dp, height = 147.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(width = 1.dp, height = 147.dp)
+                            .background(MyColorBlack)
+                    )
+                    Column(
                         modifier = Modifier
                             .weight(1f)
-                            .nonRippleClickable {
-                                onUpdate(ElswordQuestUpdate.Remove)
-                            }
+                            .padding(10.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(100.dp)
-                        ) {
-                            Text(
-                                text = "초기화",
-                                style = textStyle16B().copy(
-                                    fontSize = 18.sp,
-                                ),
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                            )
-                        }
-                    }
+                        CommonRadio(
+                            text = "진행 안 함",
+                            textStyle = textStyle12B().copy(fontSize = 14.sp),
+                            color = MyColorRed,
+                            check = type == ElswordQuestUpdate.Remove,
+                            onCheckedChange = {
+                                type = ElswordQuestUpdate.Remove
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
 
-                    DoubleCard(
-                        topCardColor = MyColorTurquoise,
-                        minHeight = 100.dp,
-                        modifier = Modifier
-                            .weight(1f)
-                            .nonRippleClickable {
-                                onUpdate(ElswordQuestUpdate.Ongoing)
+                        CommonRadio(
+                            text = "진행 중",
+                            textStyle = textStyle12B().copy(fontSize = 14.sp),
+                            color = MyColorRed,
+                            check = type == ElswordQuestUpdate.Ongoing,
+                            onCheckedChange = {
+                                type = ElswordQuestUpdate.Ongoing
                             }
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(100.dp)
-                        ) {
-                            Text(
-                                text = "진행",
-                                style = textStyle16B().copy(
-                                    fontSize = 18.sp,
-                                ),
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                            )
-                        }
-                    }
+                        )
+                        Spacer(modifier = Modifier.height(3.dp))
 
-                    DoubleCard(
-                        topCardColor = MyColorRed,
-                        minHeight = 100.dp,
-                        modifier = Modifier
-                            .weight(1f)
-                            .nonRippleClickable {
-                                onUpdate(ElswordQuestUpdate.Complete)
-                            }
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(100.dp)
-                        ) {
-                            Text(
-                                text = "완료",
-                                style = textStyle16B().copy(
-                                    fontSize = 18.sp,
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Slider(
+                                value = state,
+                                onValueChange = {
+                                    state = it
+                                },
+                                steps = item.max - 1,
+                                valueRange = 0f..item.max.toFloat(),
+                                colors = SliderDefaults.colors(
+                                    thumbColor = MyColorRed,
+                                    activeTickColor = MyColorRed,
+                                    activeTrackColor = MyColorRed
                                 ),
+                                enabled = type == ElswordQuestUpdate.Ongoing,
+                                modifier = Modifier.padding(top = 15.dp)
+                            )
+                            Text(
+                                text = item.questName,
+                                style = textStyle12().copy(fontSize = 14.sp)
+                            )
+                            Text(
+                                text = "${state.toInt()}/${item.max}",
+                                style = textStyle12B().copy(fontSize = 14.sp),
                                 modifier = Modifier
-                                    .align(Alignment.Center)
+                                    .align(Alignment.TopEnd)
+                                    .padding(end = 10.dp)
                             )
                         }
+
+                        CommonRadio(
+                            text = "완료",
+                            textStyle = textStyle12B().copy(fontSize = 14.sp),
+                            color = MyColorRed,
+                            check = type == ElswordQuestUpdate.Complete,
+                            onCheckedChange = {
+                                type = ElswordQuestUpdate.Complete
+                            }
+                        )
                     }
                 }
             }
+
+            DoubleCard(
+                topCardColor = MyColorRed,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 15.dp, end = 13.dp, bottom = 15.dp)
+                    .nonRippleClickable {
+                        onUpdate(item.characterName, type, state.toInt())
+                    }
+            ) {
+                Text(
+                    text = "확인",
+                    textAlign = TextAlign.Center,
+                    style = textStyle16B(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp)
+                )
+            }
+
         }
     }
 }

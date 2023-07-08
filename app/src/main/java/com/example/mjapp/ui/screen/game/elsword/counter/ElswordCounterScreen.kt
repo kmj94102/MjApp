@@ -41,7 +41,6 @@ fun ElswordCounterScreen(
     goToAdd: () -> Unit,
     viewModel: ElswordCounterViewModel = hiltViewModel()
 ) {
-    val selectName = remember { mutableStateOf("") }
     val isStatusChangeShow = remember { mutableStateOf(false) }
     val isQuestSelectShow = remember { mutableStateOf(false) }
 
@@ -96,7 +95,7 @@ fun ElswordCounterScreen(
                 ElswordCounterContents(
                     detailInfo = it,
                     onSelect = { name ->
-                        selectName.value = name
+                        viewModel.setDialogItem(name)
                         isStatusChangeShow.value = true
                     },
                     onListChange = {
@@ -123,17 +122,19 @@ fun ElswordCounterScreen(
     )
 
     QuestStatusChangeDialog(
+        item = viewModel.dialogItem.value,
         isShow = isStatusChangeShow.value,
         onDismiss = {
             isStatusChangeShow.value = false
         },
-        onUpdate = {
+        onUpdate = { name, type, progress ->
             isStatusChangeShow.value = false
             viewModel.updateQuest(
                 ElswordQuestUpdate(
                     id = viewModel.list.getOrNull(viewModel.selectCounter.value)?.id ?: 0,
-                    name = selectName.value,
-                    type = it
+                    name = name,
+                    type = type,
+                    progress = progress
                 )
             )
         }
@@ -182,7 +183,7 @@ fun ElswordCounterContents(
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        Text(text = "진행도 : ${detailInfo.progress}%", style = textStyle12().copy(fontSize = 14.sp))
+        Text(text = "진행도 : ${detailInfo.getProgress()}%", style = textStyle12().copy(fontSize = 14.sp))
 
         LazyColumn(
             contentPadding = PaddingValues(top = 15.dp, bottom = 50.dp),

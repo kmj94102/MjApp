@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.theme.MyColorBlack
@@ -27,6 +28,7 @@ fun CommonRadio(
     textStyle: TextStyle = textStyle16(),
     isEnable: Boolean = true,
     check: Boolean,
+    color: Color = MyColorPurple,
     onCheckedChange: (String) -> Unit,
 ) {
 
@@ -43,7 +45,7 @@ fun CommonRadio(
             animationSpec = tween(durationMillis = 250)
         )
         val fillColor = animateColorAsState(
-            targetValue = if (check) MyColorPurple else MyColorWhite,
+            targetValue = if (check) color else MyColorWhite,
             animationSpec = tween(durationMillis = 500)
         )
 
