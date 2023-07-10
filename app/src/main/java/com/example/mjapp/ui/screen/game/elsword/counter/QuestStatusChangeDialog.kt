@@ -18,6 +18,7 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonRadio
+import com.example.mjapp.ui.custom.CommonSlider
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.theme.*
@@ -36,7 +37,7 @@ fun QuestStatusChangeDialog(
     if (isShow.not()) return
 
     var state by remember {
-        mutableStateOf(item.progress.toFloat())
+        mutableStateOf(item.progress)
     }
     var type by remember {
         mutableStateOf(item.type)
@@ -122,36 +123,33 @@ fun QuestStatusChangeDialog(
                                 type = ElswordQuestUpdate.Ongoing
                             }
                         )
-                        Spacer(modifier = Modifier.height(3.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                        Box(modifier = Modifier.fillMaxWidth()) {
-                            Slider(
-                                value = state,
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = item.questName,
+                                    style = textStyle12().copy(fontSize = 14.sp)
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(
+                                    text = "${state}/${item.max}",
+                                    style = textStyle12B().copy(fontSize = 14.sp),
+                                    modifier = Modifier
+                                        .padding(end = 0.dp)
+                                )
+                            }
+                            CommonSlider(
+                                valueRange = (0..item.max).toList(),
+                                enable = type == ElswordQuestUpdate.Ongoing,
                                 onValueChange = {
                                     state = it
                                 },
-                                steps = item.max - 1,
-                                valueRange = 0f..item.max.toFloat(),
-                                colors = SliderDefaults.colors(
-                                    thumbColor = MyColorRed,
-                                    activeTickColor = MyColorRed,
-                                    activeTrackColor = MyColorRed
-                                ),
-                                enabled = type == ElswordQuestUpdate.Ongoing,
-                                modifier = Modifier.padding(top = 15.dp)
-                            )
-                            Text(
-                                text = item.questName,
-                                style = textStyle12().copy(fontSize = 14.sp)
-                            )
-                            Text(
-                                text = "${state.toInt()}/${item.max}",
-                                style = textStyle12B().copy(fontSize = 14.sp),
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(end = 10.dp)
+                                modifier = Modifier.padding(top = 5.dp)
                             )
                         }
+
+                        Spacer(modifier = Modifier.height(10.dp))
 
                         CommonRadio(
                             text = "완료",
