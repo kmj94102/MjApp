@@ -25,10 +25,7 @@ import com.example.mjapp.ui.custom.ConditionAsyncImage
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.screen.game.pokemon.search.PokemonNameSearchDialog
-import com.example.mjapp.ui.theme.MyColorBeige
-import com.example.mjapp.ui.theme.MyColorGray
-import com.example.mjapp.ui.theme.MyColorRed
-import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle12B
@@ -156,7 +153,10 @@ fun PokemonItem(
                 onClick(info.number)
             }
     ) {
-        DoubleCard(modifier = Modifier.fillMaxWidth()) {
+        DoubleCard(
+            topCardColor = if (info.isCatch) MyColorWhite else MyColorLightGray,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             ConditionAsyncImage(
                 value = isShiny,
                 trueImage = info.shinySpotlight,
