@@ -41,7 +41,7 @@ fun CommonRadio(
         }
     ) {
         val borderColor = animateColorAsState(
-            targetValue = if (check) MyColorWhite else MyColorLightGray,
+            targetValue = if (check) color else MyColorLightGray,
             animationSpec = tween(durationMillis = 250)
         )
         val fillColor = animateColorAsState(
