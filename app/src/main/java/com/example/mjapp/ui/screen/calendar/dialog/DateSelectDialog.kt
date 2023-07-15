@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,6 +36,7 @@ import java.util.*
 fun DateSelectDialog(
     date: String,
     isShow: Boolean,
+    color: Color = MyColorPurple,
     onDismiss: () -> Unit,
     onSelect: (String) -> Unit
 ) {
@@ -140,7 +142,7 @@ fun DateSelectDialog(
                     Spacer(modifier = Modifier.width(6.dp))
 
                     DoubleCard(
-                        topCardColor = MyColorPurple,
+                        topCardColor = color,
                         modifier = Modifier
                             .weight(1f)
                             .nonRippleClickable {

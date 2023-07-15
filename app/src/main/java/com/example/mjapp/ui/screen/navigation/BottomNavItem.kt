@@ -33,10 +33,10 @@ enum class BottomNavItems(val item: BottomNavItem) {
             icon = R.drawable.ic_calendar
         )
     ),
-    Plant(
+    AccountBook(
         item = BottomNavItem(
-            title = "식물",
-            route = "Plant",
+            title = "가계부",
+            route = "AccountBook",
             icon = R.drawable.ic_flower
         )
     ),

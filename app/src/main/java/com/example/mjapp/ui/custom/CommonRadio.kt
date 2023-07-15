@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.theme.MyColorBlack
@@ -29,6 +30,7 @@ fun CommonRadio(
     isEnable: Boolean = true,
     check: Boolean,
     color: Color = MyColorPurple,
+    shape: Shape = CircleShape,
     onCheckedChange: (String) -> Unit,
 ) {
 
@@ -52,8 +54,8 @@ fun CommonRadio(
         Box(
             modifier = Modifier
                 .size(12.dp)
-                .clip(CircleShape)
-                .border(1.dp, borderColor.value, CircleShape)
+                .clip(shape)
+                .border(1.dp, borderColor.value, shape)
                 .background(fillColor.value)
         )
         Spacer(modifier = Modifier.padding(start = 8.dp))

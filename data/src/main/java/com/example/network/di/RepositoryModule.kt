@@ -28,4 +28,10 @@ interface RepositoryModule {
     fun bindCalendarRepository(
         calendarRepositoryImpl: CalendarRepositoryImpl
     ): CalendarRepository
+
+    @Binds
+    fun bindAccountBookRepository(
+        accountBookRepositoryImpl: AccountBookRepositoryImpl
+    ): AccountBookRepository
+
 }

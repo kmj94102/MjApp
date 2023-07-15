@@ -56,4 +56,13 @@ sealed class NavScreen(val item: MainNavItem) {
     ) {
         const val Date = "date"
     }
+
+    object AddNewAccountBookItem: NavScreen(
+        MainNavItem(
+            route = "AddNewAccountBookItem",
+            routeWithPostFix = "AddNewAccountBookItem/{date}"
+        )
+    ) {
+        const val Date = "date"
+    }
 }

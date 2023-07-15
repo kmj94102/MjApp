@@ -119,4 +119,18 @@ object NetworkModule {
     fun provideElswordClient(
         elswordService: ElswordService
     ): ElswordClient = ElswordClient(elswordService)
+
+    @Provides
+    @Singleton
+    fun provideAccountBookService(
+        @Named("internal") retrofit: Retrofit
+    ): AccountBookService =
+        retrofit.create(AccountBookService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAccountClient(
+        accountBookService: AccountBookService
+    ): AccountBookClient = AccountBookClient(accountBookService)
+
 }

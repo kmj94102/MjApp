@@ -20,7 +20,8 @@ import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
-import com.example.mjapp.ui.screen.plant.PlantScreen
+import com.example.mjapp.ui.screen.accountbook.AccountBookScreen
+import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
 import com.example.mjapp.util.makeRouteWithArgs
 
 @Composable
@@ -41,7 +42,7 @@ fun NavigationGraph(
         }
         gameScreens(onBackClick, navController)
         calendarScreens(onBackClick, navController)
-        plantScreens(onBackClick, navController)
+        accountBookScreens(onBackClick, navController)
         otherScreens(onBackClick, navController)
     }
 }
@@ -179,16 +180,35 @@ fun NavGraphBuilder.calendarScreens(
     }
 }
 
-/** 식물 관련 화면 **/
-fun NavGraphBuilder.plantScreens(
+/** 가계부 관련 화면 **/
+fun NavGraphBuilder.accountBookScreens(
     onBackClick: () -> Unit,
     navController: NavHostController
 ) {
-    /** 식물 화면 **/
+    /** 가계부 화면 **/
     composable(
-        route = BottomNavItems.Plant.item.routeWithPostFix
+        route = BottomNavItems.AccountBook.item.routeWithPostFix
     ) {
-        PlantScreen()
+        AccountBookScreen(
+            goToAdInComeExpenditure = {
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.AddNewAccountBookItem.item.route,
+                        it
+                    )
+                )
+            }
+        )
+    }
+
+    /** 수입/지출 추가 화면 **/
+    composable(
+        route = NavScreen.AddNewAccountBookItem.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(NavScreen.AddNewAccountBookItem.Date) { type = NavType.StringType }
+        )
+    ) {
+        AddNewAccountBookItemScreen(onBackClick)
     }
 }
 
