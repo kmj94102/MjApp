@@ -16,15 +16,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DashLine
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.*
+import com.example.network.model.SummaryAccountBookThisMonthInfo
 
 @Composable
 fun AccountBookScreen(
-    goToAdInComeExpenditure: (String) -> Unit
+    goToNewAccountBookItem: (String) -> Unit,
+    goToDetail: (String) -> Unit,
+    viewModel: AccountBookViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier
@@ -96,11 +100,11 @@ fun AccountBookScreen(
                         .fillMaxWidth()
                         .height(70.dp)
                         .nonRippleClickable {
-                            goToAdInComeExpenditure(getToday())
+                            goToNewAccountBookItem(getToday())
                         }
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_pin),
+                        painter = painterResource(id = R.drawable.ic_plus),
                         contentDescription = null,
                         modifier = Modifier.size(24.dp)
                     )
@@ -110,20 +114,33 @@ fun AccountBookScreen(
         }
 
         LazyColumn(
-            contentPadding = PaddingValues(start = 20.dp, end = 17.dp, top = 10.dp, bottom = 70.dp)
+            contentPadding = PaddingValues(start = 20.dp, end = 17.dp, top = 10.dp, bottom = 70.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-
+            item {
+                viewModel.info.value?.let {
+                    SummaryThisMonthContainer(
+                        info = it,
+                        goToDetail = goToDetail
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
 fun SummaryThisMonthContainer(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    info: SummaryAccountBookThisMonthInfo,
+    goToDetail: (String) -> Unit
 ) {
     DoubleCard(
         bottomCardColor = MyColorTurquoise,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .nonRippleClickable { goToDetail(getToday()) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -155,7 +172,7 @@ fun SummaryThisMonthContainer(
         )
 
         Text(
-            text = "23.05.26 ~ 23.06.25",
+            text = "${info.startDate} ~ ${info.endDate}",
             style = textStyle12().copy(color = MyColorGray, textAlign = TextAlign.End),
             modifier = Modifier
                 .fillMaxWidth()
@@ -164,14 +181,14 @@ fun SummaryThisMonthContainer(
 
         TitleAmountRow(
             title = "수입",
-            amount = 1_000_000,
+            amount = info.income,
             modifier = Modifier.padding(horizontal = 15.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
 
         TitleAmountRow(
             title = "지출",
-            amount = -1_000_000,
+            amount = info.expenditure,
             modifier = Modifier.padding(horizontal = 15.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
@@ -185,7 +202,7 @@ fun SummaryThisMonthContainer(
 
         TitleAmountRow(
             title = "차액",
-            amount = 0,
+            amount = info.difference,
             isAmountBold = true,
             modifier = Modifier.padding(horizontal = 15.dp)
         )

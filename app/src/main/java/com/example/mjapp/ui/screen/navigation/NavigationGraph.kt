@@ -22,6 +22,7 @@ import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.accountbook.AccountBookScreen
 import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
+import com.example.mjapp.ui.screen.accountbook.detail.AccountBookDetailScreen
 import com.example.mjapp.util.makeRouteWithArgs
 
 @Composable
@@ -190,10 +191,18 @@ fun NavGraphBuilder.accountBookScreens(
         route = BottomNavItems.AccountBook.item.routeWithPostFix
     ) {
         AccountBookScreen(
-            goToAdInComeExpenditure = {
+            goToNewAccountBookItem = {
                 navController.navigate(
                     makeRouteWithArgs(
                         NavScreen.AddNewAccountBookItem.item.route,
+                        it
+                    )
+                )
+            },
+            goToDetail = {
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.AccountBookDetail.item.route,
                         it
                     )
                 )
@@ -209,6 +218,26 @@ fun NavGraphBuilder.accountBookScreens(
         )
     ) {
         AddNewAccountBookItemScreen(onBackClick)
+    }
+
+    /** 월별 가계부 상세 조회 **/
+    composable(
+        route = NavScreen.AccountBookDetail.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(NavScreen.AccountBookDetail.Date) { type = NavType.StringType }
+        )
+    ) {
+        AccountBookDetailScreen(
+            onBackClick = onBackClick,
+            goToNewAccountBookItem = {
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.AddNewAccountBookItem.item.route,
+                        it
+                    )
+                )
+            }
+        )
     }
 }
 

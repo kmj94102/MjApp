@@ -46,3 +46,52 @@ data class AccountBookItem(
         )
     }
 }
+
+data class DateConfiguration(
+    val date: String,
+    val baseDate: Int
+) {
+    companion object {
+        fun create(date: String, baseDate: Int) = DateConfiguration(
+            date = "${date.replace(".", "-")}T10:00:00.000Z",
+            baseDate = baseDate
+        )
+    }
+}
+
+
+data class SummaryAccountBookThisMonthInfo(
+    val startDate: String,
+    val endDate: String,
+    val income: Int,
+    val expenditure: Int,
+    val difference: Int
+)
+
+data class AccountBookDetailInfo(
+    val startDate: String,
+    val endDate: String,
+    val income: Int,
+    val expenditure: Int,
+    val list: List<AccountBookItem>
+) {
+    fun modifyDateFormat() = AccountBookDetailInfo(
+        startDate = startDate,
+        endDate = endDate,
+        income = income,
+        expenditure = expenditure,
+        list = list.map {
+            it.copy(date = it.date.replace("-", "."))
+        }
+    )
+
+    companion object {
+        fun init() = AccountBookDetailInfo(
+            startDate = "",
+            endDate = "",
+            income = 0,
+            expenditure = 0,
+            list = emptyList()
+        )
+    }
+}

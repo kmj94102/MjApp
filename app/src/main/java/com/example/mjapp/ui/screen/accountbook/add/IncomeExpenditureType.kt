@@ -22,6 +22,9 @@ enum class IncomeExpenditureType(
     CommunicationCost("communication_cost", "통신", R.drawable.ic_communication_cost),
     Bank("bank", "금융", R.drawable.ic_bank),
     FamilyEvent("family_event", "경조사", R.drawable.ic_family_event),
-    Other("other", "기타", R.drawable.ic_other)
+    Other("other", "기타", R.drawable.ic_other);
 
+    companion object {
+        fun getImageByType(type: String) = values().firstOrNull { it.type == type }?.imageRes ?: R.drawable.ic_other
+    }
 }
