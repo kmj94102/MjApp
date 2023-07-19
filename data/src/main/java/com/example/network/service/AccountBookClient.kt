@@ -1,6 +1,6 @@
 package com.example.network.service
 
-import com.example.network.model.AccountBookItem
+import com.example.network.model.AccountBookInsertItem
 import com.example.network.model.DateConfiguration
 import javax.inject.Inject
 
@@ -9,7 +9,7 @@ class AccountBookClient @Inject constructor(
 ) {
 
     suspend fun insertNewAccountBookItem(
-        item: AccountBookItem
+        item: AccountBookInsertItem
     ) = runCatching { service.insertAccountBookItem(item) }
 
     suspend fun fetchSummaryThisMonth(

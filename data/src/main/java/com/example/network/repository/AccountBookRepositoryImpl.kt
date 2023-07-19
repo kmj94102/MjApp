@@ -1,5 +1,6 @@
 package com.example.network.repository
 
+import com.example.network.model.AccountBookInsertItem
 import com.example.network.model.AccountBookItem
 import com.example.network.model.DateConfiguration
 import com.example.network.service.AccountBookClient
@@ -10,7 +11,7 @@ class AccountBookRepositoryImpl @Inject constructor(
 ) : AccountBookRepository {
 
     override suspend fun insertNewAccountBookItem(
-        item: AccountBookItem,
+        item: AccountBookInsertItem,
         isIncome: Boolean
     ) = client.insertNewAccountBookItem(item.uploadFormat(isIncome))
 

@@ -10,8 +10,18 @@ data class AccountBookItem(
     val amount: Int,
     val usageType: String,
     val whereToUse: String
+)
+
+data class AccountBookInsertItem(
+    val id: Int = 0,
+    val date: String,
+    val dateOfWeek: String,
+    val amount: Int,
+    val usageType: String,
+    val whereToUse: String,
+    val isAddFrequently: Boolean
 ) {
-    fun updateDate(dateValue: String): AccountBookItem {
+    fun updateDate(dateValue: String): AccountBookInsertItem {
         val sdfInput = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
         val sdfOutput = SimpleDateFormat("E", Locale.getDefault())
 
@@ -37,12 +47,13 @@ data class AccountBookItem(
     )
 
     companion object {
-        fun initItem() = AccountBookItem(
+        fun initItem() = AccountBookInsertItem(
             date = "",
             dateOfWeek = "",
             amount = 0,
             usageType = "",
-            whereToUse = ""
+            whereToUse = "",
+            isAddFrequently = false
         )
     }
 }

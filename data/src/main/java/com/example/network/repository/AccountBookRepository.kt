@@ -1,14 +1,11 @@
 package com.example.network.repository
 
-import com.example.network.model.AccountBookDetailInfo
-import com.example.network.model.AccountBookItem
-import com.example.network.model.DateConfiguration
-import com.example.network.model.SummaryAccountBookThisMonthInfo
+import com.example.network.model.*
 
 interface AccountBookRepository {
 
     suspend fun insertNewAccountBookItem(
-        item: AccountBookItem,
+        item: AccountBookInsertItem,
         isIncome: Boolean
     ): Result<String>
 

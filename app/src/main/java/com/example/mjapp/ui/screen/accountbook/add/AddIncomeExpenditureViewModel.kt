@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.screen.navigation.NavScreen
 import com.example.mjapp.util.isNumeric
 import com.example.mjapp.util.removeNumberFormat
-import com.example.network.model.AccountBookItem
+import com.example.network.model.AccountBookInsertItem
 import com.example.network.repository.AccountBookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,11 +17,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AddNewAccountBookItemViewModel @Inject constructor(
     private val repository: AccountBookRepository,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    private val _item = mutableStateOf(AccountBookItem.initItem())
-    val item: State<AccountBookItem> = _item
+    private val _item = mutableStateOf(AccountBookInsertItem.initItem())
+    val item: State<AccountBookInsertItem> = _item
 
     private val _status = mutableStateOf<Status>(Status.Init)
     val status: State<Status> = _status
@@ -65,6 +65,12 @@ class AddNewAccountBookItemViewModel @Inject constructor(
     fun updateWhereToUse(whereToUse: String) {
         _item.value = _item.value.copy(
             whereToUse = whereToUse
+        )
+    }
+
+    fun updateIsAddFrequently() {
+        _item.value = _item.value.copy(
+            isAddFrequently = _item.value.isAddFrequently.not()
         )
     }
 

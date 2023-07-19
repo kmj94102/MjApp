@@ -223,9 +223,9 @@ fun AddNewAccountBookItemScreen(
 
         CommonRadio(
             text = "즐겨찾기 등록",
-            check = false,
+            check = viewModel.item.value.isAddFrequently,
             onCheckedChange = {
-
+                viewModel.updateIsAddFrequently()
             },
             color = color,
             shape = RoundedCornerShape(3.dp),
