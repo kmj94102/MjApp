@@ -43,7 +43,7 @@ class PokemonDexViewModel @Inject constructor(
 
     private fun fetchPokemonDex() = viewModelScope.launch {
         repository.fetchPokemonList(
-            name = _search.value,
+            name = _search.value.trim(),
             skip = page,
             limit = limit
         ) { isMoreDate, list ->

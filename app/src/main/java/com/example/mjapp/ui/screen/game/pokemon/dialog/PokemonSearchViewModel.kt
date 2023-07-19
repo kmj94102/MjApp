@@ -32,7 +32,7 @@ class PokemonSearchViewModel @Inject constructor(
 
     fun searchPokemonList() {
         repository
-            .fetchBriefPokemonList(search = _search.value)
+            .fetchBriefPokemonList(search = _search.value.trim())
             .onEach {
                 _list.clear()
                 _list.addAll(it)
