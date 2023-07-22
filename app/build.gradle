@@ -51,7 +51,7 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.fragment:fragment-ktx:1.5.7'
+    implementation 'androidx.fragment:fragment-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -80,11 +80,16 @@ dependencies {
     // Coil
     implementation "io.coil-kt:coil-compose:2.3.0"
 
+    // Lottie
+    def lottieVersion = "6.0.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
+    implementation "com.airbnb.android:lottie-compose:$lottieVersion"
+
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // compose navigation
-    def nav_version = "2.5.3"
+    def nav_version = "2.6.0"
     implementation "androidx.navigation:navigation-compose:$nav_version"
     implementation "com.google.accompanist:accompanist-navigation-animation:0.24.13-rc"
 
@@ -93,8 +98,8 @@ dependencies {
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
     kapt "com.google.dagger:hilt-compiler:2.44"
 
-    def paging_version = "3.1.1"
+    def paging_version = "3.2.0-rc01"
     implementation "androidx.paging:paging-runtime:$paging_version"
-    implementation "androidx.paging:paging-compose:1.0.0-alpha19"
+    implementation "androidx.paging:paging-compose:3.2.0-rc01"
 
 }
