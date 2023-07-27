@@ -21,8 +21,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.util.textStyle16
 
@@ -33,9 +31,9 @@ import com.example.mjapp.util.textStyle16
 fun CommonTextField(
     value: String,
     onTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
     textStyle: TextStyle = textStyle16(),
     hint: String = "",
-    modifier: Modifier = Modifier,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,

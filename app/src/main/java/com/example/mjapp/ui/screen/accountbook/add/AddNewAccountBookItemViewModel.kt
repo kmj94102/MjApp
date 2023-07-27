@@ -3,9 +3,9 @@ package com.example.mjapp.ui.screen.accountbook.add
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.screen.navigation.NavScreen
+import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.isNumeric
 import com.example.mjapp.util.removeNumberFormat
 import com.example.network.model.AccountBookInsertItem
@@ -18,13 +18,10 @@ import javax.inject.Inject
 class AddNewAccountBookItemViewModel @Inject constructor(
     private val repository: AccountBookRepository,
     savedStateHandle: SavedStateHandle
-): ViewModel() {
+): BaseViewModel() {
 
     private val _item = mutableStateOf(AccountBookInsertItem.initItem())
     val item: State<AccountBookInsertItem> = _item
-
-    private val _status = mutableStateOf<Status>(Status.Init)
-    val status: State<Status> = _status
 
     private val _isIncome = mutableStateOf(true)
     val isIncome: State<Boolean> = _isIncome
@@ -77,7 +74,7 @@ class AddNewAccountBookItemViewModel @Inject constructor(
     fun insertNewAccountBook() = viewModelScope.launch {
         val check = _item.value.checkValidity()
         if (check.isNotEmpty()) {
-            _status.value = Status.Failure(check)
+            _status.value.updateMessage(check)
             return@launch
         }
 
@@ -87,32 +84,16 @@ class AddNewAccountBookItemViewModel @Inject constructor(
                 isIncome = _isIncome.value
             )
             .onSuccess {
-                _status.value = Status.Success(it)
+                _status.value.updateMessage(it)
             }
             .onFailure {
                 it.printStackTrace()
-                _status.value = Status.Failure("등록 실패")
+                _status.value.updateMessage("등록 실패")
             }
     }
 
     fun updateIsIncome(isIncome: Boolean) {
         _isIncome.value = isIncome
-    }
-
-    fun updateStateInit() {
-        _status.value = Status.Init
-    }
-
-    sealed class Status {
-        object Init: Status()
-
-        data class Success(
-            val msg: String
-        ): Status()
-
-        data class Failure(
-            val msg: String
-        ): Status()
     }
 
 }

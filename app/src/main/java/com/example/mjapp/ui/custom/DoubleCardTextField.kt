@@ -1,7 +1,7 @@
 package com.example.mjapp.ui.custom
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,7 +46,10 @@ fun DoubleCardTextField(
         minHeight = minHeight,
         modifier = modifier
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             CommonTextField(
                 value = value,
                 onTextChange = onTextChange,
@@ -62,12 +65,10 @@ fun DoubleCardTextField(
                 singleLine = singleLine,
                 maxLines = maxLines,
                 onSearch = onSearch,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.weight(1f)
             )
 
-            Box(modifier = Modifier.align(Alignment.CenterEnd)) {
-                tailIcon()
-            }
+            tailIcon()
         }
     }
 }

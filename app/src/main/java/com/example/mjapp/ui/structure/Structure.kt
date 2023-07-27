@@ -83,6 +83,31 @@ fun BaseContainer(
 }
 
 @Composable
+fun HighMediumLowContainer(
+    status: BaseStatus,
+    paddingValues: PaddingValues =
+        PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
+    reload: (() -> Unit)? = null,
+    errorScreen: (@Composable () -> Unit)? = null,
+    heightContent: @Composable () -> Unit,
+    mediumContent: @Composable () -> Unit,
+    lowContent: @Composable () -> Unit
+) {
+    BaseContainer(
+        status = status,
+        paddingValues = paddingValues,
+        reload = reload,
+        errorScreen = errorScreen
+    ) {
+        heightContent()
+        Box(modifier = Modifier.weight(1f)) {
+            mediumContent()
+        }
+        lowContent()
+    }
+}
+
+@Composable
 fun NetworkErrorScreen(
     reload: () -> Unit
 ) {
