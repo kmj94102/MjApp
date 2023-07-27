@@ -2,43 +2,58 @@ package com.example.mjapp.ui.screen.accountbook
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.getToday
+import com.example.network.model.AccountBookMainInfo
 import com.example.network.model.DateConfiguration
-import com.example.network.model.SummaryAccountBookThisMonthInfo
+import com.example.network.model.NetworkError
 import com.example.network.repository.AccountBookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountBookViewModel @Inject constructor(
     private val repository: AccountBookRepository
-): ViewModel() {
+) : BaseViewModel() {
 
-    private val _info = mutableStateOf<SummaryAccountBookThisMonthInfo?>(null)
-    val info: State<SummaryAccountBookThisMonthInfo?> = _info
+    private val _info = mutableStateOf<AccountBookMainInfo?>(null)
+    val info: State<AccountBookMainInfo?> = _info
 
     init {
         fetchSummaryThisMonth()
     }
 
-    private fun fetchSummaryThisMonth() = viewModelScope.launch {
+    fun fetchSummaryThisMonth() {
         val config = DateConfiguration.create(
             date = getToday(),
             baseDate = 25
         )
 
         repository
-            .fetchSummaryThisMonth(config)
-            .onSuccess {
+            .fetchAccountBookInfo(config)
+            .onStart {
+                _status.value.startLoading()
+            }
+            .onEach {
                 _info.value = it
             }
-            .onFailure {
-                it.printStackTrace()
-                _info.value = null
+            .catch {
+                if (it is NetworkError) {
+                    _status.value.updateNetworkErrorState(true)
+                } else {
+                    _status.value.updateMessage(it.message ?: "??")
+                }
             }
+            .onCompletion {
+                _status.value.endLoading()
+            }
+            .launchIn(viewModelScope)
     }
 
 }

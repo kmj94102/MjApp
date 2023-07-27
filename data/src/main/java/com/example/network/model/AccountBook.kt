@@ -58,6 +58,38 @@ data class AccountBookInsertItem(
     }
 }
 
+data class AccountBookMainInfo(
+    val thisMonthSummary: ThisMonthSummary,
+    val lastMonthAnalysis: LastMonthAnalysis,
+    val thisYearSummary: List<ThisYearSummaryItem>
+)
+
+data class ThisMonthSummary(
+    val startDate: String,
+    val endDate: String,
+    val income: Int,
+    val expenditure: Int,
+    val difference: Int
+)
+
+data class LastMonthAnalysis(
+    val start: String,
+    val end: String,
+    val result: List<LastMonthAnalysisItem>
+)
+
+data class LastMonthAnalysisItem(
+    val usageType: String,
+    val amount: Int
+)
+
+data class ThisYearSummaryItem(
+    val month: Int,
+    val startDate: String,
+    val endDate: String,
+    val info: Int
+)
+
 data class DateConfiguration(
     val date: String,
     val baseDate: Int
@@ -69,15 +101,6 @@ data class DateConfiguration(
         )
     }
 }
-
-
-data class SummaryAccountBookThisMonthInfo(
-    val startDate: String,
-    val endDate: String,
-    val income: Int,
-    val expenditure: Int,
-    val difference: Int
-)
 
 data class AccountBookDetailInfo(
     val startDate: String,
@@ -106,3 +129,10 @@ data class AccountBookDetailInfo(
         )
     }
 }
+
+data class FixedAccountBookItem(
+    val date: String,
+    val amount: Int,
+    val usageType: String,
+    val whereToUse: String
+)

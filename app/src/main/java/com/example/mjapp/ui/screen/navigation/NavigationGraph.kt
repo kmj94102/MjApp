@@ -21,6 +21,7 @@ import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.accountbook.AccountBookScreen
+import com.example.mjapp.ui.screen.accountbook.add.AddFixedAccountBookScreen
 import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
 import com.example.mjapp.ui.screen.accountbook.detail.AccountBookDetailScreen
 import com.example.mjapp.util.makeRouteWithArgs
@@ -59,7 +60,7 @@ fun NavGraphBuilder.gameScreens(
     ) {
         GameScreen(
             goToScreen = {
-                val route = when(it) {
+                val route = when (it) {
                     Constants.PokemonDex -> {
                         NavScreen.PokemonDex.item.routeWithPostFix
                     }
@@ -117,7 +118,7 @@ fun NavGraphBuilder.gameScreens(
     composable(
         route = NavScreen.PokemonAdd.item.routeWithPostFix
     ) {
-        PokemonAddScreen (
+        PokemonAddScreen(
             onBackClick = onBackClick
         )
     }
@@ -199,6 +200,14 @@ fun NavGraphBuilder.accountBookScreens(
                     )
                 )
             },
+            goToFixedAccountBookItem = {
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.AddFixedAccountBookItem.item.route,
+                        it
+                    )
+                )
+            },
             goToDetail = {
                 navController.navigate(
                     makeRouteWithArgs(
@@ -218,6 +227,18 @@ fun NavGraphBuilder.accountBookScreens(
         )
     ) {
         AddNewAccountBookItemScreen(onBackClick)
+    }
+
+    /** 고정 내역 추가 화면 **/
+    composable(
+        route = NavScreen.AddFixedAccountBookItem.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(Constants.Date) { type = NavType.StringType }
+        )
+    ) {
+        AddFixedAccountBookScreen(
+            onBackClick = onBackClick
+        )
     }
 
     /** 월별 가계부 상세 조회 **/

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MjApp</string>
+
+    <!-- 에러 문구 -->
+    <string name="network_error_message">네트워크에 오류가 발생하였습니다.\n잠시 후 이용바랍니다.</string>
+    <string name="reload">다시 조회</string>
 </resources>

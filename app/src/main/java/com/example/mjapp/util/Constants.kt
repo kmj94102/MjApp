@@ -7,4 +7,5 @@ object Constants {
     const val PokemonImageChange = "pokemon_image_change"
     const val ElswordIntroduce = "elsword_introduce"
     const val ElswordCounter = "elsword_counter"
+    const val Date = "date"
 }

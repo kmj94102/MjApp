@@ -26,5 +26,7 @@ enum class IncomeExpenditureType(
 
     companion object {
         fun getImageByType(type: String) = values().firstOrNull { it.type == type }?.imageRes ?: R.drawable.ic_other
+
+        fun getNameByType(type: String) = values().firstOrNull { it.type == type }?.typeName ?: ""
     }
 }

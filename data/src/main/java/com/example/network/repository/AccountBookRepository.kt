@@ -1,6 +1,7 @@
 package com.example.network.repository
 
 import com.example.network.model.*
+import kotlinx.coroutines.flow.Flow
 
 interface AccountBookRepository {
 
@@ -9,9 +10,9 @@ interface AccountBookRepository {
         isIncome: Boolean
     ): Result<String>
 
-    suspend fun fetchSummaryThisMonth(
+    fun fetchAccountBookInfo(
         dateConfiguration: DateConfiguration
-    ): Result<SummaryAccountBookThisMonthInfo>
+    ): Flow<AccountBookMainInfo>
 
     suspend fun fetchThisMonthDetail(
         dateConfiguration: DateConfiguration

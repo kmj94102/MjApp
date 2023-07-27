@@ -12,9 +12,9 @@ class AccountBookClient @Inject constructor(
         item: AccountBookInsertItem
     ) = runCatching { service.insertAccountBookItem(item) }
 
-    suspend fun fetchSummaryThisMonth(
+    suspend fun fetchAccountBookInfo(
         dateConfiguration: DateConfiguration
-    ) = runCatching { service.fetchSummaryThisMonth(dateConfiguration) }
+    ) = runCatching { service.fetchAccountBookInfo(dateConfiguration) }
 
     suspend fun fetchThisMonthDetail(
         dateConfiguration: DateConfiguration

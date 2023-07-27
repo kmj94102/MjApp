@@ -1,5 +1,7 @@
 package com.example.mjapp.ui.screen.navigation
 
+import com.example.mjapp.util.Constants
+
 data class MainNavItem(
     val route: String,
     val routeWithPostFix: String = route
@@ -65,6 +67,13 @@ sealed class NavScreen(val item: MainNavItem) {
     ) {
         const val Date = "date"
     }
+
+    object AddFixedAccountBookItem: NavScreen(
+        MainNavItem(
+            route = "AddFixedAccountBookItem",
+            routeWithPostFix = "AddFixedAccountBookItem/{${Constants.Date}}"
+        )
+    )
 
     object AccountBookDetail: NavScreen(
         MainNavItem(
