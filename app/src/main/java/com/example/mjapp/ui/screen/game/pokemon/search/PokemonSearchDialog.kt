@@ -15,12 +15,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.mjapp.R
-import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
+import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -29,12 +30,13 @@ import com.example.mjapp.util.textStyle16B
 
 @Composable
 fun PokemonNameSearchDialog(
+    isShow: Boolean,
     onDismiss: () -> Unit,
     onSearch: (String) -> Unit
 ) {
-    val searchValue = remember {
-        mutableStateOf("")
-    }
+    if (isShow.not()) return
+
+    val searchValue = remember { mutableStateOf("") }
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Column(
@@ -48,13 +50,12 @@ fun PokemonNameSearchDialog(
                 boxColor = MyColorRed,
                 iconRes = R.drawable.ic_close,
                 iconSize = 21.dp,
+                onClick = onDismiss,
                 modifier = Modifier
                     .padding(vertical = 5.dp)
                     .padding(end = 20.dp)
                     .align(Alignment.End)
-            ) {
-                onDismiss()
-            }
+            )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -64,22 +65,18 @@ fun PokemonNameSearchDialog(
                         )
                     )
             ) {
-                DoubleCard(
+                DoubleCardTextField(
+                    value = searchValue.value,
+                    onTextChange = { searchValue.value = it },
+                    hint = "포켓몬 이름",
+                    imeAction = ImeAction.Search,
+                    onSearch = onSearch,
                     bottomCardColor = MyColorRed,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 28.dp)
                         .padding(horizontal = 20.dp)
-                ) {
-                    CommonTextField(
-                        value = searchValue.value,
-                        onTextChange = {
-                            searchValue.value = it
-                        },
-                        contentPadding = PaddingValues(vertical = 10.dp, horizontal = 15.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                )
                 Spacer(modifier = Modifier.height(25.dp))
                 DoubleCard(
                     topCardColor = MyColorRed,
@@ -87,15 +84,15 @@ fun PokemonNameSearchDialog(
                         .fillMaxWidth()
                         .padding(bottom = 28.dp)
                         .padding(horizontal = 20.dp)
+                        .nonRippleClickable {
+                            onSearch(searchValue.value)
+                        }
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .nonRippleClickable {
-                                onSearch(searchValue.value)
-                            }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_search),

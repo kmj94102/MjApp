@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonLottieAnimation
 import com.example.mjapp.ui.custom.DoubleCard
+import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
@@ -62,6 +64,8 @@ fun BaseContainer(
     status: BaseStatus,
     paddingValues: PaddingValues = PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp),
     reload: (() -> Unit)? = null,
+    onBackClick: (() -> Unit)? = null,
+    color: Color = MyColorRed,
     errorScreen: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -77,9 +81,46 @@ fun BaseContainer(
             }
         },
         errorScreen = {
-            errorScreen?.invoke() ?: NetworkErrorScreen { reload?.invoke() }
+            if (errorScreen != null)
+                errorScreen()
+            else {
+                NetworkErrorScreen(
+                    onBackClick = onBackClick,
+                    color = color,
+                    reload = {
+                        reload?.invoke()
+                    }
+                )
+            }
         }
     )
+}
+
+@Composable
+fun HeaderBodyContainer(
+    status: BaseStatus,
+    paddingValues: PaddingValues =
+        PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
+    reload: (() -> Unit)? = null,
+    onBackClick: (() -> Unit)? = null,
+    color: Color = MyColorRed,
+    errorScreen: (@Composable () -> Unit)? = null,
+    headerContent: @Composable () -> Unit,
+    bodyContent: @Composable () -> Unit
+) {
+    BaseContainer(
+        status = status,
+        paddingValues = paddingValues,
+        reload = reload,
+        onBackClick = onBackClick,
+        color = color,
+        errorScreen = errorScreen
+    ) {
+        headerContent()
+        Box(modifier = Modifier.weight(1f)) {
+            bodyContent()
+        }
+    }
 }
 
 @Composable
@@ -88,6 +129,8 @@ fun HighMediumLowContainer(
     paddingValues: PaddingValues =
         PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
     reload: (() -> Unit)? = null,
+    onBackClick: (() -> Unit)? = null,
+    color: Color = MyColorRed,
     errorScreen: (@Composable () -> Unit)? = null,
     heightContent: @Composable () -> Unit,
     mediumContent: @Composable () -> Unit,
@@ -97,6 +140,8 @@ fun HighMediumLowContainer(
         status = status,
         paddingValues = paddingValues,
         reload = reload,
+        onBackClick = onBackClick,
+        color = color,
         errorScreen = errorScreen
     ) {
         heightContent()
@@ -109,7 +154,9 @@ fun HighMediumLowContainer(
 
 @Composable
 fun NetworkErrorScreen(
-    reload: () -> Unit
+    onBackClick: (() -> Unit)? = null,
+    color: Color = MyColorRed,
+    reload: () -> Unit,
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -142,6 +189,13 @@ fun NetworkErrorScreen(
                         .padding(vertical = 10.dp)
                 )
             }
+        }
+        onBackClick?.let {
+            IconBox(
+                boxColor = color,
+                onClick = onBackClick,
+                modifier = Modifier.padding(top = 22.dp, start = 20.dp)
+            )
         }
     }
 }

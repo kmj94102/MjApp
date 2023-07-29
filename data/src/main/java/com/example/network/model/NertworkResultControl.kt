@@ -5,4 +5,7 @@ fun Throwable.checkNetworkError() = message?.uppercase()?.contains("HTTP") == tr
 object NetworkError : Throwable()
 
 fun <T> Result<T>.getFailureThrow() =
-    onFailure { throw if (it.checkNetworkError()) NetworkError else it }
+    onFailure {
+        it.printStackTrace()
+        throw if (it.checkNetworkError()) NetworkError else it
+    }

@@ -1,31 +1,47 @@
 package com.example.mjapp.ui.screen.game.pokemon.dex
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mjapp.R
-import com.example.mjapp.ui.custom.ConditionAsyncImage
-import com.example.mjapp.ui.custom.DoubleCard
+import com.example.mjapp.ui.custom.AsyncImageDoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.screen.game.pokemon.search.PokemonNameSearchDialog
-import com.example.mjapp.ui.theme.*
+import com.example.mjapp.ui.structure.HeaderBodyContainer
+import com.example.mjapp.ui.theme.MyColorBeige
+import com.example.mjapp.ui.theme.MyColorGray
+import com.example.mjapp.ui.theme.MyColorLightGray
+import com.example.mjapp.ui.theme.MyColorRed
+import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle12B
@@ -37,57 +53,102 @@ fun PokemonDexScreen(
     onBackClick: () -> Unit,
     viewModel: PokemonDexViewModel = hiltViewModel()
 ) {
-    val isDetailDialogShow = remember { mutableStateOf(false) }
-    val isSearchDialogShow = remember { mutableStateOf(false) }
-    val state = rememberLazyGridState()
+    var isDetailDialogShow by remember { mutableStateOf(false) }
+    var isSearchDialogShow by remember { mutableStateOf(false) }
+    val status by viewModel.status.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 22.dp, start = 20.dp, end = 17.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IconBox(
-                boxColor = MyColorRed
-            ) {
-                onBackClick()
-            }
-            Text(
-                text = viewModel.search.value,
-                style = textStyle16B().copy(textAlign = TextAlign.Center),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 40.dp)
+    HeaderBodyContainer(
+        status = status,
+        reload = viewModel::fetchPokemonDex,
+        onBackClick = onBackClick,
+        headerContent = {
+            PokemonDexHeader(
+                onBackClick = onBackClick,
+                viewModel = viewModel,
+                onSearchClick = { isSearchDialogShow = true }
             )
-            IconBox(
-                iconRes = R.drawable.ic_shiny,
-                iconColor = if (viewModel.isShiny.value) MyColorRed else MyColorGray,
-                boxColor = MyColorWhite
-            ) {
-                viewModel.toggleShinyState()
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            IconBox(
-                iconRes = R.drawable.ic_search,
-                iconSize = 19.dp,
-                boxColor = MyColorBeige
-            ) {
-                isSearchDialogShow.value = true
-            }
-            Spacer(modifier = Modifier.width(3.dp))
+        },
+        bodyContent = {
+            PokemonDexBody(
+                viewModel = viewModel,
+                onDetailClick = { isDetailDialogShow = true }
+            )
         }
+    )
 
+    DetailDialog(
+        isShow = isDetailDialogShow,
+        number = viewModel.selectNumber.value,
+        onCatchStateChange = { viewModel.updateCatchState(it) },
+        onDismiss = { isDetailDialogShow = false },
+        onSelectChange = { viewModel.updateSelectNumber(it) }
+    )
+
+    PokemonNameSearchDialog(
+        isShow = isSearchDialogShow,
+        onDismiss = { isSearchDialogShow = false },
+        onSearch = {
+            viewModel.updateSearchValue(it)
+            isSearchDialogShow = false
+        }
+    )
+}
+
+@Composable
+fun PokemonDexHeader(
+    onBackClick: () -> Unit,
+    viewModel: PokemonDexViewModel,
+    onSearchClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        IconBox(
+            boxColor = MyColorRed,
+            onClick = onBackClick
+        )
+        Text(
+            text = viewModel.search.value,
+            style = textStyle16B().copy(textAlign = TextAlign.Center),
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 40.dp)
+        )
+        IconBox(
+            iconRes = R.drawable.ic_shiny,
+            iconColor = if (viewModel.isShiny.value) MyColorRed else MyColorGray,
+            boxColor = MyColorWhite,
+            onClick = viewModel::toggleShinyState
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        IconBox(
+            iconRes = R.drawable.ic_search,
+            iconSize = 19.dp,
+            boxColor = MyColorBeige,
+            onClick = onSearchClick
+        )
+        Spacer(modifier = Modifier.width(3.dp))
+    }
+}
+
+@Composable
+fun PokemonDexBody(
+    viewModel: PokemonDexViewModel,
+    onDetailClick: () -> Unit
+) {
+    val state = rememberLazyGridState()
+    val index by remember { derivedStateOf { state.firstVisibleItemIndex } }
+
+    if (viewModel.list.isEmpty()) {
+        PokemonListEmptyItem()
+    } else {
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             state = state,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(top = 15.dp, bottom = 50.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(viewModel.list.size) {
                 PokemonItem(
@@ -95,48 +156,35 @@ fun PokemonDexScreen(
                     isShiny = viewModel.isShiny.value,
                     onClick = { number ->
                         viewModel.updateSelectNumber(number)
-                        isDetailDialogShow.value = true
+                        onDetailClick()
                     }
                 )
             }
         }
     }
-
-    LaunchedEffect(state.firstVisibleItemIndex) {
+    LaunchedEffect(index) {
         if (viewModel.isMoreDate.value) {
-            viewModel.fetchMoreData(state.firstVisibleItemIndex)
+            viewModel.fetchMoreData(index)
         }
     }
+}
 
-    if (viewModel.isLoading.value) {
-        Dialog(onDismissRequest = {}) {
-            CircularProgressIndicator()
+@Composable
+fun PokemonListEmptyItem() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                painter = painterResource(id = R.drawable.img_pokemon_empty_1),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(211.dp, 197.dp)
+                    .padding(bottom = 10.dp)
+            )
+            Text(
+                text = "검색 결과가 없습니다.",
+                style = textStyle16B().copy(color = MyColorLightGray)
+            )
         }
-    }
-
-    if (isDetailDialogShow.value) {
-        DetailDialog(
-            number = viewModel.selectNumber.value,
-            onCatchStateChange = {
-                viewModel.updateCatchState(it)
-            },
-            onDismiss = {
-                isDetailDialogShow.value = false
-            },
-            onSelectChange = {
-                viewModel.updateSelectNumber(it)
-            }
-        )
-    }
-
-    if (isSearchDialogShow.value) {
-        PokemonNameSearchDialog(
-            onDismiss = { isSearchDialogShow.value = false },
-            onSearch = {
-                viewModel.updateSearchValue(it)
-                isSearchDialogShow.value = false
-            }
-        )
     }
 }
 
@@ -148,32 +196,21 @@ fun PokemonItem(
 ) {
     Column(
         modifier = Modifier
-            .width(70.dp)
             .nonRippleClickable {
                 onClick(info.number)
             }
     ) {
-        DoubleCard(
+        AsyncImageDoubleCard(
+            condition = isShiny,
+            trueImage = info.shinySpotlight,
+            falseImage = info.spotlight,
+            placeholderRes = R.drawable.img_egg,
+            size = DpSize(56.dp, 56.dp),
+            innerPadding = PaddingValues(6.dp),
+            saturation = if (info.isCatch) 1f else 0f,
             topCardColor = if (info.isCatch) MyColorWhite else MyColorLightGray,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            ConditionAsyncImage(
-                value = isShiny,
-                trueImage = info.shinySpotlight,
-                falseImage = info.spotlight,
-                placeholder = painterResource(id = R.drawable.img_egg),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                colorFilter = ColorFilter.colorMatrix(
-                    ColorMatrix().apply {
-                        setToSaturation(if (info.isCatch) 1f else 0f)
-                    }
-                ),
-                modifier = Modifier
-                    .padding(6.dp)
-                    .fillMaxWidth()
-            )
-        }
+            modifier = Modifier.size(71.dp)
+        )
         Text(
             text = "No.${info.number}",
             style = textStyle12().copy(fontSize = 10.sp),

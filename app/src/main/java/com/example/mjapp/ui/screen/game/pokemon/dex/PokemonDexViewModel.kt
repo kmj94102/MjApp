@@ -3,24 +3,26 @@ package com.example.mjapp.ui.screen.game.pokemon.dex
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.structure.BaseViewModel
+import com.example.network.model.NetworkError
 import com.example.network.model.PokemonSummary
 import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonDexViewModel @Inject constructor(
     private val repository: PokemonRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _selectNumber = mutableStateOf("")
     val selectNumber: State<String> = _selectNumber
-
-    private val _isLoading = mutableStateOf(false)
-    val isLoading: State<Boolean> = _isLoading
 
     private val _isShiny = mutableStateOf(false)
     val isShiny: State<Boolean> = _isShiny
@@ -41,15 +43,23 @@ class PokemonDexViewModel @Inject constructor(
         fetchPokemonDex()
     }
 
-    private fun fetchPokemonDex() = viewModelScope.launch {
-        repository.fetchPokemonList(
-            name = _search.value.trim(),
-            skip = page,
-            limit = limit
-        ) { isMoreDate, list ->
-            _isMoreDate.value = isMoreDate
-            _list.addAll(list)
-        }
+    fun fetchPokemonDex() {
+        repository
+            .fetchPokemonList(
+                name = _search.value.trim(),
+                skip = page,
+                limit = limit
+            )
+            .onStart { _status.value.startLoading() }
+            .onEach { (isMoreDate, list) ->
+                _isMoreDate.value = isMoreDate
+                _list.addAll(list)
+            }
+            .catch {
+                if (it is NetworkError) _status.value.updateNetworkErrorState(true)
+            }
+            .onCompletion { _status.value.endLoading() }
+            .launchIn(viewModelScope)
     }
 
     fun fetchMoreData(index: Int) {

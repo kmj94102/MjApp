@@ -3,8 +3,6 @@ package com.example.mjapp.ui.custom
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -14,28 +12,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.mjapp.ui.theme.MyColorBlack
-import com.example.mjapp.ui.theme.MyColorGray
-import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.textStyle16B
 
 /**
  * 2중 카드
@@ -138,12 +136,75 @@ fun ImageDoubleCard(
         bottomCardColor = bottomCardColor,
         modifier = modifier
     ) {
-            Image(
-                painter = painterResource(id = resId),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .size(imageSize)
-            )
+        Image(
+            painter = painterResource(id = resId),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(innerPadding)
+                .size(imageSize)
+        )
+    }
+}
+
+@Composable
+fun AsyncImageDoubleCard(
+    modifier: Modifier = Modifier,
+    connerSize: Dp = 10.dp,
+    topCardColor: Color = MyColorWhite,
+    bottomCardColor: Color = MyColorWhite,
+    condition: Boolean,
+    trueImage: String,
+    falseImage: String,
+    @DrawableRes
+    placeholderRes: Int,
+    saturation: Float = 1f,
+    size: DpSize,
+    innerPadding: PaddingValues
+) {
+    CenteredDoubleCard(
+        connerSize = connerSize,
+        topCardColor = topCardColor,
+        bottomCardColor = bottomCardColor,
+        modifier = modifier
+    ) {
+        ConditionAsyncImage(
+            value = condition,
+            trueImage = trueImage,
+            falseImage = falseImage,
+            placeholder = painterResource(id = placeholderRes),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+            colorFilter = ColorFilter.colorMatrix(
+                ColorMatrix().apply { setToSaturation(saturation) }
+            ),
+            modifier = Modifier
+                .padding(innerPadding)
+                .size(size)
+        )
+    }
+}
+
+@Composable
+fun DoubleCardButton(
+    modifier: Modifier = Modifier,
+    topCardColor: Color = MyColorWhite,
+    bottomCardColor: Color = MyColorWhite,
+    text: String,
+    textStyle: TextStyle = textStyle16B(),
+    innerPadding: PaddingValues = PaddingValues(vertical = 10.dp)
+) {
+    DoubleCard(
+        topCardColor = topCardColor,
+        bottomCardColor = bottomCardColor,
+        modifier = modifier
+    ) {
+        Text(
+            text = text,
+            style = textStyle,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(innerPadding)
+        )
     }
 }

@@ -49,12 +49,15 @@ import com.example.network.model.TypeInfo
  * **/
 @Composable
 fun DetailDialog(
+    isShow: Boolean,
     number: String,
     onDismiss: () -> Unit,
     onCatchStateChange: (Boolean) -> Unit,
     onSelectChange: (String) -> Unit,
     viewModel: PokemonDetailViewModel = hiltViewModel(),
 ) {
+    if (isShow.not()) return
+
     viewModel.fetchPokemonDetail(number)
     val info = viewModel.info.value
     val context = LocalContext.current
@@ -140,6 +143,7 @@ fun DetailDialog(
                     }
                 }
             }
+
             /** 하단 영역 **/
             Row(
                 verticalAlignment = Alignment.CenterVertically,
