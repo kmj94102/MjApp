@@ -1,8 +1,8 @@
 package com.example.mjapp.ui.screen.game.pokemon.counter
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.network.model.PokemonCounter
 import com.example.network.model.UpdatePokemonCatch
 import com.example.network.repository.PokemonRepository
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PokemonCounterViewModel @Inject constructor(
     private val repository: PokemonRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _list = mutableStateListOf<PokemonCounter>()
     val list: List<PokemonCounter> = _list
@@ -36,6 +36,10 @@ class PokemonCounterViewModel @Inject constructor(
                 _list.clear()
             }
             .launchIn(viewModelScope)
+    }
+
+    fun insertPokemonCounter(number: String) = viewModelScope.launch {
+        repository.insertPokemonCounter(number)
     }
 
     fun updateCounter(value: Int, number: String) = viewModelScope.launch {

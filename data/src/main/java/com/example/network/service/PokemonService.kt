@@ -9,8 +9,12 @@ import retrofit2.http.Query
 
 interface PokemonService {
 
-    /** 포켓몬 조회 **/
-    @GET("pokemonList")
+    /** 포켓몬 번호로 정보 조회 **/
+    @GET("/pokemon")
+    suspend fun fetchPokemonWithNumber(@Query("number") number: String): PokemonInfo
+
+    /** 포켓몬 리스트 조회 **/
+    @GET("/pokemonList")
     suspend fun fetchPokemonList(
         @Query("name") name: String,
         @Query("skip") skip: Int,
@@ -22,7 +26,7 @@ interface PokemonService {
     suspend fun fetchPokemonDetail(@Path("number") number: String): PokemonDetailInfo
 
     /** 포켓몬 추가 **/
-    @POST("insert/pokemon")
+    @POST("/insert/pokemon")
     suspend fun insertPokemon(@Body item: PokemonInfo): String
 
     /** 포켓몬 잡은 상태 업데이트 **/
@@ -30,7 +34,7 @@ interface PokemonService {
     suspend fun updatePokemonCatch(@Body item: UpdatePokemonCatch): String
 
     /** 특성 추가 **/
-    @POST("insert/char")
+    @POST("/insert/char")
     suspend fun insertCharacteristic(@Body item: CharacteristicInfo): String
 
     /**

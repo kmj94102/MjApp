@@ -127,7 +127,6 @@ fun PokemonAddScreen(
                 number = number,
                 image = image
             )
-            isSearchDialogShow.value = false
         }
     )
 

@@ -23,6 +23,8 @@ interface PokemonRepository {
     /** 포켓몬 카운터 추가 **/
     suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo)
 
+    suspend fun insertPokemonCounter(number: String)
+
     /** 포켓몬 카운터 조회 **/
     fun fetchPokemonCounter(): Flow<List<PokemonCounter>>
 

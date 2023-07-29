@@ -33,6 +33,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
 
 /**
@@ -191,12 +192,13 @@ fun DoubleCardButton(
     bottomCardColor: Color = MyColorWhite,
     text: String,
     textStyle: TextStyle = textStyle16B(),
-    innerPadding: PaddingValues = PaddingValues(vertical = 10.dp)
+    innerPadding: PaddingValues = PaddingValues(vertical = 10.dp),
+    onClick: () -> Unit
 ) {
     DoubleCard(
         topCardColor = topCardColor,
         bottomCardColor = bottomCardColor,
-        modifier = modifier
+        modifier = modifier.nonRippleClickable(onClick)
     ) {
         Text(
             text = text,

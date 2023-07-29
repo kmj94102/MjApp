@@ -9,8 +9,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -21,12 +23,15 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonButton
 import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
+import com.example.mjapp.ui.screen.game.pokemon.dialog.PokemonSearchDialog
+import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
@@ -36,78 +41,93 @@ import com.example.network.model.PokemonCounter
 @Composable
 fun PokemonCounterScreen(
     onBackClick: () -> Unit,
-    goToPokemonDex: () -> Unit,
     viewModel: PokemonCounterViewModel = hiltViewModel()
 ) {
-    val isShow = remember {
-        mutableStateOf(false)
-    }
-    val selectValue = remember {
-        mutableStateOf(PokemonCounter.init())
-    }
+    var isCustomIncreaseSettingShow by remember { mutableStateOf(false) }
+    var isPokemonSearchShow by remember { mutableStateOf(false) }
+    val selectValue = remember { mutableStateOf(PokemonCounter.init()) }
+    val status by viewModel.status.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        IconBox(
-            boxColor = MyColorRed,
-            modifier = Modifier
-                .padding(top = 22.dp)
-                .padding(horizontal = 20.dp)
-        ) {
-            onBackClick()
-        }
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(15.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(top = 15.dp, bottom = 50.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 17.dp)
-        ) {
-            viewModel.list.forEach { pokemonCounter ->
-                item {
-                    PokemonCounterCard(
-                        counter = pokemonCounter,
-                        updateCounter = { value ->
-                            viewModel.updateCounter(value, pokemonCounter.number)
-                        },
-                        deleteCounter = {
-                            viewModel.deleteCounter(pokemonCounter.number)
-                        },
-                        updateCatch = {
-                            viewModel.updateCatch(pokemonCounter.number)
-                        },
-                        onSettingClick = {
-                            selectValue.value = pokemonCounter
-                            isShow.value = true
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+    HeaderBodyContainer(
+        status = status,
+        headerContent = {
+            IconBox(
+                boxColor = MyColorRed,
+                onClick = onBackClick,
+            )
+        },
+        bodyContent = {
+            PokemonCounterBody(
+                viewModel = viewModel,
+                onSettingClick = {
+                    selectValue.value = it
+                    isCustomIncreaseSettingShow = true
+                },
+                onAddClick = {
+                    isPokemonSearchShow = true
                 }
-            }
+            )
+        }
+    )
 
+    CustomIncreaseSettingDialog(
+        isShow = isCustomIncreaseSettingShow,
+        selectValue = selectValue.value,
+        onDismiss = {
+            isCustomIncreaseSettingShow = false
+        },
+        onUpdateClick = { customIncrease, number ->
+            viewModel.updateCustomIncrease(customIncrease, number)
+        }
+    )
+
+    PokemonSearchDialog(
+        isShow = isPokemonSearchShow,
+        onDismiss = { isPokemonSearchShow = false },
+        onSelect = { number, _ ->
+            viewModel.insertPokemonCounter(number)
+        }
+    )
+}
+
+@Composable
+fun PokemonCounterBody(
+    viewModel: PokemonCounterViewModel,
+    onSettingClick: (PokemonCounter) -> Unit,
+    onAddClick: () -> Unit
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        contentPadding = PaddingValues(top = 15.dp, bottom = 50.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        viewModel.list.forEach { pokemonCounter ->
             item {
-                PokemonCounterEmptyCard {
-                    goToPokemonDex()
-                }
+                PokemonCounterCard(
+                    counter = pokemonCounter,
+                    updateCounter = { value ->
+                        viewModel.updateCounter(value, pokemonCounter.number)
+                    },
+                    deleteCounter = {
+                        viewModel.deleteCounter(pokemonCounter.number)
+                    },
+                    updateCatch = {
+                        viewModel.updateCatch(pokemonCounter.number)
+                    },
+                    onSettingClick = {
+                        onSettingClick(pokemonCounter)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
-    }
 
-    if (isShow.value) {
-        CustomIncreaseSettingDialog(
-            isShow = isShow.value,
-            selectValue = selectValue.value,
-            onDismiss = {
-                isShow.value = false
-            },
-            onUpdateClick = { customIncrease, number ->
-                viewModel.updateCustomIncrease(customIncrease, number)
-            }
-        )
+        item {
+            PokemonCounterEmptyCard(onClick = onAddClick)
+        }
     }
-
 }
 
 @Composable
@@ -138,20 +158,18 @@ fun PokemonCounterCard(
                     boxShape = CircleShape,
                     boxSize = DpSize(24.dp, 24.dp),
                     iconSize = 18.dp,
-                    iconRes = R.drawable.ic_setting
-                ) {
-                    onSettingClick()
-                }
+                    iconRes = R.drawable.ic_setting,
+                    onClick = onSettingClick
+                )
                 Spacer(modifier = Modifier.width(5.dp))
                 IconBox(
                     boxColor = MyColorRed,
                     boxShape = CircleShape,
                     boxSize = DpSize(24.dp, 24.dp),
                     iconSize = 16.dp,
-                    iconRes = R.drawable.ic_close
-                ) {
-                    deleteCounter()
-                }
+                    iconRes = R.drawable.ic_close,
+                    onClick = deleteCounter
+                )
             }
             Spacer(modifier = Modifier.height(7.dp))
             Row(

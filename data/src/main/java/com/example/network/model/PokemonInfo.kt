@@ -16,7 +16,15 @@ data class PokemonInfo(
     val description: String = "",
     val generation: Int = 0,
     val isCatch: Boolean = false
-)
+) {
+    fun toPokemonCounterEntity() = PokemonCounterEntity(
+        number = number,
+        image = image,
+        shinyImage = shinyImage,
+        count = 0,
+        timestamp = Calendar.getInstance().timeInMillis
+    )
+}
 
 data class EvolutionInfo(
     val beforeDot: String,

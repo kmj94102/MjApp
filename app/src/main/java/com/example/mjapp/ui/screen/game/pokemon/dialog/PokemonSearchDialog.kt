@@ -153,6 +153,7 @@ fun PokemonSearchDialog(
                                 .padding(start = 20.dp, end = 17.dp, bottom = 20.dp)
                                 .nonRippleClickable {
                                     onSelect(it.number, it.spotlight)
+                                    onDismiss()
                                 }
                         ) {
                             Text(

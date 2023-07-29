@@ -1,6 +1,5 @@
 package com.example.network.repository
 
-import android.util.Log
 import com.example.network.database.dao.PokemonDao
 import com.example.network.model.*
 import com.example.network.service.ExternalClient
@@ -61,18 +60,26 @@ class PokemonRepositoryImpl @Inject constructor(
     override suspend fun updatePokemonCatch(
         pokemonCatch: UpdatePokemonCatch
     ): String {
-        return try {
-            client.updatePokemonCatch(pokemonCatch)
-        } catch (e: Exception) {
-            Log.e("updatePokemonCatch", "error : ${e.message}")
-            "업데이트 실패"
-        }
+        return client.updatePokemonCatch(pokemonCatch)
+            .getOrElse {
+                it.printStackTrace()
+                "업데이트 실패"
+            }
     }
 
     override suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo) {
         dao.insertPokemonCounter(
             pokemonDetailInfo.toPokemonCounterEntity()
         )
+    }
+
+    override suspend fun insertPokemonCounter(number: String) {
+        client
+            .fetchPokemonWithNumber(number)
+            .onSuccess {
+                dao.insertPokemonCounter(it.toPokemonCounterEntity())
+            }
+            .getFailureThrow()
     }
 
     override fun fetchPokemonCounter(): Flow<List<PokemonCounter>> =

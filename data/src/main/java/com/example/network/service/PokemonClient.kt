@@ -6,7 +6,11 @@ import javax.inject.Inject
 class PokemonClient @Inject constructor(
     private val service: PokemonService
 ) {
-    /** 포켓몬 조회 **/
+    /** 포켓몬 번호로 정보 조회 **/
+    suspend fun fetchPokemonWithNumber(number: String) = runCatching {
+        service.fetchPokemonWithNumber(number)
+    }
+
 //    fun fetchPokemonList(name: String) = Pager(
 //        config = PagingConfig(
 //            pageSize = 100
@@ -15,6 +19,7 @@ class PokemonClient @Inject constructor(
 //            PokemonDexPagingSource(pokemonService = service, name = name)
 //        }
 //    ).flow
+    /** 포켓몬 리스트 조회 **/
     suspend fun fetchPokemonList(
         name: String,
         skip: Int,
@@ -42,7 +47,7 @@ class PokemonClient @Inject constructor(
     /** 포켓몬 잡은 상태 업데이트  **/
     suspend fun updatePokemonCatch(
         updatePokemonCatch: UpdatePokemonCatch
-    ) = service.updatePokemonCatch(updatePokemonCatch)
+    ) = runCatching { service.updatePokemonCatch(updatePokemonCatch) }
 
     /** 특성 추가 **/
     suspend fun insertCharacteristic(
