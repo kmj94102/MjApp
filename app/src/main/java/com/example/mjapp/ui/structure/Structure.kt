@@ -31,7 +31,7 @@ import com.example.mjapp.util.toast
 
 @Composable
 fun BaseStructureScreen(
-    status: BaseStatus,
+    status: BaseStatus?,
     errorScreen: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -42,26 +42,28 @@ fun BaseStructureScreen(
             .fillMaxSize()
             .background(MyColorWhite)
     ) {
-        if (status.isNetworkError) {
+        if (status?.isNetworkError == true) {
             errorScreen()
         } else {
             content()
         }
 
-        if (status.isLoading) {
+        if (status?.isLoading == true) {
             LoadingScreen()
         }
     }
 
-    LaunchedEffect(status.message) {
-        if (status.message.trim().isEmpty()) return@LaunchedEffect
-        context.toast(status.message)
+    status?.let {
+        LaunchedEffect(it.message) {
+            if (it.message.trim().isEmpty()) return@LaunchedEffect
+            context.toast(it.message)
+        }
     }
 }
 
 @Composable
 fun BaseContainer(
-    status: BaseStatus,
+    status: BaseStatus?,
     paddingValues: PaddingValues = PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp),
     reload: (() -> Unit)? = null,
     onBackClick: (() -> Unit)? = null,
@@ -98,7 +100,7 @@ fun BaseContainer(
 
 @Composable
 fun HeaderBodyContainer(
-    status: BaseStatus,
+    status: BaseStatus?,
     paddingValues: PaddingValues =
         PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
     reload: (() -> Unit)? = null,
@@ -125,7 +127,7 @@ fun HeaderBodyContainer(
 
 @Composable
 fun HighMediumLowContainer(
-    status: BaseStatus,
+    status: BaseStatus?,
     paddingValues: PaddingValues =
         PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
     reload: (() -> Unit)? = null,
@@ -194,7 +196,9 @@ fun NetworkErrorScreen(
             IconBox(
                 boxColor = color,
                 onClick = onBackClick,
-                modifier = Modifier.padding(top = 22.dp, start = 20.dp)
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 22.dp, start = 20.dp)
             )
         }
     }

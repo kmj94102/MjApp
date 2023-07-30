@@ -3,6 +3,8 @@ package com.example.mjapp.ui.screen.game.elsword.introduce
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,25 +19,40 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12B
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ElswordIntroduceScreen(
     onBackClick: () -> Unit,
     viewModel: ElswordIntroduceViewModel = hiltViewModel()
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        IconBox(
-            boxColor = MyColorRed,
-            modifier = Modifier.padding(top = 22.dp, start = 20.dp)
-        ) {
-            onBackClick()
+    HighMediumLowContainer(
+        status = null,
+        heightContent = {
+            IconBox(
+                boxColor = MyColorRed,
+                onClick = onBackClick,
+                modifier = Modifier.padding(bottom = 15.dp)
+            )
+        },
+        mediumContent = {
+            ElswordIntroduceMedium(viewModel = viewModel)
+        },
+        lowContent = {
+            ElswordIntroduceLow(viewModel = viewModel)
         }
-        Spacer(modifier = Modifier.height(15.dp))
+    )
+}
+
+@Composable
+fun ElswordIntroduceMedium(
+    viewModel: ElswordIntroduceViewModel
+) {
+    Column {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -52,93 +69,74 @@ fun ElswordIntroduceScreen(
             IconBox(
                 boxColor = MyColorRed,
                 boxShape = CircleShape,
-                modifier = Modifier
-                    .padding(start = 20.dp)
-                    .align(Alignment.CenterStart)
-            ) {
-                viewModel.prevSelector()
-            }
+                onClick = viewModel::prevSelector,
+                modifier = Modifier.align(Alignment.CenterStart)
+            )
             IconBox(
                 boxColor = MyColorRed,
                 boxShape = CircleShape,
                 iconRes = R.drawable.ic_next,
-                modifier = Modifier
-                    .padding(end = 20.dp)
-                    .align(Alignment.CenterEnd)
-            ) {
-                viewModel.nextSelector()
-            }
+                onClick = viewModel::nextSelector,
+                modifier = Modifier.align(Alignment.CenterEnd)
+            )
         }
         Spacer(modifier = Modifier.height(15.dp))
+
         Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(3f)
-                .padding(horizontal = 20.dp)
         ) {
-            Row(
+            LazyVerticalGrid(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.fillMaxSize()
             ) {
-                ElswordLineCard(
-                    image = viewModel.currentCharacter.jobImage[0],
-                    color = viewModel.currentCharacter.color,
-                    modifier = Modifier.weight(1f)
-                )
-                ElswordLineCard(
-                    image = viewModel.currentCharacter.jobImage[1],
-                    color = viewModel.currentCharacter.color,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-                ElswordLineCard(
-                    image = viewModel.currentCharacter.jobImage[2],
-                    color = viewModel.currentCharacter.color,
-                    modifier = Modifier.weight(1f)
-                )
-                ElswordLineCard(
-                    image = viewModel.currentCharacter.jobImage[3],
-                    color = viewModel.currentCharacter.color,
-                    modifier = Modifier.weight(1f)
-                )
+                (0..3).forEach {
+                    item {
+                        ElswordLineCard(
+                            image = viewModel.currentCharacter.jobImage[it],
+                            color = viewModel.currentCharacter.color,
+                            modifier = Modifier.fillMaxWidth(1f)
+                        )
+                    }
+                }
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-        FlowRow(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-        ) {
-            viewModel.getNameList().forEachIndexed { index, name ->
-                Text(
-                    text = name,
-                    style = textStyle12B().copy(
-                        fontSize = 14.sp,
-                        color = if (index == viewModel.selectCharacter.value) {
-                            viewModel.currentCharacter.color
-                        } else {
-                            MyColorBlack
-                        }
-                    ),
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .nonRippleClickable {
-                            viewModel.updateSelector(index)
-                        }
-                )
-            }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ElswordIntroduceLow(
+    viewModel: ElswordIntroduceViewModel
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 3.dp, bottom = 12.dp)
+    ) {
+        viewModel.getNameList().forEachIndexed { index, name ->
+            Text(
+                text = name,
+                style = textStyle12B().copy(
+                    fontSize = 14.sp,
+                    color = if (index == viewModel.selectCharacter.value) {
+                        viewModel.currentCharacter.color
+                    } else {
+                        MyColorBlack
+                    }
+                ),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .nonRippleClickable {
+                        viewModel.updateSelector(index)
+                    }
+            )
         }
-        Spacer(modifier = Modifier.height(22.dp))
     }
 }
 
@@ -154,7 +152,7 @@ fun ElswordLineCard(
             Image(
                 painter = painterResource(id = image),
                 contentDescription = null,
-                contentScale = ContentScale.FillHeight,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
