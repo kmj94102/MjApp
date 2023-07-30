@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonLottieAnimation
 import com.example.mjapp.ui.custom.DoubleCard
@@ -31,7 +32,7 @@ import com.example.mjapp.util.toast
 
 @Composable
 fun BaseStructureScreen(
-    status: BaseStatus?,
+    status: BaseStatus,
     errorScreen: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -42,28 +43,26 @@ fun BaseStructureScreen(
             .fillMaxSize()
             .background(MyColorWhite)
     ) {
-        if (status?.isNetworkError == true) {
+        if (status.isNetworkError) {
             errorScreen()
         } else {
             content()
         }
 
-        if (status?.isLoading == true) {
+        if (status.isLoading) {
             LoadingScreen()
         }
     }
 
-    status?.let {
-        LaunchedEffect(it.message) {
-            if (it.message.trim().isEmpty()) return@LaunchedEffect
-            context.toast(it.message)
-        }
+    LaunchedEffect(status.message) {
+        if (status.message.trim().isEmpty()) return@LaunchedEffect
+        context.toast(status.message)
     }
 }
 
 @Composable
 fun BaseContainer(
-    status: BaseStatus?,
+    status: BaseStatus,
     paddingValues: PaddingValues = PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp),
     reload: (() -> Unit)? = null,
     onBackClick: (() -> Unit)? = null,
@@ -100,7 +99,7 @@ fun BaseContainer(
 
 @Composable
 fun HeaderBodyContainer(
-    status: BaseStatus?,
+    status: BaseStatus,
     paddingValues: PaddingValues =
         PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
     reload: (() -> Unit)? = null,
@@ -127,7 +126,7 @@ fun HeaderBodyContainer(
 
 @Composable
 fun HighMediumLowContainer(
-    status: BaseStatus?,
+    status: BaseStatus,
     paddingValues: PaddingValues =
         PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
     reload: (() -> Unit)? = null,
@@ -206,11 +205,13 @@ fun NetworkErrorScreen(
 
 @Composable
 fun LoadingScreen() {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        CommonLottieAnimation(
-            resId = R.raw.lottie_loading,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+    Dialog(onDismissRequest = {}) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            CommonLottieAnimation(
+                resId = R.raw.lottie_loading,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
     }
 }

@@ -2,15 +2,15 @@ package com.example.mjapp.ui.screen.game.elsword.introduce
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.lifecycle.ViewModel
 import com.example.mjapp.ui.screen.game.elsword.ElswordCharacters
+import com.example.mjapp.ui.structure.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ElswordIntroduceViewModel @Inject constructor(
 
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val characterList = ElswordCharacters.values()
 
