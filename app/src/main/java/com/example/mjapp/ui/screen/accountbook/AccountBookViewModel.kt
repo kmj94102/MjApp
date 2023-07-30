@@ -37,22 +37,18 @@ class AccountBookViewModel @Inject constructor(
 
         repository
             .fetchAccountBookInfo(config)
-            .onStart {
-                _status.value.startLoading()
-            }
+            .onStart { startLoading() }
             .onEach {
                 _info.value = it
             }
             .catch {
                 if (it is NetworkError) {
-                    _status.value.updateNetworkErrorState(true)
+                    updateNetworkErrorState(true)
                 } else {
-                    _status.value.updateMessage(it.message ?: "??")
+                    updateMessage(it.message ?: "??")
                 }
             }
-            .onCompletion {
-                _status.value.endLoading()
-            }
+            .onCompletion { endLoading() }
             .launchIn(viewModelScope)
     }
 

@@ -50,15 +50,15 @@ class PokemonDexViewModel @Inject constructor(
                 skip = page,
                 limit = limit
             )
-            .onStart { _status.value.startLoading() }
+            .onStart { startLoading() }
             .onEach { (isMoreDate, list) ->
                 _isMoreDate.value = isMoreDate
                 _list.addAll(list)
             }
             .catch {
-                if (it is NetworkError) _status.value.updateNetworkErrorState(true)
+                if (it is NetworkError) updateNetworkErrorState(true)
             }
-            .onCompletion { _status.value.endLoading() }
+            .onCompletion { endLoading() }
             .launchIn(viewModelScope)
     }
 

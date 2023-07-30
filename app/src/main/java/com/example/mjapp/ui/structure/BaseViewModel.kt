@@ -6,7 +6,23 @@ import kotlinx.coroutines.flow.StateFlow
 
 abstract class BaseViewModel: ViewModel() {
 
-    protected val _status = MutableStateFlow(BaseStatus())
+    private val _status = MutableStateFlow(BaseStatus())
     val status: StateFlow<BaseStatus> = _status
+
+    protected fun startLoading() {
+        _status.value.startLoading()
+    }
+
+    protected fun endLoading() {
+        _status.value.endLoading()
+    }
+
+    protected fun updateMessage(message: String) {
+        _status.value.updateMessage(message)
+    }
+
+    protected fun updateNetworkErrorState(value: Boolean) {
+        _status.value.updateNetworkErrorState(value)
+    }
 
 }

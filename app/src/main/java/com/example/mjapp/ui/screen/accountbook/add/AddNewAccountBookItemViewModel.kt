@@ -74,7 +74,7 @@ class AddNewAccountBookItemViewModel @Inject constructor(
     fun insertNewAccountBook() = viewModelScope.launch {
         val check = _item.value.checkValidity()
         if (check.isNotEmpty()) {
-            _status.value.updateMessage(check)
+            updateMessage(check)
             return@launch
         }
 
@@ -83,12 +83,10 @@ class AddNewAccountBookItemViewModel @Inject constructor(
                 item = _item.value,
                 isIncome = _isIncome.value
             )
-            .onSuccess {
-                _status.value.updateMessage(it)
-            }
+            .onSuccess { updateMessage(it) }
             .onFailure {
                 it.printStackTrace()
-                _status.value.updateMessage("등록 실패")
+                updateMessage("등록 실패")
             }
     }
 
