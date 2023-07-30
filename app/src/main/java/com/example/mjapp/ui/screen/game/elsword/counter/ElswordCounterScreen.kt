@@ -1,15 +1,30 @@
 package com.example.mjapp.ui.screen.game.elsword.counter
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,21 +34,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.custom.UnderLineText
 import com.example.mjapp.ui.screen.game.elsword.ElswordCharacters
-import com.example.mjapp.ui.theme.*
+import com.example.mjapp.ui.structure.HeaderBodyContainer
+import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorGray
+import com.example.mjapp.ui.theme.MyColorRed
+import com.example.mjapp.ui.theme.MyColorTurquoise
+import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle24B
 import com.example.network.model.ElswordCharacter
 import com.example.network.model.ElswordQuestDetail
-import com.example.network.model.ElswordQuestUpdate
 
 @Composable
 fun ElswordCounterScreen(
@@ -41,104 +60,120 @@ fun ElswordCounterScreen(
     goToAdd: () -> Unit,
     viewModel: ElswordCounterViewModel = hiltViewModel()
 ) {
-    val isStatusChangeShow = remember { mutableStateOf(false) }
-    val isQuestSelectShow = remember { mutableStateOf(false) }
+    var isStatusChangeShow by remember { mutableStateOf(false) }
+    var isQuestSelectShow by remember { mutableStateOf(false) }
+    val status by viewModel.status.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MyColorWhite)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(top = 22.dp)
-                .padding(horizontal = 20.dp)
-        ) {
-            IconBox(
-                boxColor = MyColorRed
-            ) {
-                onBackClick()
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            IconBox(
-                boxColor = MyColorTurquoise,
-                iconRes = R.drawable.ic_plus
-            ) {
-                goToAdd()
-            }
+    HeaderBodyContainer(
+        status = status,
+        headerContent = {
+            ElswordCounterHeader(
+                onBackClick = onBackClick,
+                goToAdd = goToAdd
+            )
+        },
+        bodyContent = {
+            ElswordCounterBody(
+                viewModel = viewModel,
+                goToAdd = goToAdd,
+                onStatusChangeClick = { isStatusChangeShow = true },
+                onQuestClick = { isQuestSelectShow = true }
+            )
         }
-        if (viewModel.list.isEmpty()) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.weight(1f)
-            ) {
-                Column {
-                    Image(
-                        painter = painterResource(id = R.drawable.img_elsword_empty),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier
-                            .padding(horizontal = 30.dp)
-                            .fillMaxWidth()
-                    )
-                    Text(
-                        text = "퀘스트를 등록해주세요",
-                        style = textStyle12().copy(fontSize = 14.sp, color = MyColorGray),
-                        modifier = Modifier
-                            .padding(top = 30.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                }
-            }
-        } else {
-            viewModel.list.getOrNull(viewModel.selectCounter.value)?.let {
-                ElswordCounterContents(
-                    detailInfo = it,
-                    onSelect = { name ->
-                        viewModel.setDialogItem(name)
-                        isStatusChangeShow.value = true
-                    },
-                    onListChange = {
-                        if (viewModel.list.size >= 2) {
-                            isQuestSelectShow.value = true
-                        }
-                    }
-                )
-            }
-        }
-    }
+    )
 
     QuestSelectDialog(
         list = viewModel.list.map { it.name },
         selectItem = viewModel.list.getOrNull(viewModel.selectCounter.value)?.name ?: "",
-        isShow = isQuestSelectShow.value,
-        onDismiss = {
-            isQuestSelectShow.value = false
-        },
+        isShow = isQuestSelectShow,
+        onDismiss = { isQuestSelectShow = false },
         onSelect = {
-            isQuestSelectShow.value = false
+            isQuestSelectShow = false
             viewModel.chaneSelector(it)
         }
     )
 
     QuestStatusChangeDialog(
         item = viewModel.dialogItem.value,
-        isShow = isStatusChangeShow.value,
-        onDismiss = {
-            isStatusChangeShow.value = false
-        },
+        isShow = isStatusChangeShow,
+        onDismiss = { isStatusChangeShow = false },
         onUpdate = { name, type, progress ->
-            isStatusChangeShow.value = false
-            viewModel.updateQuest(
-                ElswordQuestUpdate(
-                    id = viewModel.list.getOrNull(viewModel.selectCounter.value)?.id ?: 0,
-                    name = name,
-                    type = type,
-                    progress = progress
-                )
-            )
+            isStatusChangeShow = false
+            viewModel.updateQuest(name, type, progress)
         }
     )
+}
+
+@Composable
+fun ElswordCounterHeader(
+    onBackClick: () -> Unit,
+    goToAdd: () -> Unit
+) {
+    Row {
+        IconBox(
+            boxColor = MyColorRed,
+            onClick = onBackClick
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        IconBox(
+            boxColor = MyColorTurquoise,
+            iconRes = R.drawable.ic_plus,
+            onClick = goToAdd
+        )
+    }
+}
+
+@Composable
+fun ElswordCounterBody(
+    viewModel: ElswordCounterViewModel,
+    goToAdd: () -> Unit,
+    onStatusChangeClick: () -> Unit,
+    onQuestClick: () -> Unit
+) {
+    viewModel.list.getOrNull(viewModel.selectCounter.value)?.let {
+        ElswordCounterContents(
+            detailInfo = it,
+            onSelect = { name ->
+                viewModel.setDialogItem(name)
+                onStatusChangeClick()
+            },
+            onListChange = {
+                if (viewModel.list.size >= 2) {
+                    onQuestClick()
+                }
+            }
+        )
+    } ?: ElswordCounterEmpty(goToAdd)
+}
+
+@Composable
+fun ElswordCounterEmpty(
+    goToAdd: () -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize(1f)
+            .nonRippleClickable(goToAdd)
+    ) {
+        Column {
+            Image(
+                painter = painterResource(id = R.drawable.img_elsword_empty),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .padding(horizontal = 30.dp)
+                    .fillMaxWidth()
+            )
+            Text(
+                text = "퀘스트를 등록해주세요",
+                style = textStyle12().copy(fontSize = 14.sp, color = MyColorGray),
+                modifier = Modifier
+                    .padding(top = 30.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+        }
+    }
 }
 
 @Composable
@@ -148,42 +183,20 @@ fun ElswordCounterContents(
     onSelect: (String) -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        ConstraintLayout(
-            modifier = Modifier.padding(top = 10.dp)
-        ) {
-            val (text, line) = createRefs()
-            Text(
-                text = detailInfo.name,
-                style = textStyle24B(),
-                modifier = Modifier
-                    .constrainAs(text) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                    }
-                    .nonRippleClickable {
-                        onListChange()
-                    }
-            )
-
-            Box(
-                modifier = Modifier
-                    .background(MyColorRed)
-                    .height(1.dp)
-                    .constrainAs(line) {
-                        top.linkTo(text.bottom, 2.dp)
-                        start.linkTo(text.start)
-                        end.linkTo(text.end)
-                        width = Dimension.fillToConstraints
-                    }
-            )
-        }
-
+        UnderLineText(
+            textValue = detailInfo.name,
+            textStyle = textStyle24B(),
+            underLineColor = MyColorRed,
+            modifier = Modifier.nonRippleClickable(onListChange)
+        )
         Spacer(modifier = Modifier.height(5.dp))
-        Text(text = "진행도 : ${detailInfo.getProgress()}%", style = textStyle12().copy(fontSize = 14.sp))
+
+        Text(
+            text = "진행도 : ${detailInfo.getProgress()}%",
+            style = textStyle12().copy(fontSize = 14.sp)
+        )
 
         LazyColumn(
             contentPadding = PaddingValues(top = 15.dp, bottom = 50.dp),
