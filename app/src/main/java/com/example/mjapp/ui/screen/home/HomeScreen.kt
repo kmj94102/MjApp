@@ -8,8 +8,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
@@ -29,72 +32,84 @@ import com.example.mjapp.ui.screen.calendar.CalendarScheduleContainer
 import com.example.mjapp.ui.screen.game.elsword.ElswordCharacters
 import com.example.mjapp.ui.screen.game.pokemon.counter.CustomIncreaseSettingDialog
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterCard
+import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.*
 import com.example.network.model.CalendarItem
 import com.example.network.model.ElswordCounter
 import com.example.network.model.PokemonCounter
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val isPokemonCounterSettingShow = remember {
-        mutableStateOf(false)
-    }
-    val selectValue = remember {
-        mutableStateOf(PokemonCounter.init())
-    }
-    val state = rememberPagerState() {
-        viewModel.counterList.size
-    }
+    var isPokemonCounterSettingShow by remember { mutableStateOf(false) }
+    var selectValue by remember { mutableStateOf(PokemonCounter.init()) }
+    val status by viewModel.status.collectAsStateWithLifecycle()
 
-    LazyColumn(
-        contentPadding = PaddingValues(top = 22.dp, bottom = 50.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 20.dp, end = 17.dp, bottom = 20.dp)
-    ) {
-        item {
+    HeaderBodyContainer(
+        status = status,
+        headerContent = {
             Text(
                 text = getToday("yyyy년 MM월"),
                 style = textStyle24B().copy(color = MyColorPurple),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp)
+            )
+        },
+        bodyContent = {
+            HomeBody(
+                viewModel = viewModel,
+                onSettingsClick = {
+                    selectValue = it
+                    isPokemonCounterSettingShow = true
+                }
             )
         }
+    )
+
+    CustomIncreaseSettingDialog(
+        isShow = isPokemonCounterSettingShow,
+        selectValue = selectValue,
+        onDismiss = {
+            isPokemonCounterSettingShow = false
+        },
+        onUpdateClick = { customIncrease, number ->
+            viewModel.updateCustomIncrease(customIncrease, number)
+        }
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
+@Composable
+fun HomeBody(
+    viewModel: HomeViewModel,
+    onSettingsClick: (PokemonCounter) -> Unit
+) {
+    val state = rememberPagerState { viewModel.counterList.size }
+
+    LazyColumn(
+        contentPadding = PaddingValues(top = 22.dp, bottom = 50.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 20.dp)
+    ) {
         item {
             WeekCalendar(
                 selectDate = viewModel.selectItem.value.detailDate,
                 today = viewModel.today,
                 list = viewModel.list,
-                onDateSelect = {
-                    viewModel.updateSelectDate(it)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
+                onDateSelect = viewModel::updateSelectDate,
+                modifier = Modifier.fillMaxWidth()
             )
         }
+
         item {
-            Spacer(modifier = Modifier.height(10.dp))
             val list = viewModel.selectItem.value.itemList
             if (list.isEmpty()) {
-                DoubleCard(
-                    bottomCardColor = MyColorPurple,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "등록 된 일정이 없습니다.",
-                        style = textStyle12().copy(
-                            color = MyColorGray,
-                            textAlign = TextAlign.Center
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 30.dp)
-                    )
-                }
+                EmptySchedule()
             } else {
                 list.forEach {
                     when (it) {
@@ -102,18 +117,14 @@ fun HomeScreen(
                             CalendarPlanContainer(
                                 info = it,
                                 modifier = Modifier.fillMaxWidth(),
-                                deleteListener = { id ->
-                                    viewModel.deletePlanTasks(id)
-                                }
+                                deleteListener = viewModel::deletePlanTasks
                             )
                         }
                         is CalendarItem.ScheduleInfo -> {
                             CalendarScheduleContainer(
                                 info = it,
                                 modifier = Modifier.fillMaxWidth(),
-                                deleteListener = { id ->
-                                    viewModel.deleteSchedule(id)
-                                }
+                                deleteListener = viewModel::deleteSchedule
                             )
                         }
                     }
@@ -137,10 +148,7 @@ fun HomeScreen(
                         updateCounter = { value -> viewModel.updateCounter(value, it.number) },
                         deleteCounter = { viewModel.deleteCounter(it.number) },
                         updateCatch = { viewModel.updateCatch(it.number) },
-                        onSettingClick = {
-                            selectValue.value = it
-                            isPokemonCounterSettingShow.value = true
-                        },
+                        onSettingClick = { onSettingsClick(it) },
                         modifier = Modifier
                             .width(100.dp)
                             .weight(1f)
@@ -156,7 +164,6 @@ fun HomeScreen(
             }
         }
 
-
         item {
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -171,20 +178,27 @@ fun HomeScreen(
                     }
                 }
             }
-
         }
     }
+}
 
-    CustomIncreaseSettingDialog(
-        isShow = isPokemonCounterSettingShow.value,
-        selectValue = selectValue.value,
-        onDismiss = {
-            isPokemonCounterSettingShow.value = false
-        },
-        onUpdateClick = { customIncrease, number ->
-            viewModel.updateCustomIncrease(customIncrease, number)
-        }
-    )
+@Composable
+fun EmptySchedule() {
+    DoubleCard(
+        bottomCardColor = MyColorPurple,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "등록 된 일정이 없습니다.",
+            style = textStyle12().copy(
+                color = MyColorGray,
+                textAlign = TextAlign.Center
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 30.dp)
+        )
+    }
 }
 
 @Composable

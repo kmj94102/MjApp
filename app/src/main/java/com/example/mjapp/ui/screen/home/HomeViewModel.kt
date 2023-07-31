@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.custom.getLastDayOfWeek
 import com.example.mjapp.ui.custom.getStartDayOfWeek
 import com.example.mjapp.ui.custom.getWeeklyDateRange
+import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.getToday
 import com.example.mjapp.util.toStringFormat
 import com.example.network.model.*
@@ -26,7 +27,7 @@ class HomeViewModel @Inject constructor(
     private val calendarRepository: CalendarRepository,
     private val pokemonRepository: PokemonRepository,
     private val elswordRepository: ElswordRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     val today = getToday()
     private val _list = mutableStateListOf<MyCalendar>()
