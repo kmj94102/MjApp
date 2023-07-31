@@ -106,8 +106,8 @@ fun HeaderBodyContainer(
     onBackClick: (() -> Unit)? = null,
     color: Color = MyColorRed,
     errorScreen: (@Composable () -> Unit)? = null,
-    headerContent: @Composable () -> Unit,
-    bodyContent: @Composable () -> Unit
+    headerContent: @Composable ColumnScope.() -> Unit,
+    bodyContent: @Composable ColumnScope.() -> Unit
 ) {
     BaseContainer(
         status = status,
@@ -118,7 +118,7 @@ fun HeaderBodyContainer(
         errorScreen = errorScreen
     ) {
         headerContent()
-        Box(modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier.weight(1f)) {
             bodyContent()
         }
     }
@@ -133,9 +133,9 @@ fun HighMediumLowContainer(
     onBackClick: (() -> Unit)? = null,
     color: Color = MyColorRed,
     errorScreen: (@Composable () -> Unit)? = null,
-    heightContent: @Composable () -> Unit,
-    mediumContent: @Composable () -> Unit,
-    lowContent: @Composable () -> Unit
+    heightContent: @Composable ColumnScope.() -> Unit,
+    mediumContent: @Composable ColumnScope.() -> Unit,
+    lowContent: @Composable ColumnScope.() -> Unit
 ) {
     BaseContainer(
         status = status,
@@ -146,7 +146,7 @@ fun HighMediumLowContainer(
         errorScreen = errorScreen
     ) {
         heightContent()
-        Box(modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier.weight(1f)) {
             mediumContent()
         }
         lowContent()
