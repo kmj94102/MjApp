@@ -22,112 +22,123 @@ import com.example.mjapp.util.textStyle24B
 import com.example.mjapp.R
 import com.example.mjapp.util.Constants
 import com.example.mjapp.ui.custom.OutlineText
+import com.example.mjapp.ui.structure.BaseStatus
+import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
 
 @Composable
 fun GameScreen(
     goToScreen: (String) -> Unit
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(top = 22.dp, bottom = 70.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MyColorWhite)
-            .padding(start = 20.dp, end = 17.dp)
-    ) {
-        item {
+    HeaderBodyContainer(
+        status = BaseStatus(),
+        headerContent = {
             Text(
                 text = BottomNavItems.Game.item.title,
                 style = textStyle24B().copy(color = MyColorRed),
                 modifier = Modifier.padding(bottom = 10.dp)
             )
+        },
+        bodyContent = {
+            GameBody(goToScreen = goToScreen)
         }
-        item {
-            GameCard(
-                text = "포켓몬\n도감",
-                imageRes = R.drawable.img_pokemon_dex,
-                color = MyColorBeige,
-            ) {
-                goToScreen(Constants.PokemonDex)
-            }
-        }
-        item {
-            GameCard(
-                text = "포켓몬\n카운터",
-                imageRes = R.drawable.img_pokemon_counter,
-                color = MyColorTurquoise,
-            ) {
-                goToScreen(Constants.PokemonCounter)
-            }
-        }
-        item {
-            GameCard(
-                text = "엘소드\n캐릭터 소개",
-                imageRes = R.drawable.img_elsword_introduce,
-                color = MyColorRed,
-            ) {
-                goToScreen(Constants.ElswordIntroduce)
-            }
-        }
-        item {
-            GameCard(
-                text = "엘소드\n카운터",
-                imageRes = R.drawable.img_elsword_counter,
-                color = MyColorPurple,
-            ) {
-                goToScreen(Constants.ElswordCounter)
-            }
-        }
-        item {
-            GameCard(
-                text = "포켓몬\n등록",
-                imageRes = R.drawable.img_pokemon_counter,
-                color = MyColorTurquoise,
-            ) {
-                goToScreen(Constants.PokemonAdd)
-            }
-        }
-        item {
-            GameCard(
-                text = "포켓몬 이미지\n수정",
-                imageRes = R.drawable.img_pokemon_dex,
-                color = MyColorBeige
-            ) {
-                goToScreen(Constants.PokemonImageChange)
+    )
+}
+
+@Composable
+fun GameBody(
+    goToScreen: (String) -> Unit
+) {
+    val list = createGameCardItemList()
+
+    LazyColumn(
+        contentPadding = PaddingValues(bottom = 70.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        list.forEach {
+            item {
+                GameCard(
+                    gameCardItem = it,
+                    onClick = goToScreen
+                )
             }
         }
     }
 }
 
+data class GameCardItem(
+    val text: String,
+    @DrawableRes
+    val imageRes: Int,
+    val color: Color,
+    val pageAddress: String
+)
+
+fun createGameCardItemList() = listOf(
+    GameCardItem(
+        text = "포켓몬\n도감",
+        imageRes = R.drawable.img_pokemon_dex,
+        color = MyColorBeige,
+        pageAddress = Constants.PokemonDex
+    ),
+    GameCardItem(
+        text = "포켓몬\n카운터",
+        imageRes = R.drawable.img_pokemon_counter,
+        color = MyColorTurquoise,
+        pageAddress = Constants.PokemonCounter
+    ),
+    GameCardItem(
+        text = "엘소드\n캐릭터 소개",
+        imageRes = R.drawable.img_elsword_introduce,
+        color = MyColorRed,
+        pageAddress = Constants.ElswordIntroduce
+    ),
+    GameCardItem(
+        text = "엘소드\n카운터",
+        imageRes = R.drawable.img_elsword_counter,
+        color = MyColorPurple,
+        pageAddress = Constants.ElswordCounter
+    ),
+    GameCardItem(
+        text = "포켓몬\n등록",
+        imageRes = R.drawable.img_pokemon_counter,
+        color = MyColorTurquoise,
+        pageAddress = Constants.PokemonAdd
+    ),
+    GameCardItem(
+        text = "포켓몬 이미지\n수정",
+        imageRes = R.drawable.img_pokemon_dex,
+        color = MyColorBeige,
+        pageAddress = Constants.PokemonImageChange
+    ),
+)
+
 @Composable
 fun GameCard(
-    text: String,
-    @DrawableRes
-    imageRes: Int,
-    color: Color,
-    onClick: () -> Unit
+    gameCardItem: GameCardItem,
+    onClick: (String) -> Unit
 ) {
     DoubleCard(
-        bottomCardColor = color,
+        bottomCardColor = gameCardItem.color,
         modifier = Modifier
             .fillMaxWidth()
             .height(125.dp)
-            .nonRippleClickable { onClick() }
+            .nonRippleClickable { onClick(gameCardItem.pageAddress) }
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = text,
+                painter = painterResource(id = gameCardItem.imageRes),
+                contentDescription = gameCardItem.text,
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier.height(125.dp)
             )
             OutlineText(
-                text = text,
+                text = gameCardItem.text,
                 style = textStyle24B().copy(
                     fontSize = 32.sp,
                     textAlign = TextAlign.End,
-                    color = color,
+                    color = gameCardItem.color,
                     lineHeight = 40.sp
                 ),
                 outlineColor = MyColorBlack,
