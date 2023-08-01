@@ -3,6 +3,8 @@ package com.example.mjapp.ui.custom
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,7 +15,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16
 
 @Composable
@@ -70,5 +75,33 @@ fun DoubleCardTextField(
 
             tailIcon()
         }
+    }
+}
+
+@Composable
+fun DoubleCardText(
+    modifier: Modifier = Modifier,
+    topCardColor: Color = MyColorWhite,
+    bottomCardColor: Color = MyColorWhite,
+    onClick: () -> Unit,
+    text: String,
+    textStyle: TextStyle = textStyle16(),
+    textColor: Color = MyColorBlack,
+    emptyTextColor: Color = MyColorGray,
+    innerPadding: PaddingValues = PaddingValues(vertical = 10.dp, horizontal = 15.dp)
+) {
+    DoubleCard(
+        topCardColor = topCardColor,
+        bottomCardColor = bottomCardColor,
+        modifier = modifier.nonRippleClickable(onClick)
+    ) {
+        Text(
+            text = text,
+            style = textStyle,
+            color = if (text.isEmpty()) emptyTextColor else textColor,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(innerPadding)
+        )
     }
 }

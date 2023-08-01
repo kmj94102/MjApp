@@ -1,7 +1,7 @@
 package com.example.network.repository
 
 import com.example.network.model.MyCalendarInfo
-import com.example.network.model.PlanTasks
+import com.example.network.model.PlanTasksModify
 import com.example.network.model.ScheduleModifier
 import com.example.network.service.CalendarClient
 import kotlinx.coroutines.flow.Flow
@@ -11,20 +11,9 @@ import javax.inject.Inject
 class CalendarRepositoryImpl @Inject constructor(
     private val client: CalendarClient
 ) : CalendarRepository {
-    override suspend fun insertSchedule(
-        item: ScheduleModifier,
-        onSuccess: (String) -> Unit,
-        onFailure: (String) -> Unit
-    ) {
-        val calendarItem = item.toMyCalendarItem()
-
-        try {
-            client.insertSchedule(calendarItem)
-            onSuccess("일정 등록 완료")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            onFailure("일정 등록 실패")
-        }
+    override suspend fun insertSchedule(item: ScheduleModifier) = runCatching {
+        client.insertSchedule(item.checkValidity().toMyCalendarItem())
+        "일정 등록 완료"
     }
 
     override fun fetchCalendarByMonth(
@@ -69,18 +58,9 @@ class CalendarRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertPlan(
-        item: PlanTasks,
-        onSuccess: (String) -> Unit,
-        onFailure: (String) -> Unit
-    ) {
-        try {
-            client.insertPlan(item)
-            onSuccess("계획 등록 완료")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            onFailure("계획 등록 실패")
-        }
+    override suspend fun insertPlan(item: PlanTasksModify) = runCatching {
+        client.insertPlan(item.checkValidity().toPlanTasks())
+        "계획 등록 완료"
     }
 
     override suspend fun deleteSchedule(id: Int) {

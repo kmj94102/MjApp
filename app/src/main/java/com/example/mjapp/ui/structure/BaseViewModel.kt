@@ -25,4 +25,8 @@ abstract class BaseViewModel: ViewModel() {
         _status.value.updateNetworkErrorState(value)
     }
 
+    protected fun updateFinish() {
+        _status.value.updateFinish()
+    }
+
 }

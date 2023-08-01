@@ -7,9 +7,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.mjapp.util.Constants
+import com.example.mjapp.ui.screen.accountbook.AccountBookScreen
+import com.example.mjapp.ui.screen.accountbook.add.AddFixedAccountBookScreen
+import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
+import com.example.mjapp.ui.screen.accountbook.detail.AccountBookDetailScreen
 import com.example.mjapp.ui.screen.calendar.CalendarScreen
-import com.example.mjapp.ui.screen.calendar.add.CalendarAddScreen
+import com.example.mjapp.ui.screen.calendar.add.PlanAddScreen
+import com.example.mjapp.ui.screen.calendar.add.ScheduleAddScreen
 import com.example.mjapp.ui.screen.game.GameScreen
 import com.example.mjapp.ui.screen.game.elsword.counter.ElswordCounterScreen
 import com.example.mjapp.ui.screen.game.elsword.counter.add.ElswordCounterAddScreen
@@ -20,10 +24,7 @@ import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
-import com.example.mjapp.ui.screen.accountbook.AccountBookScreen
-import com.example.mjapp.ui.screen.accountbook.add.AddFixedAccountBookScreen
-import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
-import com.example.mjapp.ui.screen.accountbook.detail.AccountBookDetailScreen
+import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
 
 @Composable
@@ -161,21 +162,54 @@ fun NavGraphBuilder.calendarScreens(
             goToAdd = {
                 navController.navigate(
                     makeRouteWithArgs(
-                        NavScreen.CalendarAdd.item.route,
+                        NavScreen.ScheduleAdd.item.route,
                         it
                     )
                 )
             }
         )
     }
-    /** 달력 아이템 추가 화면 **/
+    /** 일정 아이템 추가 화면 **/
     composable(
-        route = NavScreen.CalendarAdd.item.routeWithPostFix,
+        route = NavScreen.ScheduleAdd.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(NavScreen.CalendarAdd.Date) { type = NavType.StringType }
+            navArgument(Constants.Date) { type = NavType.StringType }
+        )
+    ) { backStackEntry ->
+        ScheduleAddScreen(
+            onBackClick = onBackClick,
+            goToPlanAdd = {
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.PlanAdd.item.route,
+                        it
+                    )
+                ) {
+                    navController.popBackStack()
+                }
+            }
+        )
+    }
+    /** 계획 아이템 추가 화면 **/
+    composable(
+        route = NavScreen.PlanAdd.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(Constants.Date) { type = NavType.StringType }
         )
     ) {
-        CalendarAddScreen(onBackClick = onBackClick)
+        PlanAddScreen(
+            onBackClick = onBackClick,
+            goToScheduleAdd = {
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.ScheduleAdd.item.route,
+                        it
+                    )
+                ) {
+                    navController.popBackStack()
+                }
+            }
+        )
     }
 }
 

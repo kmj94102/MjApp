@@ -14,6 +14,9 @@ class BaseStatus {
     var isNetworkError by mutableStateOf(false)
         private set
 
+    var isFinish by mutableStateOf(false)
+        private set
+
     fun updateMessage(message: String) {
         this.message = message
     }
@@ -29,5 +32,9 @@ class BaseStatus {
 
     fun updateNetworkErrorState(value: Boolean) {
         isNetworkError = value
+    }
+
+    fun updateFinish() {
+        isFinish = true
     }
 }

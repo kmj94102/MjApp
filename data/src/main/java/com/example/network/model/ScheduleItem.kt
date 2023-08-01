@@ -39,17 +39,24 @@ data class ScheduleModifier(
         if (recurrenceType == "none" || recurrenceEndDate.isEmpty()) null
         else "${recurrenceEndDate.replace(".", "-")}T23:59:59.000Z"
 
-    fun checkValidity(): String {
-        if (recurrenceType != "none" && compareTime(date, recurrenceEndDate) >= 0) {
-            return "반복 설정 시 종료 시간은 일정 등록일 이후로 설정해야 합니다."
+    fun checkValidity(): ScheduleModifier {
+        return when {
+            date.isEmpty() -> throw Exception("날짜를 선택해 주세요.")
+            startTime.isEmpty() -> throw Exception("시작 시간을 선택해 주세요.")
+            endTime.isEmpty() -> throw Exception("종료 시간을 선택해 주세요.")
+            scheduleTitle.isEmpty() -> throw Exception("제목을 입력해 주세요.")
+            scheduleContent.isEmpty() -> throw Exception("내용을 입력해 주세요.")
+            recurrenceType != "none" && recurrenceEndDate.isEmpty() ->
+                throw Exception("반복 설정 시 종료 시간을 설정해야 합니다.")
+
+            recurrenceType != "none" && compareTime(date, recurrenceEndDate) >= 0 ->
+                throw Exception("반복 설정 시 종료 시간은 일정 등록일 이후로 설정해야 합니다.")
+
+            compareTime(startTime, endTime, "HH:mm") > 0 ->
+                throw Exception("시작 시간 또는 종료 시간을 확인해 주세요.")
+
+            else -> this
         }
-        if (compareTime(startTime, endTime, "HH:mm") > 0) {
-            return "시작 시간 또는 종료 시간을 확인해주세요."
-        }
-        if (scheduleContent.isEmpty() || scheduleTitle.isEmpty()) {
-            return "일정 제목 도는 내용을 추가해주세요."
-        }
-        return ""
     }
 
     private fun compareTime(
@@ -61,5 +68,10 @@ data class ScheduleModifier(
         val date1: Date = format.parse(time1) ?: return 0
         val date2: Date = format.parse(time2) ?: return 0
         return date1.compareTo(date2)
+    }
+
+    fun calculateEndTime(value: String): String {
+        val result = compareTime(value, endTime.ifEmpty { "00:00" }, "HH:mm")
+        return if (result > 0) value else endTime
     }
 }

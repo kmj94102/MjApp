@@ -29,10 +29,12 @@ import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle16B
 import com.example.mjapp.util.toast
+import kotlinx.coroutines.delay
 
 @Composable
 fun BaseStructureScreen(
     status: BaseStatus,
+    onBackClick: (() -> Unit)? = null,
     errorScreen: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -57,6 +59,12 @@ fun BaseStructureScreen(
     LaunchedEffect(status.message) {
         if (status.message.trim().isEmpty()) return@LaunchedEffect
         context.toast(status.message)
+        delay(500)
+        status.updateMessage("")
+    }
+
+    LaunchedEffect(status.isFinish) {
+        if (status.isFinish) onBackClick?.invoke()
     }
 }
 
@@ -72,6 +80,7 @@ fun BaseContainer(
 ) {
     BaseStructureScreen(
         status = status,
+        onBackClick = onBackClick,
         content = {
             Column(
                 modifier = Modifier

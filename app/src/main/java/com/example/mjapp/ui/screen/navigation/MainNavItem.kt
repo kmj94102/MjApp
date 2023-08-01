@@ -50,14 +50,19 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
-    object CalendarAdd: NavScreen(
+    object ScheduleAdd: NavScreen(
         MainNavItem(
-            route = "CalendarAdd",
-            routeWithPostFix = "CalendarAdd/{date}"
+            route = "ScheduleAdd",
+            routeWithPostFix = "ScheduleAdd/{${Constants.Date}}"
         )
-    ) {
-        const val Date = "date"
-    }
+    )
+
+    object PlanAdd: NavScreen(
+        MainNavItem(
+            route = "PlanAdd",
+            routeWithPostFix = "PlanAdd/{${Constants.Date}}"
+        )
+    )
 
     object AddNewAccountBookItem: NavScreen(
         MainNavItem(

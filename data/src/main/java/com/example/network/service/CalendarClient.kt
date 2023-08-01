@@ -10,7 +10,7 @@ class CalendarClient @Inject constructor(
 
     suspend fun insertSchedule(
         item: ScheduleItem
-    ) = service.insertSchedule(item)
+    ) = runCatching { service.insertSchedule(item) }
 
     suspend fun fetchCalendarByMonth(
         year: Int,
@@ -30,7 +30,7 @@ class CalendarClient @Inject constructor(
 
     suspend fun insertPlan(
         item: PlanTasks
-    ) = service.insertPlan(item)
+    ) = runCatching { service.insertPlan(item) }
 
     suspend fun deleteSchedule(
         id: Int
