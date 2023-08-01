@@ -20,7 +20,9 @@ data class MyCalendar(
     val dayOfWeek: String = "",
     val detailDate: String = "",
     val itemList: MutableList<CalendarItem> = mutableListOf(),
-)
+) {
+    fun getDateAndDayOfWeek() = "${date.padStart(2, '0')}(${dayOfWeek})"
+}
 
 /** 달력 정보 생성 **/
 fun fetchMyCalendarByMonth(

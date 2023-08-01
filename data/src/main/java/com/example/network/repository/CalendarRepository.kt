@@ -19,8 +19,6 @@ interface CalendarRepository {
         end: String
     ): Flow<List<MyCalendarInfo>>
 
-    suspend fun fetchCalendarByDate(currentDate: String): MyCalendarInfo?
-
     suspend fun insertPlan(item: PlanTasksModify): Result<String>
 
     suspend fun deleteSchedule(id: Int)

@@ -3,68 +3,60 @@ package com.example.mjapp.ui.screen.calendar
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.getToday
 import com.example.network.model.MyCalendar
 import com.example.network.model.MyCalendarInfo
+import com.example.network.model.NetworkError
 import com.example.network.model.fetchMyCalendarByMonth
 import com.example.network.repository.CalendarRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     private val repository: CalendarRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
-    private val _mode = mutableStateOf(ModeCalendar)
-    val mode: State<String> = _mode
+    private val _isCalendar = mutableStateOf(true)
+    val isCalendar: State<Boolean> = _isCalendar
 
     private val _calendarItemList = mutableStateListOf<MyCalendar>()
     val calendarItemList: List<MyCalendar> = _calendarItemList
 
-    private val _today = getToday("yyyy.MM.dd")
+    val today = getToday("yyyy.MM.dd")
 
-    private val _selectDate = mutableStateOf(_today)
+    private val _selectDate = mutableStateOf(today)
     val selectDate: State<String> = _selectDate
 
-    val year
-        get() = run { _selectDate.value.substring(0, 4) }
+    val year get() = run { _selectDate.value.substring(0, 4) }
 
-    val month
-        get() = run { _selectDate.value.substring(5, 7) }
+    val month get() = run { _selectDate.value.substring(5, 7) }
 
-    val selectItem
-        get() = run { _calendarItemList.find { it.detailDate == _selectDate.value } }
+    val selectItem get() = run { _calendarItemList.find { it.detailDate == _selectDate.value } }
 
-    init {
-        fetchCalendar()
-    }
+    init { fetchCalendar() }
 
-    fun getToday(): String = _today
-
-    fun updateSelectDate(date: String) {
-        _selectDate.value = date
-    }
+    fun updateSelectDate(date: String) { _selectDate.value = date }
 
     fun updateYearMonth(year: String, month: String) {
         _selectDate.value = "$year.$month.01"
         fetchCalendar()
     }
 
-    fun updateMode(isCalendar: Boolean) {
-        _mode.value =  if (isCalendar) ModeCalendar else ModeList
-    }
+    fun updateMode(isCalendar: Boolean) { _isCalendar.value = isCalendar }
 
     private fun fetchCalendar() {
+        val list = fetchMyCalendarByMonth(year = year.toInt(), month = month.toInt())
         _calendarItemList.clear()
-        _calendarItemList.addAll(
-            fetchMyCalendarByMonth(year.toInt(), month = month.toInt())
-        )
+        _calendarItemList.addAll(list)
         fetchCalendarItems()
     }
 
@@ -74,22 +66,21 @@ class CalendarViewModel @Inject constructor(
                 year = year.toInt(),
                 month = month.toInt()
             )
+            .onStart { startLoading() }
             .onEach {
                 it.forEach { item ->
                     setCalendarItem(item)
                 }
             }
+            .catch {
+                if (it is NetworkError) {
+                    updateNetworkErrorState(true)
+                } else {
+                    updateMessage(it.message ?: "??")
+                }
+            }
+            .onCompletion { endLoading() }
             .launchIn(viewModelScope)
-    }
-
-    private fun fetchCalendarItem() = viewModelScope.launch {
-        val item = repository.fetchCalendarByDate(_selectDate.value)
-        if (item == null) {
-            setCalendarItemClear(_selectDate.value)
-            return@launch
-        }
-
-        setCalendarItem(item)
     }
 
     private fun setCalendarItem(item: MyCalendarInfo) {
@@ -107,34 +98,14 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    private fun setCalendarItemClear(date: String) {
-        val index = _calendarItemList.indexOfFirst { myCalendar ->
-            myCalendar.detailDate == date
-        }
-
-        if (index != -1) {
-            _calendarItemList[index] = _calendarItemList[index].copy(
-                isHoliday = false,
-                isSpecialDay = false,
-                dateInfo = "",
-                itemList = mutableListOf()
-            )
-        }
-    }
-
     fun deleteSchedule(id: Int) = viewModelScope.launch {
         repository.deleteSchedule(id)
-        fetchCalendarItem()
+        fetchCalendar()
     }
 
     fun deletePlanTasks(id: Int) = viewModelScope.launch {
         repository.deletePlanTasks(id)
-        fetchCalendarItem()
-    }
-
-    companion object {
-        const val ModeCalendar = "mode calendar"
-        const val ModeList = "mode list"
+        fetchCalendar()
     }
 
 }

@@ -15,18 +15,12 @@ class CalendarClient @Inject constructor(
     suspend fun fetchCalendarByMonth(
         year: Int,
         month: Int
-    ) = service.fetchCalendarByMonth(year, month)
+    ) = runCatching { service.fetchCalendarByMonth(year, month) }
 
     suspend fun fetchCalendarByWeek(
         start: String,
         end: String
     ) = service.fetchCalendarByWeek(start, end)
-
-    suspend fun fetchCalendarByDate(
-        year: Int,
-        month: Int,
-        date: Int
-    ) = service.fetchCalendarByDate(year, month, date)
 
     suspend fun insertPlan(
         item: PlanTasks

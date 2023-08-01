@@ -7,8 +7,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
@@ -21,9 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.*
 import com.example.mjapp.ui.screen.calendar.dialog.YearMonthSelectDialog
+import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.*
 import com.example.network.model.CalendarItem
@@ -33,80 +37,96 @@ fun CalendarScreen(
     viewModel: CalendarViewModel = hiltViewModel(),
     goToAdd: (String) -> Unit
 ) {
-    val isYearMonthDialogShow = remember { mutableStateOf(false) }
+    var isYearMonthDialogShow by remember { mutableStateOf(false) }
     val lifecycleEvent = rememberLifecycleEvent()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .padding(top = 21.dp, bottom = 10.dp)
-        ) {
-            Text(
-                text = "${viewModel.year}.${viewModel.month}",
-                style = textStyle24B().copy(color = MyColorPurple),
-                modifier = Modifier.nonRippleClickable {
-                    isYearMonthDialogShow.value = true
-                }
+    val status by viewModel.status.collectAsStateWithLifecycle()
+    HeaderBodyContainer(
+        status = status,
+        headerContent = {
+            CalendarHeader(
+                viewModel = viewModel,
+                onYearMonthClick = { isYearMonthDialogShow = true }
             )
-            Spacer(modifier = Modifier.weight(1f))
-            IconBox(
-                boxColor = if (viewModel.mode.value == CalendarViewModel.ModeCalendar) MyColorPurple else MyColorWhite,
-                iconSize = 22.dp,
-                iconRes = R.drawable.ic_calendar
-            ) {
-                viewModel.updateMode(isCalendar = true)
-            }
-            Spacer(modifier = Modifier.width(5.dp))
-            IconBox(
-                boxColor = if (viewModel.mode.value == CalendarViewModel.ModeList) MyColorPurple else MyColorWhite,
-                iconSize = 22.dp,
-                iconRes = R.drawable.ic_lists
-            ) {
-                viewModel.updateMode(isCalendar = false)
-            }
-        }
-        when (viewModel.mode.value) {
-            CalendarViewModel.ModeCalendar -> {
-                CalendarContainer(
-                    viewModel = viewModel,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    goToAdd = goToAdd
-                )
-            }
-            CalendarViewModel.ModeList -> {
-                ListContainer(
-                    viewModel = viewModel,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                )
-            }
-        }
-    }
+        },
+        bodyContent = {
+            CalendarBody(
+                viewModel = viewModel,
+                goToAdd = goToAdd
+            )
+        },
+    )
 
     YearMonthSelectDialog(
         year = viewModel.year,
         month = viewModel.month,
-        isShow = isYearMonthDialogShow.value,
-        onDismiss = {
-            isYearMonthDialogShow.value = false
-        },
-        onSelect = { year, month ->
-            viewModel.updateYearMonth(year, month)
-        }
+        isShow = isYearMonthDialogShow,
+        onDismiss = { isYearMonthDialogShow = false },
+        onSelect = viewModel::updateYearMonth
     )
 
     LaunchedEffect(lifecycleEvent) {
         if (lifecycleEvent == Lifecycle.Event.ON_RESUME) {
             viewModel.fetchCalendarItems()
+        }
+    }
+}
+
+@Composable
+fun CalendarHeader(
+    viewModel: CalendarViewModel,
+    onYearMonthClick: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp)
+    ) {
+        val isCalendar = viewModel.isCalendar.value
+
+        Text(
+            text = "${viewModel.year}.${viewModel.month}",
+            style = textStyle24B().copy(color = MyColorPurple),
+            modifier = Modifier.nonRippleClickable(onYearMonthClick)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconBox(
+            boxColor = if (isCalendar) MyColorPurple else MyColorWhite,
+            iconSize = 22.dp,
+            iconRes = R.drawable.ic_calendar,
+            onClick = { viewModel.updateMode(isCalendar = true) }
+        )
+        Spacer(modifier = Modifier.width(5.dp))
+
+        IconBox(
+            boxColor = if (isCalendar) MyColorWhite else MyColorPurple,
+            iconSize = 22.dp,
+            iconRes = R.drawable.ic_lists,
+            onClick = { viewModel.updateMode(isCalendar = false) }
+        )
+    }
+}
+
+@Composable
+fun CalendarBody(
+    viewModel: CalendarViewModel,
+    goToAdd: (String) -> Unit
+) {
+    when (viewModel.isCalendar.value) {
+        true -> {
+            CalendarContainer(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxWidth(),
+                goToAdd = goToAdd
+            )
+        }
+
+        false -> {
+            ListContainer(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
@@ -120,34 +140,30 @@ private fun CalendarContainer(
     Column(modifier = modifier) {
         DoubleCard(
             bottomCardColor = MyColorPurple,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 17.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             MonthCalendar(
-                today = viewModel.getToday(),
+                today = viewModel.today,
                 calendarInfo = viewModel.calendarItemList,
                 selectDate = viewModel.selectDate.value,
-                onSelectChange = {
-                    viewModel.updateSelectDate(it)
-                },
+                onSelectChange = viewModel::updateSelectDate,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp, bottom = 5.dp)
                     .padding(horizontal = 10.dp)
             )
         }
+
         Row(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .padding(top = 15.dp)
+                .padding(top = 15.dp, end = 3.dp)
         ) {
             val item = viewModel.selectItem ?: return@Row
             Text(
                 text = buildAnnotatedString {
-                    append("${item.date.padStart(2, '0')}(${item.dayOfWeek})")
+                    append(item.getDateAndDayOfWeek())
                     if (item.dateInfo.isNotEmpty()) {
                         withStyle(style = SpanStyle(color = MyColorGray, fontSize = 16.sp)) {
                             append(" ${item.dateInfo}")
@@ -157,61 +173,43 @@ private fun CalendarContainer(
                 style = textStyle24B().copy(color = MyColorPurple)
             )
             Spacer(modifier = Modifier.weight(1f))
-            IconBox(boxColor = MyColorRed, iconRes = R.drawable.ic_plus) {
-                goToAdd(viewModel.selectDate.value)
-            }
+            IconBox(
+                boxColor = MyColorRed,
+                iconRes = R.drawable.ic_plus,
+                onClick = { goToAdd(viewModel.selectDate.value) }
+            )
         }
+
         LazyColumn(
-            contentPadding = PaddingValues(top = 7.dp, bottom = 50.dp, start = 20.dp, end = 20.dp),
+            contentPadding = PaddingValues(top = 7.dp, bottom = 50.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(bottom = 20.dp, top = 3.dp)
         ) {
-            viewModel.selectItem?.let {
-                if (it.itemList.isEmpty()) {
-                    item {
-                        DoubleCard(
-                            bottomCardColor = MyColorPurple,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "등록 된 일정이 없습니다.",
-                                style = textStyle12().copy(
-                                    color = MyColorGray,
-                                    textAlign = TextAlign.Center
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 30.dp)
-                            )
-                        }
-                    }
-                    return@let
-                }
-
-                it.itemList.forEach { calendarItem ->
+            val list = viewModel.selectItem?.itemList
+            if (list.isNullOrEmpty()) {
+                item { CalendarEmptyContainer() }
+            } else {
+                list.forEach { calendarItem ->
                     when (calendarItem) {
                         is CalendarItem.PlanInfo -> {
                             item {
                                 CalendarPlanContainer(
                                     info = calendarItem,
                                     modifier = Modifier.fillMaxWidth(),
-                                    deleteListener = { id ->
-                                        viewModel.deletePlanTasks(id)
-                                    }
+                                    deleteListener = viewModel::deletePlanTasks
                                 )
                             }
                         }
+
                         is CalendarItem.ScheduleInfo -> {
                             item {
                                 CalendarScheduleContainer(
                                     info = calendarItem,
                                     modifier = Modifier.fillMaxWidth(),
-                                    deleteListener = { id ->
-                                        viewModel.deleteSchedule(id)
-                                    }
+                                    deleteListener = viewModel::deleteSchedule
                                 )
                             }
                         }
@@ -219,6 +217,25 @@ private fun CalendarContainer(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CalendarEmptyContainer() {
+    DoubleCard(
+        bottomCardColor = MyColorPurple,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "등록 된 일정이 없습니다.",
+            style = textStyle12().copy(
+                color = MyColorGray,
+                textAlign = TextAlign.Center
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 30.dp)
+        )
     }
 }
 
@@ -253,20 +270,18 @@ fun CalendarScheduleContainer(
                     boxColor = MyColorRed,
                     boxShape = CircleShape,
                     iconRes = R.drawable.ic_modify,
-                    iconSize = 18.dp
-                ) {
-
-                }
+                    iconSize = 18.dp,
+                    onClick = {}
+                )
                 Spacer(modifier = Modifier.width(5.dp))
                 IconBox(
                     boxSize = DpSize(24.dp, 24.dp),
                     boxColor = MyColorRed,
                     boxShape = CircleShape,
                     iconRes = R.drawable.ic_close,
-                    iconSize = 18.dp
-                ) {
-                    deleteListener(info.id)
-                }
+                    iconSize = 18.dp,
+                    onClick = { deleteListener(info.id) }
+                )
             }
             Box(
                 modifier = Modifier
@@ -274,6 +289,7 @@ fun CalendarScheduleContainer(
                     .height(1.dp)
                     .background(MyColorBlack)
             )
+
             Text(
                 text = info.getTime(),
                 style = textStyle12().copy(MyColorGray),
@@ -321,20 +337,18 @@ fun CalendarPlanContainer(
                     boxColor = MyColorRed,
                     boxShape = CircleShape,
                     iconRes = R.drawable.ic_modify,
-                    iconSize = 18.dp
-                ) {
-
-                }
+                    iconSize = 18.dp,
+                    onClick = {}
+                )
                 Spacer(modifier = Modifier.width(5.dp))
                 IconBox(
                     boxSize = DpSize(24.dp, 24.dp),
                     boxColor = MyColorRed,
                     boxShape = CircleShape,
                     iconRes = R.drawable.ic_close,
-                    iconSize = 18.dp
-                ) {
-                    deleteListener(info.id)
-                }
+                    iconSize = 18.dp,
+                    onClick = { deleteListener(info.id) }
+                )
             }
             Box(
                 modifier = Modifier
@@ -366,10 +380,9 @@ private fun ListContainer(
     modifier: Modifier,
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(bottom = 50.dp, start = 20.dp, end = 20.dp),
+        contentPadding = PaddingValues(bottom = 50.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp),
-        modifier = modifier
-            .padding(bottom = 20.dp)
+        modifier = modifier.padding(bottom = 20.dp)
     ) {
         viewModel.calendarItemList.filter { it.itemList.isNotEmpty() }.forEach { myCalendar ->
             item {
@@ -386,20 +399,10 @@ private fun ListContainer(
                         ) {
                             Text(
                                 text = buildAnnotatedString {
-                                    append(
-                                        "${
-                                            myCalendar.date.padStart(
-                                                2,
-                                                '0'
-                                            )
-                                        } (${myCalendar.dayOfWeek})"
-                                    )
+                                    append(myCalendar.getDateAndDayOfWeek())
                                     if (myCalendar.dateInfo.isNotEmpty()) {
                                         withStyle(
-                                            style = SpanStyle(
-                                                color = MyColorGray,
-                                                fontSize = 14.sp
-                                            )
+                                            style = SpanStyle(color = MyColorGray, fontSize = 14.sp)
                                         ) {
                                             append(" ${myCalendar.dateInfo}")
                                         }
@@ -417,10 +420,9 @@ private fun ListContainer(
                                 boxColor = MyColorRed,
                                 boxSize = DpSize(24.dp, 24.dp),
                                 iconRes = R.drawable.ic_modify,
-                                iconSize = 16.dp
-                            ) {
-
-                            }
+                                iconSize = 16.dp,
+                                onClick = {}
+                            )
 
                             IconBox(
                                 boxShape = CircleShape,
@@ -428,10 +430,9 @@ private fun ListContainer(
                                 boxSize = DpSize(24.dp, 24.dp),
                                 iconRes = R.drawable.ic_close,
                                 iconSize = 16.dp,
-                                modifier = Modifier.padding(start = 5.dp, end = 10.dp)
-                            ) {
-
-                            }
+                                modifier = Modifier.padding(start = 5.dp, end = 10.dp),
+                                onClick = {}
+                            )
                         }
                         Box(
                             modifier = Modifier
@@ -443,14 +444,11 @@ private fun ListContainer(
                         myCalendar.itemList.forEachIndexed { index, item ->
                             when (item) {
                                 is CalendarItem.PlanInfo -> {
-                                    ListPlanContainer(
-                                        info = item
-                                    )
+                                    ListPlanContainer(info = item)
                                 }
+
                                 is CalendarItem.ScheduleInfo -> {
-                                    ListScheduleContainer(
-                                        info = item
-                                    )
+                                    ListScheduleContainer(info = item)
                                 }
                             }
                             if (myCalendar.itemList.size > index) {

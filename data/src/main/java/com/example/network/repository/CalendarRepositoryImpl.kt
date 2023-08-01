@@ -3,6 +3,7 @@ package com.example.network.repository
 import com.example.network.model.MyCalendarInfo
 import com.example.network.model.PlanTasksModify
 import com.example.network.model.ScheduleModifier
+import com.example.network.model.getFailureThrow
 import com.example.network.service.CalendarClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,16 +21,12 @@ class CalendarRepositoryImpl @Inject constructor(
         year: Int,
         month: Int
     ): Flow<List<MyCalendarInfo>> = flow {
-
-        try {
-            emit(
-                client.fetchCalendarByMonth(year, month).map { it.toMyCalendarInfo() }
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(emptyList())
-        }
-
+        client
+            .fetchCalendarByMonth(year, month)
+            .onSuccess { list ->
+                emit(list.map { it.toMyCalendarInfo() })
+            }
+            .getFailureThrow()
     }
 
     override fun fetchCalendarByWeek(start: String, end: String) = flow {
@@ -42,19 +39,6 @@ class CalendarRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             emit(emptyList())
-        }
-    }
-
-    override suspend fun fetchCalendarByDate(currentDate: String): MyCalendarInfo? {
-        return try {
-            val year = currentDate.substring(0, 4).toInt()
-            val month = currentDate.substring(5, 7).toInt()
-            val date = currentDate.substring(8, 10).toInt()
-
-            client.fetchCalendarByDate(year, month, date)?.toMyCalendarInfo()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
     }
 
