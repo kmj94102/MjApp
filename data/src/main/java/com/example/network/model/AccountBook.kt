@@ -130,9 +130,40 @@ data class AccountBookDetailInfo(
     }
 }
 
-data class FixedAccountBookItem(
+data class FixedAccountBook(
+    val id: Int,
     val date: String,
     val amount: Int,
     val usageType: String,
-    val whereToUse: String
-)
+    val whereToUse: String,
+    val isIncome: Boolean
+) {
+    fun checkValidity() = when {
+        amount == 0 -> throw Exception("금액을 입력해 주세요.")
+        usageType.isEmpty() -> throw Exception("사용처를 선택해 주세요.")
+        whereToUse.isEmpty() -> throw Exception("사용 내용을 입력해 주세요")
+        else -> this
+    }
+
+    fun toAccountBookInsertItem(
+        yearMonth: String
+    ) = AccountBookInsertItem(
+        date = "",
+        dateOfWeek = "",
+        amount = amount,
+        usageType = usageType,
+        whereToUse = whereToUse,
+        isAddFrequently = false
+    ).updateDate("$yearMonth.$date")
+
+    companion object {
+        fun create() = FixedAccountBook(
+            id = 0,
+            date = "01",
+            amount = 0,
+            usageType = "",
+            whereToUse = "",
+            isIncome = true
+        )
+    }
+}

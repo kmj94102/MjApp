@@ -3,6 +3,7 @@ package com.example.mjapp.ui.custom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -27,6 +28,7 @@ fun CommonButton(
     borderColor: Color = MyColorBlack,
     text: String,
     textStyle: TextStyle = textStyle16B(),
+    innerPadding: PaddingValues = PaddingValues(vertical = 3.dp),
     onClick: () -> Unit = {}
 ) {
     Box(
@@ -37,6 +39,6 @@ fun CommonButton(
             .background(backgroundColor)
             .nonRippleClickable { onClick() }
     ) {
-        Text(text = text, style = textStyle, modifier = Modifier.padding(vertical = 3.dp))
+        Text(text = text, style = textStyle, modifier = Modifier.padding(innerPadding))
     }
 }

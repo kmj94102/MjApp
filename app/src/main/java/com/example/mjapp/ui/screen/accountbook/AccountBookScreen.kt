@@ -101,7 +101,7 @@ fun BaseDateAndAddButtonsRow(
             modifier = Modifier
                 .weight(1f)
                 .nonRippleClickable {
-                    goToFixedAccountBookItem(getToday())
+                    goToFixedAccountBookItem(getToday("yyyy.MM"))
                 }
         ) {
             Column(

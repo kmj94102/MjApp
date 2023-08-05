@@ -128,12 +128,11 @@ fun AddNewAccountBookHeightItem(
 }
 
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddNewAccountBookMediumItem(
     color: Color,
     viewModel: AddNewAccountBookItemViewModel,
-    onDateSelect:() -> Unit
+    onDateSelect: () -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(top = 10.dp, bottom = 30.dp),
@@ -205,55 +204,69 @@ fun AddNewAccountBookMediumItem(
         }
 
         item {
-            DoubleCard(
-                bottomCardColor = color,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "사용처 선택",
-                    style = textStyle16(),
-                    modifier = Modifier.padding(top = 10.dp, start = 15.dp)
-                )
+            ChooseWhereToUseCard(
+                color = color,
+                usageType = viewModel.item.value.usageType,
+                onItemClick = viewModel::updateUsageType
+            )
+        }
+
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ChooseWhereToUseCard(
+    color: Color,
+    usageType: String,
+    onItemClick: (String) -> Unit
+) {
+    DoubleCard(
+        bottomCardColor = color,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "사용처 선택",
+            style = textStyle16(),
+            modifier = Modifier.padding(top = 10.dp, start = 15.dp)
+        )
 
 
-                FlowRow(
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    maxItemsInEachRow = 5,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 10.dp)
-                ) {
-                    IncomeExpenditureType.values().forEach {
-                        Column {
-                            ImageDoubleCard(
-                                resId = it.imageRes,
-                                imageSize = DpSize(47.dp, 47.dp),
-                                innerPadding = PaddingValues(3.dp),
-                                topCardColor = if (viewModel.item.value.usageType == it.type) {
-                                    color
-                                } else {
-                                    MyColorWhite
-                                },
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .nonRippleClickable {
-                                        viewModel.updateUsageType(it.type)
-                                    }
-                            )
-                            Text(
-                                text = it.typeName,
-                                style = textStyle12().copy(textAlign = TextAlign.Center),
-                                modifier = Modifier
-                                    .width(50.dp)
-                                    .padding(top = 5.dp)
-                            )
-                        }
-                    }
+        FlowRow(
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            maxItemsInEachRow = 5,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 10.dp)
+        ) {
+            IncomeExpenditureType.values().forEach {
+                Column {
+                    ImageDoubleCard(
+                        resId = it.imageRes,
+                        imageSize = DpSize(47.dp, 47.dp),
+                        innerPadding = PaddingValues(3.dp),
+                        topCardColor = if (usageType == it.type) {
+                            color
+                        } else {
+                            MyColorWhite
+                        },
+                        modifier = Modifier
+                            .size(50.dp)
+                            .nonRippleClickable {
+                                onItemClick(it.type)
+                            }
+                    )
+                    Text(
+                        text = it.typeName,
+                        style = textStyle12().copy(textAlign = TextAlign.Center),
+                        modifier = Modifier
+                            .width(50.dp)
+                            .padding(top = 5.dp)
+                    )
                 }
             }
         }
-
     }
 }
 

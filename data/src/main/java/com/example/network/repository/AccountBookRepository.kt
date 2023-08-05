@@ -10,6 +10,8 @@ interface AccountBookRepository {
         isIncome: Boolean
     ): Result<String>
 
+    suspend fun deleteAccountBookItem(id: Int): Result<Unit>
+
     fun fetchAccountBookInfo(
         dateConfiguration: DateConfiguration
     ): Flow<AccountBookMainInfo>
@@ -17,5 +19,11 @@ interface AccountBookRepository {
     suspend fun fetchThisMonthDetail(
         dateConfiguration: DateConfiguration
     ): Result<AccountBookDetailInfo>
+
+    suspend fun insertFixedAccountBookItem(
+        item: FixedAccountBook
+    ): Result<String>
+
+    fun fetchFixedAccountBook(): Flow<List<FixedAccountBook>>
 
 }

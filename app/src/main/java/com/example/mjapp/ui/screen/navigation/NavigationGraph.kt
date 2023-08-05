@@ -8,9 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.mjapp.ui.screen.accountbook.AccountBookScreen
-import com.example.mjapp.ui.screen.accountbook.add.AddFixedAccountBookScreen
+import com.example.mjapp.ui.screen.accountbook.fixed.RegistrationFixedAccountBookScreen
 import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
 import com.example.mjapp.ui.screen.accountbook.detail.AccountBookDetailScreen
+import com.example.mjapp.ui.screen.accountbook.fixed.AddFixedAccountBookScreen
 import com.example.mjapp.ui.screen.calendar.CalendarScreen
 import com.example.mjapp.ui.screen.calendar.add.PlanAddScreen
 import com.example.mjapp.ui.screen.calendar.add.ScheduleAddScreen
@@ -175,7 +176,7 @@ fun NavGraphBuilder.calendarScreens(
         arguments = listOf(
             navArgument(Constants.Date) { type = NavType.StringType }
         )
-    ) { backStackEntry ->
+    ) {
         ScheduleAddScreen(
             onBackClick = onBackClick,
             goToPlanAdd = {
@@ -234,7 +235,7 @@ fun NavGraphBuilder.accountBookScreens(
             goToFixedAccountBookItem = {
                 navController.navigate(
                     makeRouteWithArgs(
-                        NavScreen.AddFixedAccountBookItem.item.route,
+                        NavScreen.RegistrationFixedAccountBookItem.item.route,
                         it
                     )
                 )
@@ -260,12 +261,24 @@ fun NavGraphBuilder.accountBookScreens(
         AddNewAccountBookItemScreen(onBackClick)
     }
 
-    /** 고정 내역 추가 화면 **/
+    /** 고정 내역 등록 화면 **/
     composable(
-        route = NavScreen.AddFixedAccountBookItem.item.routeWithPostFix,
+        route = NavScreen.RegistrationFixedAccountBookItem.item.routeWithPostFix,
         arguments = listOf(
             navArgument(Constants.Date) { type = NavType.StringType }
         )
+    ) {
+        RegistrationFixedAccountBookScreen(
+            onBackClick = onBackClick,
+            goToAddFixed = {
+                navController.navigate(NavScreen.AddFixedAccountBook.item.routeWithPostFix)
+            }
+        )
+    }
+
+    /** 고정 내역 추가 화면 **/
+    composable(
+        route = NavScreen.AddFixedAccountBook.item.routeWithPostFix
     ) {
         AddFixedAccountBookScreen(
             onBackClick = onBackClick

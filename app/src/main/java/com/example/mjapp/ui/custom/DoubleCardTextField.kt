@@ -85,6 +85,7 @@ fun DoubleCardText(
     bottomCardColor: Color = MyColorWhite,
     onClick: () -> Unit,
     text: String,
+    hint: String = "",
     textStyle: TextStyle = textStyle16(),
     textColor: Color = MyColorBlack,
     emptyTextColor: Color = MyColorGray,
@@ -96,7 +97,7 @@ fun DoubleCardText(
         modifier = modifier.nonRippleClickable(onClick)
     ) {
         Text(
-            text = text,
+            text = text.ifEmpty { hint },
             style = textStyle,
             color = if (text.isEmpty()) emptyTextColor else textColor,
             modifier = Modifier
