@@ -25,11 +25,11 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SelectSpinner(
+    modifier: Modifier = Modifier,
     selectList: List<String>,
     state: PagerState,
     initValue: String,
-    width: Dp = 90.dp,
-    modifier: Modifier = Modifier
+    width: Dp = 90.dp
 ) {
     Box(modifier = modifier) {
         VerticalPager(

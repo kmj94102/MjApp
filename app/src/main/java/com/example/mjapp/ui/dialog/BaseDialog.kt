@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -34,10 +36,10 @@ fun BaseDialog(
     isShow: Boolean,
     isCancelable: Boolean = true,
     title: String,
-    topButtonContents: @Composable RowScope.() -> Unit,
+    onDismiss: () -> Unit,
+    topButtonContents: @Composable RowScope.() -> Unit = { DialogCloseButton(onClose = onDismiss) },
     bodyContents: @Composable ColumnScope.() -> Unit,
     bottomButtonContents: @Composable RowScope.() -> Unit,
-    onDismiss: () -> Unit
 ) {
     if (isShow.not()) return
 
@@ -78,14 +80,14 @@ fun ConfirmCancelDialog(
     isShow: Boolean,
     isCancelable: Boolean = true,
     title: String,
-    topButtonContents: @Composable RowScope.() -> Unit,
-    bodyContents: @Composable ColumnScope.() -> Unit,
     cancelText: String = "취소",
     onCancelClick: () -> Unit,
     confirmText: String = "확인",
     onConfirmClick: () -> Unit,
+    onDismiss: () -> Unit,
+    topButtonContents: @Composable RowScope.() -> Unit = { DialogCloseButton(onClose = onDismiss) },
+    bodyContents: @Composable ColumnScope.() -> Unit,
     color: Color,
-    onDismiss: () -> Unit
 ) {
     BaseDialog(
         isShow = isShow,
@@ -123,4 +125,54 @@ fun DialogCloseButton(
         iconRes = R.drawable.ic_close,
         onClick = onClose
     )
+}
+
+@Composable
+fun PokemonDialog(
+    isShow: Boolean,
+    onDismiss: () -> Unit,
+    topIcon: @Composable () -> Unit = {},
+    bodyContents: @Composable ColumnScope.() -> Unit,
+    bottomContents: @Composable RowScope.() -> Unit = { Spacer(modifier = Modifier.height(30.dp)) }
+) {
+    if (isShow.not()) return
+    val brush = Brush.verticalGradient(listOf(Color(0xFF0E2F60), Color(0xFF1F789B)))
+
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(15.dp))
+                .border(1.dp, MyColorBlack, RoundedCornerShape(15.dp))
+                .background(MyColorWhite)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+            ) {
+                topIcon()
+                Spacer(modifier = Modifier.weight(1f))
+                DialogCloseButton(onClose = onDismiss)
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(brush = brush)
+            ) {
+                bodyContents()
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+            ) {
+                bottomContents()
+            }
+        }
+    }
 }

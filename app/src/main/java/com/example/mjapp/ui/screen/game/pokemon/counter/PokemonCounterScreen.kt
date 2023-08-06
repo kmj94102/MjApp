@@ -30,7 +30,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonButton
 import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
-import com.example.mjapp.ui.screen.game.pokemon.dialog.PokemonSearchDialog
+import com.example.mjapp.ui.dialog.PokemonSearchDialog
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.nonRippleClickable

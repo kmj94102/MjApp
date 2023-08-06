@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.custom.SelectSpinner
-import com.example.mjapp.ui.screen.calendar.dialog.getDayList
 import com.example.mjapp.ui.theme.MyColorTurquoise
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -28,7 +27,6 @@ fun DaySelectDialog(
     ConfirmCancelDialog(
         isShow = isShow,
         title = "날짜 선택",
-        topButtonContents = { DialogCloseButton(onClose = onDismiss) },
         bodyContents = {
             Box(
                 modifier = Modifier

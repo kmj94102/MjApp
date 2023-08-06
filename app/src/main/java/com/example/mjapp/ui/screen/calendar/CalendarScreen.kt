@@ -26,7 +26,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.*
-import com.example.mjapp.ui.screen.calendar.dialog.YearMonthSelectDialog
+import com.example.mjapp.ui.dialog.YearMonthSelectDialog
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.*

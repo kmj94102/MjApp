@@ -57,7 +57,7 @@ class PokemonClient @Inject constructor(
     /** 포켓몬 간략한 조회 (진화 추가용) **/
     suspend fun fetchBriefPokemonList(
         search: String
-    ) = service.fetchBriefPokemonList(search = search)
+    ) = runCatching { service.fetchBriefPokemonList(search = search) }
 
     /** 포켓몬 진화 추가 **/
     suspend fun insertPokemonEvolution(

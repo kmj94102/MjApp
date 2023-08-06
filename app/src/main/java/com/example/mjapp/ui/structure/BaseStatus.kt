@@ -34,7 +34,7 @@ class BaseStatus {
         isNetworkError = value
     }
 
-    fun updateFinish() {
-        isFinish = true
+    fun updateFinish(value: Boolean) {
+        isFinish = value
     }
 }

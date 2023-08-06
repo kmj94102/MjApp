@@ -43,7 +43,7 @@ class AccountBookViewModel @Inject constructor(
             }
             .catch {
                 if (it is NetworkError) {
-                    updateNetworkErrorState(true)
+                    updateNetworkErrorState()
                 } else {
                     updateMessage(it.message ?: "??")
                 }

@@ -56,7 +56,7 @@ class PokemonDexViewModel @Inject constructor(
                 _list.addAll(list)
             }
             .catch {
-                if (it is NetworkError) updateNetworkErrorState(true)
+                if (it is NetworkError) updateNetworkErrorState()
             }
             .onCompletion { endLoading() }
             .launchIn(viewModelScope)

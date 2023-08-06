@@ -27,8 +27,8 @@ import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
 import com.example.network.model.PokemonEvolutionItem
 import com.example.mjapp.R
-import com.example.mjapp.ui.screen.game.pokemon.dialog.EvolutionTypeDialog
-import com.example.mjapp.ui.screen.game.pokemon.dialog.PokemonSearchDialog
+import com.example.mjapp.ui.dialog.EvolutionTypeDialog
+import com.example.mjapp.ui.dialog.PokemonSearchDialog
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.util.textStyle16

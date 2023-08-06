@@ -24,7 +24,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.screen.game.pokemon.PokemonCardImage
-import com.example.mjapp.ui.screen.game.pokemon.dialog.NumberSelectDialog
+import com.example.mjapp.ui.dialog.NumberSelectDialog
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorWhite

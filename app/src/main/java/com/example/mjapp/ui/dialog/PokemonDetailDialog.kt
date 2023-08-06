@@ -1,20 +1,37 @@
-package com.example.mjapp.ui.screen.game.pokemon.dex
+package com.example.mjapp.ui.dialog
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -23,23 +40,30 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.ConditionAsyncImage
 import com.example.mjapp.ui.custom.ConditionImage
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
-import com.example.mjapp.util.*
+import com.example.mjapp.util.nonRippleClickable
+import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle16
+import com.example.mjapp.util.textStyle16B
+import com.example.mjapp.util.textStyle24B
+import com.example.mjapp.util.toast
 import com.example.network.model.EvolutionInfo
 import com.example.network.model.PokemonDetailInfo
 import com.example.network.model.TypeInfo
+import kotlinx.coroutines.delay
 
 /**
  * 포켓몬 상세 다이얼로그
@@ -48,7 +72,7 @@ import com.example.network.model.TypeInfo
  * @param onSelectChange 다른 포켓몬 선택 리스너
  * **/
 @Composable
-fun DetailDialog(
+fun PokemonDetailDialog(
     isShow: Boolean,
     number: String,
     onDismiss: () -> Unit,
@@ -57,162 +81,99 @@ fun DetailDialog(
     viewModel: PokemonDetailViewModel = hiltViewModel(),
 ) {
     if (isShow.not()) return
-
-    viewModel.fetchPokemonDetail(number)
-    val info = viewModel.info.value
+    val status by viewModel.status.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val selectState = remember { mutableStateOf(1) }
+    var selectState by remember { mutableIntStateOf(1) }
 
-    Dialog(
-        onDismissRequest = {
-            viewModel.statusReset()
-            onDismiss()
-        }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(25.dp))
-                .background(Color.White)
-        ) {
-            /** 상단 영역 **/
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 5.dp, horizontal = 20.dp)
-            ) {
-                ConditionImage(
-                    value = info?.pokemonInfo?.isCatch == true,
-                    trueImageRes = R.drawable.img_monster_ballpng,
-                    falseImageRes = R.drawable.img_monster_ball_empty,
-                    modifier = Modifier
-                        .size(28.dp)
-                        .nonRippleClickable {
-                            viewModel.updateCatch()
-                        }
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                IconBox(
-                    boxShape = CircleShape,
-                    boxColor = MyColorRed,
-                    iconSize = 21.dp,
-                    iconRes = R.drawable.ic_close
-                ) {
-                    onDismiss()
-                }
-            }
-            /** 바디 영역 **/
+    PokemonDialog(
+        isShow = isShow,
+        onDismiss = onDismiss,
+        topIcon = {
+            PokemonDetailTopIcon(viewModel = viewModel)
+        },
+        bodyContents = {
+            val info = viewModel.info.value
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(460.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(Color(0xFF0E2F60), Color(0xFF1F789B))
-                        )
+            ) {
+                when {
+                    status.isLoading -> PokemonSearchLoading()
+                    info == null -> PokemonDetailEmpty()
+                    else -> PokemonDetailBody(
+                        pokemonDetailInfo = info,
+                        isShiny = viewModel.isShiny.value,
+                        selectState = selectState,
+                        onItemClick = onSelectChange
                     )
-            ) {
-                when (viewModel.isLoading.value) {
-                    true -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .weight(1f)
-                                .align(Alignment.CenterHorizontally)
-                        )
-                    }
-                    false -> {
-                        if (info == null) {
-                            Text(
-                                text = "정보를 가져오지 못했어요.",
-                                style = textStyle16B().copy(color = MyColorWhite),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .align(Alignment.CenterHorizontally)
-                            )
-                        } else {
-                            PokemonDetailBody(
-                                pokemonDetailInfo = info,
-                                isShiny = viewModel.isShiny.value,
-                                selectState = selectState.value,
-                                onItemClick = {
-                                    onSelectChange(it)
-                                }
-                            )
-                        }
-                    }
                 }
             }
-
-            /** 하단 영역 **/
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp, horizontal = 20.dp)
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(if (selectState.value == 1) MyColorRed else MyColorLightGray)
-                        .border(1.dp, MyColorBlack, CircleShape)
-                        .nonRippleClickable {
-                            selectState.value = 1
-                        }
-                ) {
-                    Text(text = "1", style = textStyle16B())
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(if (selectState.value == 2) MyColorRed else MyColorLightGray)
-                        .border(1.dp, MyColorBlack, CircleShape)
-                        .nonRippleClickable {
-                            selectState.value = 2
-                        }
-                ) {
-                    Text(text = "2", style = textStyle16B())
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                IconBox(
-                    boxColor = MyColorWhite,
-                    boxShape = CircleShape,
-                    boxSize = DpSize(28.dp, 28.dp),
-                    iconSize = 22.dp,
-                    iconRes = R.drawable.ic_shiny,
-                    iconColor = if (viewModel.isShiny.value) MyColorRed else MyColorLightGray
-                ) {
-                    viewModel.toggleIsShiny()
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_stop_watch),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .nonRippleClickable {
-                            viewModel.insertCounter()
-                        }
-                )
-            }
+        },
+        bottomContents = {
+            PokemonDetailBottom(
+                viewModel = viewModel,
+                selectState = selectState,
+                updateSelectState = { selectState = it }
+            )
         }
+    )
+
+    LaunchedEffect(number) {
+        viewModel.fetchPokemonDetail(number)
     }
 
-    when (val status = viewModel.status.value) {
-        is PokemonDetailViewModel.Status.Init -> {}
-        is PokemonDetailViewModel.Status.Error -> {
-            context.toast(status.msg)
-        }
-        is PokemonDetailViewModel.Status.InsertCounterSuccess -> {
-            context.toast("카운터 등록이 완료되었습니다.")
-        }
-        is PokemonDetailViewModel.Status.CatchUpdateSuccess -> {
-            onCatchStateChange(info?.pokemonInfo?.isCatch == true)
+    LaunchedEffect(status.message) {
+        if (status.message.trim().isEmpty()) return@LaunchedEffect
+        context.toast(status.message)
+        delay(500)
+        status.updateMessage("")
+    }
+
+    LaunchedEffect(status.isFinish) {
+        if (status.isFinish.not()) return@LaunchedEffect
+        onCatchStateChange(viewModel.info.value?.pokemonInfo?.isCatch == true)
+        delay(500)
+        status.updateFinish(false)
+    }
+}
+
+@Composable
+fun PokemonDetailTopIcon(
+    viewModel: PokemonDetailViewModel
+) {
+    val isCatch = viewModel.info.value?.pokemonInfo?.isCatch == true
+    ConditionImage(
+        value = isCatch,
+        trueImageRes = R.drawable.img_monster_ballpng,
+        falseImageRes = R.drawable.img_monster_ball_empty,
+        modifier = Modifier
+            .size(30.dp)
+            .nonRippleClickable(viewModel::updateCatch)
+    )
+}
+
+@Composable
+fun ColumnScope.PokemonDetailEmpty() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .weight(1f)
+            .align(Alignment.CenterHorizontally)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                painter = painterResource(id = R.drawable.img_pokemon_empty_2),
+                contentDescription = null,
+                modifier = Modifier.size(211.dp, 197.dp)
+            )
+            androidx.compose.material3.Text(
+                text = "정보를 가져오지 못했어요.",
+                style = textStyle12().copy(
+                    fontSize = 14.sp,
+                    color = MyColorGray
+                )
+            )
         }
     }
 }
@@ -225,19 +186,16 @@ fun PokemonDetailBody(
     selectState: Int
 ) {
     when (selectState) {
-        1 -> {
-            PokemonDescription(
-                pokemonDetailInfo,
-                isShiny,
-                onItemClick
-            )
-        }
-        2 -> {
-            PokemonStatusAndEvolution(
-                pokemonDetailInfo,
-                isShiny
-            )
-        }
+        1 -> PokemonDescription(
+            info = pokemonDetailInfo,
+            isShiny = isShiny,
+            onItemClick = onItemClick
+        )
+        2 -> PokemonStatusAndEvolution(
+            info = pokemonDetailInfo,
+            isShiny = isShiny,
+            onItemClick = onItemClick
+        )
     }
 }
 
@@ -331,9 +289,7 @@ fun PokemonDescription(
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start, (-36).dp)
                         }
-                        .nonRippleClickable {
-                            onItemClick(it.number)
-                        }
+                        .nonRippleClickable { onItemClick(it.number) }
                 )
                 Box(
                     modifier = Modifier
@@ -363,9 +319,7 @@ fun PokemonDescription(
                             bottom.linkTo(parent.bottom)
                             end.linkTo(parent.end, (-36).dp)
                         }
-                        .nonRippleClickable {
-                            onItemClick(it.number)
-                        }
+                        .nonRippleClickable { onItemClick(it.number) }
                 )
                 Box(
                     modifier = Modifier
@@ -414,8 +368,7 @@ fun CirclePokemonImage(
 
 @Composable
 fun PokemonTypeClip(typeInfo: TypeInfo) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Box(
         modifier = Modifier
             .padding(end = 10.dp)
             .size(70.dp, 20.dp)
@@ -426,6 +379,7 @@ fun PokemonTypeClip(typeInfo: TypeInfo) {
             painter = painterResource(id = typeInfo.imageRes),
             contentDescription = null,
             modifier = Modifier
+                .align(Alignment.CenterStart)
                 .padding(start = 4.dp)
                 .size(20.dp)
         )
@@ -433,8 +387,8 @@ fun PokemonTypeClip(typeInfo: TypeInfo) {
             text = typeInfo.koreanName,
             style = textStyle12().copy(textAlign = TextAlign.Center),
             modifier = Modifier
-                .weight(1f)
-                .padding(end = 4.dp)
+                .align(Alignment.Center)
+                .padding(start = 20.dp)
         )
     }
 }
@@ -442,7 +396,8 @@ fun PokemonTypeClip(typeInfo: TypeInfo) {
 @Composable
 fun PokemonStatusAndEvolution(
     info: PokemonDetailInfo,
-    isShiny: Boolean
+    isShiny: Boolean,
+    onItemClick: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -519,28 +474,10 @@ fun PokemonStatusAndEvolution(
             }
         }
 
-        item {
-            Spacer(modifier = Modifier.height(25.dp))
-        }
+        item { Spacer(modifier = Modifier.height(25.dp)) }
         if (info.evolutionInfo.isEmpty()) {
             item {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.img_pokemon_empty_2),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(211.dp, 197.dp)
-                            .padding(bottom = 10.dp)
-                    )
-                    Text(
-                        text = "진화 정보가 없습니다",
-                        style = textStyle16B().copy(color = MyColorLightGray)
-                    )
-                }
-
+                EvolutionEmpty()
             }
         } else {
             item {
@@ -548,6 +485,7 @@ fun PokemonStatusAndEvolution(
                     PokemonEvolutionContainer(
                         evolutionInfo = it,
                         isShiny = isShiny,
+                        onItemClick = onItemClick,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 10.dp)
@@ -555,6 +493,26 @@ fun PokemonStatusAndEvolution(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EvolutionEmpty() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.img_pokemon_empty_2),
+            contentDescription = null,
+            modifier = Modifier
+                .size(211.dp, 197.dp)
+                .padding(bottom = 10.dp)
+        )
+        Text(
+            text = "진화 정보가 없습니다",
+            style = textStyle16B().copy(color = MyColorLightGray)
+        )
     }
 }
 
@@ -584,7 +542,8 @@ private fun RowScope.PokemonStatusText(text: String) {
 fun PokemonEvolutionContainer(
     evolutionInfo: EvolutionInfo,
     isShiny: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onItemClick: (String) -> Unit
 ) {
     ConstraintLayout(modifier = modifier) {
         val (before, after, evolutionIcon, condition, line) = createRefs()
@@ -598,6 +557,7 @@ fun PokemonEvolutionContainer(
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                 }
+                .nonRippleClickable { onItemClick(evolutionInfo.beforeDot) }
         ) {
             AsyncImage(
                 model = if (isShiny) evolutionInfo.beforeShinyDot else evolutionInfo.beforeDot,
@@ -662,4 +622,53 @@ fun PokemonEvolutionContainer(
         )
 
     }
+}
+
+@Composable
+fun RowScope.PokemonDetailBottom(
+    viewModel: PokemonDetailViewModel,
+    selectState: Int,
+    updateSelectState: (Int) -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(28.dp)
+            .clip(CircleShape)
+            .background(if (selectState == 1) MyColorRed else MyColorLightGray)
+            .border(1.dp, MyColorBlack, CircleShape)
+            .nonRippleClickable { updateSelectState(1) }
+    ) {
+        Text(text = "1", style = textStyle16B())
+    }
+    Spacer(modifier = Modifier.width(10.dp))
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(28.dp)
+            .clip(CircleShape)
+            .background(if (selectState == 2) MyColorRed else MyColorLightGray)
+            .border(1.dp, MyColorBlack, CircleShape)
+            .nonRippleClickable { updateSelectState(2) }
+    ) {
+        Text(text = "2", style = textStyle16B())
+    }
+    Spacer(modifier = Modifier.width(10.dp))
+    IconBox(
+        boxColor = MyColorWhite,
+        boxShape = CircleShape,
+        boxSize = DpSize(28.dp, 28.dp),
+        iconSize = 22.dp,
+        iconRes = R.drawable.ic_shiny,
+        iconColor = if (viewModel.isShiny.value) MyColorRed else MyColorLightGray,
+        onClick = viewModel::toggleIsShiny
+    )
+    Spacer(modifier = Modifier.weight(1f))
+    Icon(
+        painter = painterResource(id = R.drawable.ic_stop_watch),
+        contentDescription = null,
+        modifier = Modifier
+            .size(24.dp)
+            .nonRippleClickable(viewModel::insertCounter)
+    )
 }

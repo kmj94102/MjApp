@@ -39,7 +39,7 @@ import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.UnderLineText
 import com.example.mjapp.ui.dialog.DaySelectDialog
 import com.example.mjapp.ui.screen.accountbook.add.IncomeExpenditureType
-import com.example.mjapp.ui.screen.calendar.dialog.YearMonthSelectDialog
+import com.example.mjapp.ui.dialog.YearMonthSelectDialog
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
@@ -173,6 +173,7 @@ fun RegistrationFixedAccountBookBody(
         isShow = isYearMonthSelectShow,
         year = viewModel.year,
         month = viewModel.month,
+        color = MyColorTurquoise,
         onDismiss = { isYearMonthSelectShow = false },
         onSelect = viewModel::updateYearMonth
     )

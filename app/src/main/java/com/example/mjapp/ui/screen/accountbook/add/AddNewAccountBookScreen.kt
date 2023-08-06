@@ -25,7 +25,7 @@ import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.ImageDoubleCard
-import com.example.mjapp.ui.screen.calendar.dialog.DateSelectDialog
+import com.example.mjapp.ui.dialog.DateSelectDialog
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed

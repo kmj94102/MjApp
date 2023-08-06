@@ -59,18 +59,11 @@ class PokemonRepositoryImpl @Inject constructor(
 
     override suspend fun updatePokemonCatch(
         pokemonCatch: UpdatePokemonCatch
-    ): String {
-        return client.updatePokemonCatch(pokemonCatch)
-            .getOrElse {
-                it.printStackTrace()
-                "업데이트 실패"
-            }
-    }
+    ) = client.updatePokemonCatch(pokemonCatch)
+        .getFailureThrow()
 
-    override suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo) {
-        dao.insertPokemonCounter(
-            pokemonDetailInfo.toPokemonCounterEntity()
-        )
+    override suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo) = runCatching {
+        dao.insertPokemonCounter(pokemonDetailInfo.toPokemonCounterEntity())
     }
 
     override suspend fun insertPokemonCounter(number: String) {
@@ -101,15 +94,13 @@ class PokemonRepositoryImpl @Inject constructor(
         dao.updateCatch(number)
     }
 
-    override fun fetchBriefPokemonList(search: String) = flow {
-        try {
-            emit(
-                client.fetchBriefPokemonList(search).mapNotNull { it.toBriefPokemonItem() }
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(emptyList())
-        }
+    override fun fetchBriefPokemonList(search: String): Flow<List<BriefPokemonItem>> = flow {
+        client
+            .fetchBriefPokemonList(search)
+            .onSuccess { list ->
+                emit(list.mapNotNull { it.toBriefPokemonItem() })
+            }
+            .getFailureThrow()
     }
 
     override suspend fun insertPokemonEvolution(

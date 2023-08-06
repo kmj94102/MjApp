@@ -51,7 +51,7 @@ class RegistrationFixedAccountBookViewModel @Inject constructor(
             .onEach { _list.clearAndAddAll(it) }
             .catch {
                 if (it is NetworkError) {
-                    updateNetworkErrorState(true)
+                    updateNetworkErrorState()
                 } else {
                     _list.clear()
                     updateMessage(it.message ?: "정보를 불러오는 도중 실패하였습니다.")

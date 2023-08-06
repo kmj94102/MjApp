@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.AsyncImageDoubleCard
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.dialog.PokemonDetailDialog
 import com.example.mjapp.ui.screen.game.pokemon.search.PokemonNameSearchDialog
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorBeige
@@ -76,7 +77,7 @@ fun PokemonDexScreen(
         }
     )
 
-    DetailDialog(
+    PokemonDetailDialog(
         isShow = isDetailDialogShow,
         number = viewModel.selectNumber.value,
         onCatchStateChange = { viewModel.updateCatchState(it) },
