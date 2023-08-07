@@ -20,4 +20,15 @@ data class ElswordQuestUpdateInfo(
     val image : String,
     val type: String,
     val progress: Int
-)
+) {
+    companion object {
+        fun create() = ElswordQuestUpdateInfo(
+            max = 0,
+            questName = "",
+            characterName = "",
+            image = "",
+            type = ElswordQuestUpdate.Remove,
+            progress = 0
+        )
+    }
+}

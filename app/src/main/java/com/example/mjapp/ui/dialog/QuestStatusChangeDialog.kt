@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,22 +37,16 @@ import com.example.network.model.ElswordQuestUpdateInfo
 
 @Composable
 fun QuestStatusChangeDialog(
-    item: ElswordQuestUpdateInfo?,
+    item: ElswordQuestStatus,
     isShow: Boolean,
     onDismiss: () -> Unit,
     onUpdate: (String, String, Int) -> Unit
 ) {
-    if (item == null) return
-
-    var state by remember { mutableIntStateOf(item.progress) }
-    var type by remember { mutableStateOf(item.type) }
-    var isEnable by remember { mutableStateOf(type == ElswordQuestUpdate.Ongoing) }
-
     ConfirmCancelDialog(
         isShow = isShow,
         title = "상태 업데이트",
         onCancelClick = onDismiss,
-        onConfirmClick = { onUpdate(item.characterName, type, state) },
+        onConfirmClick = { onUpdate(item.characterName, item.status, item.progress) },
         onDismiss = onDismiss,
         bodyContents = {
             Card(
@@ -90,11 +83,8 @@ fun QuestStatusChangeDialog(
                             text = "진행 안 함",
                             textStyle = textStyle12B().copy(fontSize = 14.sp),
                             color = MyColorRed,
-                            check = type == ElswordQuestUpdate.Remove,
-                            onCheckedChange = {
-                                type = ElswordQuestUpdate.Remove
-                                isEnable = false
-                            }
+                            check = item.isDoNotProceed(),
+                            onCheckedChange = { item.updateStatus(ElswordQuestUpdate.Remove) }
                         )
                         Spacer(modifier = Modifier.height(5.dp))
 
@@ -102,11 +92,8 @@ fun QuestStatusChangeDialog(
                             text = "진행 중",
                             textStyle = textStyle12B().copy(fontSize = 14.sp),
                             color = MyColorRed,
-                            check = type == ElswordQuestUpdate.Ongoing,
-                            onCheckedChange = {
-                                type = ElswordQuestUpdate.Ongoing
-                                isEnable = true
-                            }
+                            check = item.isProceed(),
+                            onCheckedChange = { item.updateStatus(ElswordQuestUpdate.Ongoing) }
                         )
                         Spacer(modifier = Modifier.height(10.dp))
 
@@ -118,14 +105,14 @@ fun QuestStatusChangeDialog(
                                 )
                                 Spacer(modifier = Modifier.weight(1f))
                                 Text(
-                                    text = "${state}/${item.max}",
+                                    text = "${item.progress}/${item.max}",
                                     style = textStyle12B().copy(fontSize = 14.sp)
                                 )
                             }
                             CommonSlider(
                                 valueRange = (0..item.max).toList(),
-                                enable = isEnable,
-                                onValueChange = { state = it },
+                                enable = item.isProceed(),
+                                onValueChange = item::updateProgress,
                                 modifier = Modifier.padding(top = 5.dp)
                             )
                         }
@@ -136,11 +123,8 @@ fun QuestStatusChangeDialog(
                             text = "완료",
                             textStyle = textStyle12B().copy(fontSize = 14.sp),
                             color = MyColorRed,
-                            check = type == ElswordQuestUpdate.Complete,
-                            onCheckedChange = {
-                                type = ElswordQuestUpdate.Complete
-                                isEnable = false
-                            }
+                            check = item.isComplete(),
+                            onCheckedChange = { item.updateStatus(ElswordQuestUpdate.Complete) }
                         )
                     }
                 }
@@ -148,4 +132,28 @@ fun QuestStatusChangeDialog(
         },
         color = MyColorRed
     )
+}
+
+class ElswordQuestStatus(info: ElswordQuestUpdateInfo) {
+    var status by mutableStateOf(info.type)
+        private set
+
+    var progress by mutableIntStateOf(info.progress)
+        private set
+
+    val max = info.max
+    val questName = info.questName
+    val characterName = info.characterName
+    val image = info.image
+
+    fun updateStatus(value: String) { status = value }
+
+    fun updateProgress(value: Int) { progress = value }
+
+    fun isDoNotProceed() = status == ElswordQuestUpdate.Remove
+
+    fun isProceed() = status == ElswordQuestUpdate.Ongoing
+
+    fun isComplete() = status == ElswordQuestUpdate.Complete
+
 }

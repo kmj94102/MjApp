@@ -28,8 +28,8 @@ class ElswordCounterViewModel @Inject constructor(
     val selectItem
         get() = _list.getOrNull(_selectCounter.intValue)
 
-    private val _dialogItem = mutableStateOf<ElswordQuestUpdateInfo?>(null)
-    val dialogItem: State<ElswordQuestUpdateInfo?> = _dialogItem
+    private val _dialogItem = mutableStateOf(ElswordQuestUpdateInfo.create())
+    val dialogItem: State<ElswordQuestUpdateInfo> = _dialogItem
 
     init {
         fetchQuestDetail()

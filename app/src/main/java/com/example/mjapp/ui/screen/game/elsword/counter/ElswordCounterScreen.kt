@@ -41,6 +41,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.UnderLineText
+import com.example.mjapp.ui.dialog.ElswordQuestStatus
 import com.example.mjapp.ui.dialog.QuestSelectDialog
 import com.example.mjapp.ui.dialog.QuestStatusChangeDialog
 import com.example.mjapp.ui.screen.game.elsword.ElswordCharacters
@@ -96,7 +97,7 @@ fun ElswordCounterScreen(
     )
 
     QuestStatusChangeDialog(
-        item = viewModel.dialogItem.value,
+        item = ElswordQuestStatus(viewModel.dialogItem.value),
         isShow = isStatusChangeShow,
         onDismiss = { isStatusChangeShow = false },
         onUpdate = { name, type, progress ->

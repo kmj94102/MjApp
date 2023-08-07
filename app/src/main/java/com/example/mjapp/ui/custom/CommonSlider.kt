@@ -26,7 +26,7 @@ import kotlin.math.abs
  * @param onValueChange Slider 값 변경 리스너
  * **/
 @Composable
-fun <T>CommonSlider(
+fun <T> CommonSlider(
     modifier: Modifier = Modifier,
     height: Dp = 15.dp,
     thumbColor: Color = MyColorWhite,
@@ -37,20 +37,16 @@ fun <T>CommonSlider(
     valueRange: List<T>,
     onValueChange: (T) -> Unit
 ) {
-    var currentDragX by remember { mutableStateOf(0f) }
-    var offsetList by remember { mutableStateOf( listOf<Offset>() ) }
+    var currentDragX by remember { mutableFloatStateOf(0f) }
+    var offsetList by remember { mutableStateOf(listOf<Offset>()) }
 
     Canvas(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
             .pointerInput(Unit) {
-                if (enable.not()) return@pointerInput
-
                 detectDragGestures(
-                    onDragStart = {
-                        currentDragX = it.x
-                    },
+                    onDragStart = { currentDragX = it.x },
                     onDragEnd = {},
                     onDrag = { change, _ ->
                         val (nearestIndex, nearestOffset) = offsetList
@@ -59,9 +55,7 @@ fun <T>CommonSlider(
                             ?: (0 to Offset(0f, 0f))
 
                         currentDragX = nearestOffset.x + size.width / 20
-                        runCatching {
-                            onValueChange(valueRange[nearestIndex])
-                        }
+                        runCatching { onValueChange(valueRange[nearestIndex]) }
                     }
                 )
             }
@@ -90,7 +84,7 @@ fun <T>CommonSlider(
         }
 
         drawRoundRect(
-            size = Size(currentDragX.coerceIn(with10Percent , size.width), size.height),
+            size = Size(currentDragX.coerceIn(with10Percent, size.width), size.height),
             color = if (enable) activeTrackColor else disableTrackColor,
             cornerRadius = CornerRadius(size.height, size.height)
         )
@@ -98,7 +92,10 @@ fun <T>CommonSlider(
         drawCircle(
             radius = size.height / 2 - height10Percent,
             color = thumbColor,
-            center = Offset(currentDragX.coerceIn(with10Percent , size.width) - height10Percent * 6, center.y)
+            center = Offset(
+                currentDragX.coerceIn(with10Percent, size.width) - height10Percent * 6,
+                center.y
+            )
         )
     }
 }
