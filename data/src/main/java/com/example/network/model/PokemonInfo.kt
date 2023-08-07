@@ -29,8 +29,10 @@ data class PokemonInfo(
 data class EvolutionInfo(
     val beforeDot: String,
     val beforeShinyDot: String,
+    val beforeNumber: String,
     val afterDot: String,
     val afterShinyDot: String,
+    val afterNumber: String,
     val evolutionImage: String,
     val evolutionCondition: String
 )

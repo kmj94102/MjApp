@@ -557,7 +557,7 @@ fun PokemonEvolutionContainer(
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                 }
-                .nonRippleClickable { onItemClick(evolutionInfo.beforeDot) }
+                .nonRippleClickable { onItemClick(evolutionInfo.beforeNumber) }
         ) {
             AsyncImage(
                 model = if (isShiny) evolutionInfo.beforeShinyDot else evolutionInfo.beforeDot,
@@ -576,6 +576,7 @@ fun PokemonEvolutionContainer(
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                 }
+                .nonRippleClickable { onItemClick(evolutionInfo.afterNumber) }
         ) {
             AsyncImage(
                 model = if (isShiny) evolutionInfo.afterShinyDot else evolutionInfo.afterDot,
