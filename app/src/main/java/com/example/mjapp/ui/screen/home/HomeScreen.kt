@@ -87,7 +87,7 @@ fun HomeBody(
     viewModel: HomeViewModel,
     onSettingsClick: (PokemonCounter) -> Unit
 ) {
-    val state = rememberPagerState { viewModel.counterList.size }
+    val state = rememberPagerState { viewModel.elswordQuestList.size }
 
     LazyColumn(
         contentPadding = PaddingValues(top = 22.dp, bottom = 50.dp),
@@ -98,7 +98,7 @@ fun HomeBody(
     ) {
         item {
             WeekCalendar(
-                selectDate = viewModel.selectItem.value.detailDate,
+                selectDate = viewModel.selectItem.detailDate,
                 today = viewModel.today,
                 list = viewModel.list,
                 onDateSelect = viewModel::updateSelectDate,
@@ -107,7 +107,7 @@ fun HomeBody(
         }
 
         item {
-            val list = viewModel.selectItem.value.itemList
+            val list = viewModel.selectItem.itemList
             if (list.isEmpty()) {
                 EmptySchedule()
             } else {
@@ -167,12 +167,12 @@ fun HomeBody(
         item {
             Spacer(modifier = Modifier.height(10.dp))
 
-            if (viewModel.counterList.isEmpty()) {
+            if (viewModel.elswordQuestList.isEmpty()) {
                 ElswordCounterEmptyContainer()
             } else {
                 HorizontalPager(state = state) { index ->
                     ElswordCounterContainer(
-                        elswordCounter = viewModel.counterList[index]
+                        elswordCounter = viewModel.elswordQuestList[index]
                     ) {
                         viewModel.updateElswordCounter(index)
                     }

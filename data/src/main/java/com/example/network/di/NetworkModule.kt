@@ -1,6 +1,7 @@
 package com.example.network.di
 
 import com.example.network.BuildConfig
+import com.example.network.database.dao.PokemonDao
 import com.example.network.service.*
 import dagger.Module
 import dagger.Provides
@@ -10,7 +11,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -91,8 +91,9 @@ object NetworkModule {
     @Provides
     @Singleton
     fun providePokemonClient(
-        pokemonService: PokemonService
-    ): PokemonClient = PokemonClient(pokemonService)
+        pokemonService: PokemonService,
+        pokemonDao: PokemonDao
+    ): PokemonClient = PokemonClient(pokemonService, pokemonDao)
 
     @Provides
     @Singleton

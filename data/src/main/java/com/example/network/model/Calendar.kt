@@ -109,10 +109,10 @@ sealed class CalendarItem(val type: String) {
         val endTime: String,
         val recurrenceType: String,
         val recurrenceEndDate: String?,
-        val scheduleContent : String,
+        val scheduleContent: String,
         val scheduleTitle: String,
         val recurrenceId: Int?
-    ): CalendarItem(Schedule) {
+    ) : CalendarItem(Schedule) {
         fun getTime() = "${startTime.substring(11, 16)} ~ ${endTime.substring(11, 16)}"
     }
 
@@ -120,7 +120,7 @@ sealed class CalendarItem(val type: String) {
         val id: Int,
         val title: String,
         val taskList: List<TaskInfo>
-    ): CalendarItem(Plan)
+    ) : CalendarItem(Plan)
 
     data class TaskInfo(
         val id: Int,

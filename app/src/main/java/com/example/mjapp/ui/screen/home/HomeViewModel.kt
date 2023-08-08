@@ -1,9 +1,8 @@
 package com.example.mjapp.ui.screen.home
 
-import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.custom.getLastDayOfWeek
 import com.example.mjapp.ui.custom.getStartDayOfWeek
@@ -11,65 +10,66 @@ import com.example.mjapp.ui.custom.getWeeklyDateRange
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.getToday
 import com.example.mjapp.util.toStringFormat
-import com.example.network.model.*
-import com.example.network.repository.CalendarRepository
-import com.example.network.repository.ElswordRepository
-import com.example.network.repository.PokemonRepository
+import com.example.network.model.ElswordCounter
+import com.example.network.model.ElswordCounterUpdateItem
+import com.example.network.model.HomeInfoResult
+import com.example.network.model.HomeParam
+import com.example.network.model.MyCalendar
+import com.example.network.model.MyCalendarInfo
+import com.example.network.model.PokemonCounter
+import com.example.network.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val calendarRepository: CalendarRepository,
-    private val pokemonRepository: PokemonRepository,
-    private val elswordRepository: ElswordRepository
+    private val repository: HomeRepository
 ) : BaseViewModel() {
 
     val today = getToday()
+    private val homeInfo = mutableStateOf(HomeInfoResult())
+
     private val _list = mutableStateListOf<MyCalendar>()
     val list: List<MyCalendar> = _list
 
-    private val _pokemonList = mutableStateListOf<PokemonCounter>()
-    val pokemonList: List<PokemonCounter> = _pokemonList
+    val pokemonList: List<PokemonCounter> get() = homeInfo.value.pokemonInfo
 
-    private val _selectItem = mutableStateOf(MyCalendar())
-    val selectItem: State<MyCalendar> = _selectItem
+    val elswordQuestList: List<ElswordCounter> get() = homeInfo.value.questInfo
 
-    private val _counterList = mutableStateListOf<ElswordCounter>()
-    val counterList: List<ElswordCounter> = _counterList
+    private val index = mutableIntStateOf(0)
+    val selectItem: MyCalendar get() = _list.getOrElse(index.intValue) { MyCalendar() }
 
     init {
         _list.addAll(getWeeklyDateRange(today))
-        val index = _list.indexOfFirst { it.detailDate == today }
-        _selectItem.value = _list.getOrElse(index) { MyCalendar() }
-        fetchCalenderInfo()
-        fetchPokemonCounter()
-        fetchElswordCounter()
+        index.intValue = _list.indexOfFirst { it.detailDate == today }
+        fetchHomeInfo()
+    }
+
+    private fun fetchHomeInfo() {
+        val start = getStartDayOfWeek(today)?.toStringFormat() ?: return
+        val end = getLastDayOfWeek(today)?.toStringFormat() ?: return
+
+        repository
+            .fetchHomeInfo(HomeParam(startDate = start, endDate = end))
+            .onStart { startLoading() }
+            .onEach {
+                homeInfo.value = it
+                homeInfo.value.calendarInfo.forEach { info ->
+                    setCalendarItem(info.toMyCalendarInfo())
+                }
+            }
+            .catch { it.printStackTrace() }
+            .onEach { endLoading() }
+            .launchIn(viewModelScope)
     }
 
     fun updateSelectDate(date: String) {
-        val index = _list.indexOfFirst { it.detailDate == date }
-        _selectItem.value = _list.getOrElse(index) { MyCalendar() }
-    }
-
-    private fun fetchCalenderInfo() {
-        val start = getStartDayOfWeek(today)?.toStringFormat() ?: return
-        val end = getLastDayOfWeek(today)?.toStringFormat() ?: return
-        calendarRepository
-            .fetchCalendarByWeek(
-                start = start,
-                end = end
-            )
-            .onEach {
-                it.forEach { info ->
-                    setCalendarItem(info)
-                }
-            }
-            .launchIn(viewModelScope)
+        index.intValue = _list.indexOfFirst { it.detailDate == date }
     }
 
     private fun setCalendarItem(item: MyCalendarInfo) {
@@ -88,83 +88,51 @@ class HomeViewModel @Inject constructor(
     }
 
     fun deleteSchedule(id: Int) = viewModelScope.launch {
-        calendarRepository.deleteSchedule(id)
+        repository.deleteSchedule(id)
     }
 
     fun deletePlanTasks(id: Int) = viewModelScope.launch {
-        calendarRepository.deletePlanTasks(id)
-    }
-
-    private fun fetchPokemonCounter() {
-        pokemonRepository
-            .fetchPokemonCounter()
-            .onEach {
-                _pokemonList.clear()
-                _pokemonList.addAll(it)
-            }
-            .catch {
-                _pokemonList.clear()
-            }
-            .launchIn(viewModelScope)
+        repository.deletePlanTasks(id)
     }
 
     fun updateCounter(
         count: Int,
         number: String
     ) = viewModelScope.launch {
-        pokemonRepository.updateCounter(count, number)
+        repository.updateCounter(count, number)
     }
 
-    fun deleteCounter(
-        number: String
-    ) = viewModelScope.launch {
-        pokemonRepository.deletePokemonCounter(number)
+    fun deleteCounter(number: String) = viewModelScope.launch {
+        repository.deletePokemonCounter(number)
     }
 
-    fun updateCatch(
-        number: String
-    ) = viewModelScope.launch {
-        pokemonRepository.updateCatch(number)
-        pokemonRepository.updatePokemonCatch(
-            UpdatePokemonCatch(
-                number = number,
-                isCatch = true
-            )
-        )
+    fun updateCatch(number: String) = viewModelScope.launch {
+        repository.updateCatch(number)
     }
 
     fun updateCustomIncrease(
         customIncrease: Int,
         number: String
     ) = viewModelScope.launch {
-        pokemonRepository.updateCustomIncrease(customIncrease, number)
+        repository.updateCustomIncrease(customIncrease, number)
     }
 
-    private fun fetchElswordCounter() {
-        elswordRepository
-            .fetchQuestCounter()
-            .onEach {
-                _counterList.clear()
-                _counterList.addAll(it)
-            }
-            .launchIn(viewModelScope)
-    }
 
-    fun updateElswordCounter(
-        index: Int
-    ) = viewModelScope.launch {
-        val selectItem = _counterList[index]
+    fun updateElswordCounter(index: Int) = viewModelScope.launch {
+        val tempList = elswordQuestList.toMutableList()
         val updateItem = ElswordCounterUpdateItem(
-            id = selectItem.id,
-            max = selectItem.max
+            id = tempList[index].id,
+            max = tempList[index].max
         )
 
-        val result = elswordRepository.updateQuestCounter(updateItem)
+        val result = repository.updateQuestCounter(updateItem)
         if (result == 0) {
-            _counterList.removeAt(index)
+            tempList.removeAt(index)
+        } else {
+            tempList[index] = tempList[index].copy(progress = result)
         }
-        _counterList[index] = _counterList[index].copy(
-            progress = result
+        homeInfo.value = homeInfo.value.copy(
+            questInfo = tempList
         )
     }
 

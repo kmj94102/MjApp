@@ -34,4 +34,9 @@ interface RepositoryModule {
         accountBookRepositoryImpl: AccountBookRepositoryImpl
     ): AccountBookRepository
 
+    @Binds
+    fun bindHomeRepository(
+        homeRepositoryImpl: HomeRepositoryImpl
+    ): HomeRepository
+
 }

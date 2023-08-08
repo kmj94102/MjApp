@@ -1,10 +1,13 @@
 package com.example.network.service
 
+import com.example.network.database.dao.PokemonDao
+import com.example.network.database.entity.PokemonCounterEntity
 import com.example.network.model.*
 import javax.inject.Inject
 
 class PokemonClient @Inject constructor(
-    private val service: PokemonService
+    private val service: PokemonService,
+    private val dao: PokemonDao
 ) {
     /** 포켓몬 번호로 정보 조회 **/
     suspend fun fetchPokemonWithNumber(number: String) = runCatching {
@@ -76,5 +79,23 @@ class PokemonClient @Inject constructor(
     suspend fun updatePokemonSpotlight(
         item: PokemonSpotlightItem
     ) = service.updatePokemonSpotlight(item)
+
+    /** 포켓몬 카운터 조회 **/
+    fun fetchPokemonCounter() = dao.fetchPokemonCounter()
+
+    suspend fun insertPokemonCounter(entity: PokemonCounterEntity) =
+        dao.insertPokemonCounter(entity)
+
+    suspend fun updateCounter(count: Int, number: String) =
+        dao.updateCounter(count, number)
+
+    suspend fun updateCustomIncrease(customIncrease: Int, number: String) =
+        dao.updateCustomIncrease(customIncrease, number)
+
+    suspend fun deletePokemonCounter(number: String) =
+        dao.deleteCounter(number)
+
+    suspend fun updateCatch(number: String) =
+        dao.updateCatch(number)
 
 }

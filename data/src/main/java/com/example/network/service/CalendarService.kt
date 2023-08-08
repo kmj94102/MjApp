@@ -1,11 +1,16 @@
 package com.example.network.service
 
 import com.example.network.model.CalendarResult
+import com.example.network.model.HomeInfoResult
+import com.example.network.model.HomeParam
 import com.example.network.model.PlanTasks
 import com.example.network.model.ScheduleItem
 import retrofit2.http.*
 
 interface CalendarService {
+    @POST("/select/homeInfo")
+    suspend fun fetchHomeInfo(@Body item: HomeParam): HomeInfoResult
+
     @POST("/insert/schedule")
     suspend fun insertSchedule(@Body item: ScheduleItem)
 

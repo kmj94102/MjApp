@@ -1,7 +1,14 @@
 package com.example.network.repository
 
-import com.example.network.database.dao.PokemonDao
-import com.example.network.model.*
+import com.example.network.model.BriefPokemonItem
+import com.example.network.model.CharacteristicInfo
+import com.example.network.model.PokemonCounter
+import com.example.network.model.PokemonDetailInfo
+import com.example.network.model.PokemonEvolution
+import com.example.network.model.PokemonInfo
+import com.example.network.model.PokemonSpotlightItem
+import com.example.network.model.UpdatePokemonCatch
+import com.example.network.model.getFailureThrow
 import com.example.network.service.ExternalClient
 import com.example.network.service.PokemonClient
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +18,6 @@ import javax.inject.Inject
 class PokemonRepositoryImpl @Inject constructor(
     private val client: PokemonClient,
     private val externalClient: ExternalClient,
-    private val dao: PokemonDao
 ) : PokemonRepository {
     override suspend fun insertPokemon(pokemonInfo: PokemonInfo): String {
         val originCharacteristics = pokemonInfo.characteristic.split(",")
@@ -63,35 +69,35 @@ class PokemonRepositoryImpl @Inject constructor(
         .getFailureThrow()
 
     override suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo) = runCatching {
-        dao.insertPokemonCounter(pokemonDetailInfo.toPokemonCounterEntity())
+        client.insertPokemonCounter(pokemonDetailInfo.toPokemonCounterEntity())
     }
 
     override suspend fun insertPokemonCounter(number: String) {
         client
             .fetchPokemonWithNumber(number)
             .onSuccess {
-                dao.insertPokemonCounter(it.toPokemonCounterEntity())
+                client.insertPokemonCounter(it.toPokemonCounterEntity())
             }
             .getFailureThrow()
     }
 
     override fun fetchPokemonCounter(): Flow<List<PokemonCounter>> =
-        dao.fetchPokemonCounter()
+        client.fetchPokemonCounter()
 
     override suspend fun updateCounter(count: Int, number: String) {
-        dao.updateCounter(count, number)
+        client.updateCounter(count, number)
     }
 
     override suspend fun updateCustomIncrease(customIncrease: Int, number: String) {
-        dao.updateCustomIncrease(customIncrease, number)
+        client.updateCustomIncrease(customIncrease, number)
     }
 
     override suspend fun deletePokemonCounter(number: String) {
-        dao.deleteCounter(number)
+        client.deletePokemonCounter(number)
     }
 
     override suspend fun updateCatch(number: String) {
-        dao.updateCatch(number)
+        client.updateCatch(number)
     }
 
     override fun fetchBriefPokemonList(search: String): Flow<List<BriefPokemonItem>> = flow {
