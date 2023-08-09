@@ -8,27 +8,25 @@ import javax.inject.Inject
 class CalendarClient @Inject constructor(
     private val service: CalendarService
 ) {
-
+    /** 홈 정보 조회 **/
     suspend fun fetchHomeInfo(item: HomeParam) = runCatching { service.fetchHomeInfo(item) }
 
-    suspend fun insertSchedule(item: ScheduleItem) = runCatching { service.insertSchedule(item) }
-
+    /** 월 정보 조회 **/
     suspend fun fetchCalendarByMonth(
         year: Int,
         month: Int
     ) = runCatching { service.fetchCalendarByMonth(year, month) }
 
-    suspend fun fetchCalendarByWeek(
-        start: String,
-        end: String
-    ) = runCatching { service.fetchCalendarByWeek(start, end) }
+    /** 일정 등록 **/
+    suspend fun insertSchedule(item: ScheduleItem) = runCatching { service.insertSchedule(item) }
 
-    suspend fun insertPlan(
-        item: PlanTasks
-    ) = runCatching { service.insertPlan(item) }
+    /** 계획 등록 **/
+    suspend fun insertPlan(item: PlanTasks) = runCatching { service.insertPlan(item) }
 
-    suspend fun deleteSchedule(id: Int) = service.deleteSchedule(id)
+    /** 일정 삭제 **/
+    suspend fun deleteSchedule(id: Int) = runCatching { service.deleteSchedule(id) }
 
-    suspend fun deletePlanTasks(id: Int) = service.deletePlanTasks(id)
+    /** 계획 삭제 **/
+    suspend fun deletePlanTasks(id: Int) = runCatching { service.deletePlanTasks(id) }
 
 }

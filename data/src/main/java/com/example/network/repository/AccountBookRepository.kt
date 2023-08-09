@@ -4,26 +4,31 @@ import com.example.network.model.*
 import kotlinx.coroutines.flow.Flow
 
 interface AccountBookRepository {
+    /** 가계부 조회 **/
+    fun fetchAccountBookInfo(
+        dateConfiguration: DateConfiguration
+    ): Flow<AccountBookMainInfo>
 
+    /** 가계부 등록 **/
     suspend fun insertNewAccountBookItem(
         item: AccountBookInsertItem,
         isIncome: Boolean
     ): Result<String>
 
-    suspend fun deleteAccountBookItem(id: Int): Result<Unit>
-
-    fun fetchAccountBookInfo(
-        dateConfiguration: DateConfiguration
-    ): Flow<AccountBookMainInfo>
-
+    /** 이번달 상세 조회 **/
     suspend fun fetchThisMonthDetail(
         dateConfiguration: DateConfiguration
     ): Result<AccountBookDetailInfo>
 
+    /** 고정 내역 추가 **/
     suspend fun insertFixedAccountBookItem(
         item: FixedAccountBook
     ): Result<String>
 
+    /** 고정 내역 삭제 **/
+    suspend fun deleteAccountBookItem(id: Int): Result<Unit>
+
+    /** 고정 내역 조회 **/
     fun fetchFixedAccountBook(): Flow<List<FixedAccountBook>>
 
 }

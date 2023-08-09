@@ -1,65 +1,45 @@
 package com.example.network.repository
 
-import com.example.network.model.MyCalendarInfo
 import com.example.network.model.PlanTasksModify
 import com.example.network.model.ScheduleModifier
 import com.example.network.model.getFailureThrow
 import com.example.network.service.CalendarClient
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class CalendarRepositoryImpl @Inject constructor(
     private val client: CalendarClient
 ) : CalendarRepository {
-    override suspend fun insertSchedule(item: ScheduleModifier) = runCatching {
-        client.insertSchedule(item.checkValidity().toMyCalendarItem())
-        "일정 등록 완료"
-    }
-
+    /** 달력 정보 조회 **/
     override fun fetchCalendarByMonth(
         year: Int,
         month: Int
-    ): Flow<List<MyCalendarInfo>> = flow {
+    ) = flow {
         client
             .fetchCalendarByMonth(year, month)
-            .onSuccess { list ->
-                emit(list.map { it.toMyCalendarInfo() })
-            }
+            .onSuccess { list -> emit(list.map { it.toMyCalendarInfo() }) }
             .getFailureThrow()
     }
 
-//    override fun fetchCalendarByWeek(start: String, end: String) = flow {
-//        try {
-//            emit(
-//                client
-//                    .fetchCalendarByWeek(start, end)
-//                    .map { it.toMyCalendarInfo() }
-//            )
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            emit(emptyList())
-//        }
-//    }
+    /** 일정 등록 **/
+    override suspend fun insertSchedule(item: ScheduleModifier) = runCatching {
+        client.insertSchedule(item.checkValidity().toMyCalendarItem()).getFailureThrow()
+        "일정 등록 완료"
+    }
 
+    /** 계획 등록 **/
     override suspend fun insertPlan(item: PlanTasksModify) = runCatching {
-        client.insertPlan(item.checkValidity().toPlanTasks())
+        client.insertPlan(item.checkValidity().toPlanTasks()).getFailureThrow()
         "계획 등록 완료"
     }
 
+    /** 일정 삭제 **/
     override suspend fun deleteSchedule(id: Int) {
-        try {
-            client.deleteSchedule(id)
-        } catch (e: Exception){
-            e.printStackTrace()
-        }
+        client.deleteSchedule(id).getFailureThrow()
     }
 
+    /** 계획 삭제 **/
     override suspend fun deletePlanTasks(id: Int) {
-        try {
-            client.deletePlanTasks(id)
-        } catch (e: Exception){
-            e.printStackTrace()
-        }
+        client.deletePlanTasks(id).getFailureThrow()
     }
 }

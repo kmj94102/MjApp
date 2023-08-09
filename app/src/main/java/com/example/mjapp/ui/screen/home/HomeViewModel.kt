@@ -17,6 +17,7 @@ import com.example.network.model.HomeParam
 import com.example.network.model.MyCalendar
 import com.example.network.model.MyCalendarInfo
 import com.example.network.model.PokemonCounter
+import com.example.network.model.UpdatePokemonCatch
 import com.example.network.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -62,9 +63,9 @@ class HomeViewModel @Inject constructor(
                 homeInfo.value.calendarInfo.forEach { info ->
                     setCalendarItem(info.toMyCalendarInfo())
                 }
+                endLoading()
             }
             .catch { it.printStackTrace() }
-            .onEach { endLoading() }
             .launchIn(viewModelScope)
     }
 
@@ -108,6 +109,12 @@ class HomeViewModel @Inject constructor(
 
     fun updateCatch(number: String) = viewModelScope.launch {
         repository.updateCatch(number)
+        repository.updatePokemonCatch(
+            UpdatePokemonCatch(
+                number = number,
+                isCatch = true
+            )
+        )
     }
 
     fun updateCustomIncrease(

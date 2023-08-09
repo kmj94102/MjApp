@@ -7,7 +7,7 @@ interface PokemonRepository {
     /** 포켓몬 추가 **/
     suspend fun insertPokemon(pokemonInfo: PokemonInfo): String
 
-    /** 포켓몬 조회 **/
+    /** 포켓몬 도감 조회 **/
     fun fetchPokemonList(
         name: String,
         skip: Int,
@@ -44,20 +44,12 @@ interface PokemonRepository {
     fun fetchBriefPokemonList(search: String): Flow<List<BriefPokemonItem>>
 
     /** 포켓몬 진화 추가 **/
-    suspend fun insertPokemonEvolution(
-        evolutions: List<PokemonEvolution>,
-        onSuccess: () -> Unit,
-        onFailure: () -> Unit
-    )
+    suspend fun insertPokemonEvolution(evolutions: List<PokemonEvolution>): Result<String>
 
-    /**
-     * 포켓몬 기존 spotlight 조회
-     * **/
+    /** 포켓몬 기존 spotlight 조회 **/
     fun fetchPokemonBeforeSpotlights(): Flow<List<PokemonSpotlightItem>>
 
-    /**
-     * 포켓몬 spotlight 업데이트
-     * **/
+    /** 포켓몬 spotlight 업데이트 **/
     suspend fun updatePokemonSpotlight(
         item: PokemonSpotlightItem
     ): String

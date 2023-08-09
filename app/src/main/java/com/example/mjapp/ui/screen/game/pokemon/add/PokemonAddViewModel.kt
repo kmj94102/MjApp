@@ -1,26 +1,21 @@
 package com.example.mjapp.ui.screen.game.pokemon.add
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.network.model.PokemonEvolutionItem
 import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonAddViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _evolutionList = mutableStateListOf(PokemonEvolutionItem())
     val evolutionList: List<PokemonEvolutionItem> = _evolutionList
-
-    private val _status = MutableStateFlow<Status>(Status.Init)
-    val status: Flow<Status> = _status
 
     fun addItem() {
         _evolutionList.add(PokemonEvolutionItem())
@@ -83,17 +78,19 @@ class PokemonAddViewModel @Inject constructor(
 
     fun insertEvolution() = viewModelScope.launch {
         if (validationCheck()) {
-            pokemonRepository.insertPokemonEvolution(
-                evolutions = _evolutionList.map { it.toPokemonEvolution(getNumbersList()) },
-                onSuccess = {
-                    _status.value = Status.Success
-                },
-                onFailure = {
-                    _status.value = Status.Failure("데이터 전송 중 오류가 발생하였습니다.")
+            pokemonRepository
+                .insertPokemonEvolution(
+                    evolutions = _evolutionList.map { it.toPokemonEvolution(getNumbersList()) }
+                )
+                .onSuccess {
+                    updateMessage(it)
+                    clearItems()
                 }
-            )
+                .onFailure {
+                    updateMessage(it.message ?: "데이터 전송 중 오류가 발생하였습니다.")
+                }
         } else {
-            _status.value = Status.Failure("데이터를 확인해주세요.")
+            updateMessage("데이터를 확인해주세요.")
         }
     }
 
@@ -119,18 +116,6 @@ class PokemonAddViewModel @Inject constructor(
             .reduce { result, new ->
                 "$result,$new"
             }
-    }
-
-    fun updateInitStatus() {
-        _status.value = Status.Init
-    }
-
-    sealed class Status {
-        object Init : Status()
-
-        object Success: Status()
-
-        data class Failure(val msg: String) : Status()
     }
 
 }

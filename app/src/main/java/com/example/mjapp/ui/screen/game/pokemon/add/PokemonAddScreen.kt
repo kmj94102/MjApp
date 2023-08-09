@@ -1,38 +1,47 @@
 package com.example.mjapp.ui.screen.game.pokemon.add
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
-import com.example.mjapp.ui.screen.game.pokemon.PokemonCardImage
-import com.example.mjapp.ui.theme.MyColorRed
-import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle16B
-import com.example.network.model.PokemonEvolutionItem
-import com.example.mjapp.R
 import com.example.mjapp.ui.dialog.EvolutionTypeDialog
 import com.example.mjapp.ui.dialog.PokemonSearchDialog
+import com.example.mjapp.ui.screen.game.pokemon.PokemonCardImage
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorLightGray
+import com.example.mjapp.ui.theme.MyColorRed
+import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16
-import com.example.mjapp.util.toast
+import com.example.mjapp.util.textStyle16B
+import com.example.network.model.PokemonEvolutionItem
 
 @Composable
 fun PokemonAddScreen(
@@ -40,7 +49,7 @@ fun PokemonAddScreen(
     viewModel: PokemonAddViewModel = hiltViewModel()
 ) {
     val isBefore = remember { mutableStateOf(false) }
-    val selectIndex = remember { mutableStateOf(0) }
+    var selectIndex by remember { mutableIntStateOf(0) }
     val isSearchDialogShow = remember { mutableStateOf(false) }
     val isEvolutionDialogShow = remember { mutableStateOf(false) }
 
@@ -69,11 +78,11 @@ fun PokemonAddScreen(
                         },
                         onImageClick = {
                             isBefore.value = it
-                            selectIndex.value = index
+                            selectIndex = index
                             isSearchDialogShow.value = true
                         },
                         onTypeClick = {
-                            selectIndex.value = index
+                            selectIndex = index
                             isEvolutionDialogShow.value = true
                         },
                         onConditionChange = {
@@ -122,7 +131,7 @@ fun PokemonAddScreen(
         },
         onSelect = { number, image ->
             viewModel.updateNumberInfo(
-                index = selectIndex.value,
+                index = selectIndex,
                 isBeforeItem = isBefore.value,
                 number = number,
                 image = image
@@ -136,28 +145,14 @@ fun PokemonAddScreen(
             isEvolutionDialogShow.value = false
         },
         onSelectItem = { type, condition ->
-            viewModel.updateEvolutionType(index = selectIndex.value, evolutionType = type)
+            viewModel.updateEvolutionType(index = selectIndex, evolutionType = type)
             viewModel.updateEvolutionCondition(
-                index = selectIndex.value,
+                index = selectIndex,
                 evolutionCondition = condition
             )
             isEvolutionDialogShow.value = false
         }
     )
-
-    val context = LocalContext.current
-    when (val status =
-        viewModel.status.collectAsState(initial = PokemonAddViewModel.Status.Init).value) {
-        PokemonAddViewModel.Status.Success -> {
-            context.toast("등록 완료")
-            viewModel.clearItems()
-            viewModel.updateInitStatus()
-        }
-        is PokemonAddViewModel.Status.Failure -> {
-            context.toast(status.msg)
-        }
-        else -> {}
-    }
 }
 
 @Composable

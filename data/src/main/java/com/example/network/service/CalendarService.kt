@@ -8,37 +8,30 @@ import com.example.network.model.ScheduleItem
 import retrofit2.http.*
 
 interface CalendarService {
+    /** 홈 정보 조회 **/
     @POST("/select/homeInfo")
     suspend fun fetchHomeInfo(@Body item: HomeParam): HomeInfoResult
 
-    @POST("/insert/schedule")
-    suspend fun insertSchedule(@Body item: ScheduleItem)
-
+    /** 달력 정보 조회 **/
     @GET("/select/calendar/month")
     suspend fun fetchCalendarByMonth(
         @Query("year") year: Int,
         @Query("month") month: Int
     ): List<CalendarResult>
 
-    @GET("/select/calendar/week")
-    suspend fun fetchCalendarByWeek(
-        @Query("start") start: String,
-        @Query("end") end: String
-    ): List<CalendarResult>
+    /** 일정 등록 **/
+    @POST("/insert/schedule")
+    suspend fun insertSchedule(@Body item: ScheduleItem): String
 
-    @GET("/select/calendar/date")
-    suspend fun fetchCalendarByDate(
-        @Query("year") year: Int,
-        @Query("month") month: Int,
-        @Query("date") date: Int
-    ): CalendarResult?
-
+    /** 계획 등록 **/
     @POST("/insert/plan-tasks")
-    suspend fun insertPlan(@Body item: PlanTasks)
+    suspend fun insertPlan(@Body item: PlanTasks): String
 
+    /** 일정 삭제 **/
     @DELETE("/delete/schedule")
     suspend fun deleteSchedule(@Query("id") id: Int)
 
+    /** 계획 삭제 **/
     @DELETE("/delete/plan-tasks")
     suspend fun deletePlanTasks(@Query("id") id: Int)
 

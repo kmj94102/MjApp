@@ -8,22 +8,27 @@ import javax.inject.Inject
 class AccountBookClient @Inject constructor(
     private val service: AccountBookService
 ) {
-
-    suspend fun insertNewAccountBookItem(item: AccountBookInsertItem) =
-        runCatching { service.insertAccountBookItem(item) }
-
-    suspend fun deleteAccountBookItem(id: Int) =
-        runCatching { service.deleteFixedAccountBookItem(id) }
-
+    /** 가계부 조회 **/
     suspend fun fetchAccountBookInfo(dateConfiguration: DateConfiguration) =
         runCatching { service.fetchAccountBookInfo(dateConfiguration) }
 
+    /** 가계부 등록 **/
+    suspend fun insertNewAccountBookItem(item: AccountBookInsertItem) =
+        runCatching { service.insertAccountBookItem(item) }
+
+    /** 이번달 상세 조회 **/
     suspend fun fetchThisMonthDetail(dateConfiguration: DateConfiguration) =
         runCatching { service.fetchThisMonthDetail(dateConfiguration) }
 
+    /** 고정 내역 추가 **/
     suspend fun insertFixedAccountBookItem(item: FixedAccountBook) =
         runCatching { service.insertFixedAccountBookItem(item) }
 
+    /** 고정 내역 삭제 **/
+    suspend fun deleteAccountBookItem(id: Int) =
+        runCatching { service.deleteFixedAccountBookItem(id) }
+
+    /** 고정 내역 조회 **/
     suspend fun fetchFixedAccountBook() = runCatching { service.fetchFixedAccountBookItem() }
 
 }

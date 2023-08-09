@@ -10,13 +10,10 @@ class ExternalRepositoryIml @Inject constructor(
     private val client: ExternalClient
 ) : ExternalRepository {
 
+    /** 포켓몬 정보 조회 **/
     override fun pokemonInfo(index: Int) = flow {
-        val detail = client.fetchPokemonDetail(index).mapper()
-        val species = try {
-            client.fetchPokemonSpecies(index).mapper()
-        } catch (e: Exception) {
-            null
-        }
+        val detail = client.fetchPokemonDetail(index).getOrThrow().mapper()
+        val species = client.fetchPokemonSpecies(index).getOrNull()?.mapper()
 
         emit(
             PokemonInfo(

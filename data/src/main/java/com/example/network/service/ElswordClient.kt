@@ -8,26 +8,28 @@ import javax.inject.Inject
 class ElswordClient @Inject constructor(
     private val  service: ElswordService
 ) {
-
+    /** 퀘스트 등록 **/
     suspend fun insertQuest(quest: ElswordQuest) =
-        service.insertQuest(quest)
+        runCatching { service.insertQuest(quest) }
 
+    /** 퀘스트 삭제 **/
     suspend fun deleteQuest(id: Int) =
-        service.deleteQuest(id)
+        runCatching { service.deleteQuest(id) }
 
+    /** 퀘스트 조회 **/
     suspend fun fetchQuestList() =
-        service.fetchQuestList()
+        runCatching { service.fetchQuestList() }
 
+    /** 퀘스트 상세 조회 **/
     suspend fun fetchQuestDetailList() =
-        service.fetchQuestDetailList()
+        runCatching { service.fetchQuestDetailList() }
 
+    /** 퀘스트 업데이트 **/
     suspend fun updateQuest(item: ElswordQuestUpdate) =
-        service.updateQuest(item)
+        runCatching { service.updateQuest(item) }
 
-    suspend fun fetchQuestCounter() =
-        service.fetchQuestCounter()
-
+    /** 퀘스트 카운터 업데이트 **/
     suspend fun updateQuestCounter(item: ElswordCounterUpdateItem) =
-        service.updateQuestCounter(item)
+        runCatching { service.updateQuestCounter(item) }
 
 }

@@ -8,6 +8,7 @@ import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.Constants
 import com.example.network.model.PlanTasksModify
 import com.example.network.model.TaskItem
+import com.example.network.model.printStackTrace
 import com.example.network.repository.CalendarRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,9 +25,7 @@ class PlanAddViewModel @Inject constructor(
     private val _planTasks = mutableStateOf(PlanTasksModify())
     val planTasks: State<PlanTasksModify> = _planTasks
 
-    init {
-        updateDate(initDate)
-    }
+    init { updateDate(initDate) }
 
     fun addPlanItem() {
         _planTasks.value = _planTasks.value.copy(
@@ -40,12 +39,10 @@ class PlanAddViewModel @Inject constructor(
         _planTasks.value = _planTasks.value.copy(
             taskList = _planTasks.value.taskList.toMutableList().apply {
                 removeAt(index)
-                if (isEmpty()) {
-                    add(TaskItem(contents = ""))
-                }
+                if (isEmpty()) add(TaskItem(contents = ""))
             }
         )
-    }.onFailure { it.printStackTrace() }
+    }.printStackTrace()
 
     fun updatePlanContents(index: Int, value: String) = runCatching {
         _planTasks.value = _planTasks.value.copy(
@@ -53,7 +50,7 @@ class PlanAddViewModel @Inject constructor(
                 set(index, TaskItem(contents = value))
             }
         )
-    }.onFailure { it.printStackTrace() }
+    }.printStackTrace()
 
     fun updateTitle(value: String) {
         _planTasks.value = _planTasks.value.copy(title = value)

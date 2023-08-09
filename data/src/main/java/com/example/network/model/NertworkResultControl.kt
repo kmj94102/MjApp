@@ -9,3 +9,5 @@ fun <T> Result<T>.getFailureThrow() =
         it.printStackTrace()
         throw if (it.checkNetworkError()) NetworkError else it
     }
+
+fun <T> Result<T>.printStackTrace() = onFailure { it.printStackTrace() }

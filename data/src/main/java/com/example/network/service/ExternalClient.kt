@@ -5,15 +5,12 @@ import javax.inject.Inject
 class ExternalClient @Inject constructor(
     private val service: ExternalService
 ) {
-    suspend fun fetchPokemonDetail(
-        index: Int
-    ) = service.fetchPokemonDetail(index)
+    /** 포켓몬 상세 조회 **/
+    suspend fun fetchPokemonDetail(index: Int) = runCatching { service.fetchPokemonDetail(index) }
 
-    suspend fun fetchPokemonSpecies(
-        index: Int
-    ) = service.fetchPokemonSpecies(index)
+    /** 포켓몬 스펙 조회 **/
+    suspend fun fetchPokemonSpecies(index: Int) = runCatching { service.fetchPokemonSpecies(index) }
 
-    suspend fun fetchAbility(
-        ability: String
-    ) = service.fetchAbility(ability)
+    /** 포켓몬 특성 조회 **/
+    suspend fun fetchAbility(ability: String) = runCatching { service.fetchAbility(ability) }
 }

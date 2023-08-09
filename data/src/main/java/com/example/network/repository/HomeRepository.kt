@@ -3,6 +3,7 @@ package com.example.network.repository
 import com.example.network.model.ElswordCounterUpdateItem
 import com.example.network.model.HomeInfoResult
 import com.example.network.model.HomeParam
+import com.example.network.model.UpdatePokemonCatch
 import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
@@ -18,6 +19,9 @@ interface HomeRepository {
     suspend fun deletePokemonCounter(number: String)
 
     suspend fun updateCatch(number: String)
+
+    /** 포켓몬 잡은 상태 업데이트 **/
+    suspend fun updatePokemonCatch(pokemonCatch: UpdatePokemonCatch): Result<String>
 
     suspend fun updateCustomIncrease(customIncrease: Int, number: String)
 
