@@ -9,6 +9,7 @@ import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.isNumeric
 import com.example.mjapp.util.removeNumberFormat
 import com.example.network.model.AccountBookInsertItem
+import com.example.network.model.FrequentlyItem
 import com.example.network.repository.AccountBookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -92,6 +93,16 @@ class AddNewAccountBookItemViewModel @Inject constructor(
 
     fun updateIsIncome(isIncome: Boolean) {
         _isIncome.value = isIncome
+    }
+
+    fun updateWithFrequently(item: FrequentlyItem) {
+        _item.value = _item.value.copy(
+            amount = item.amount,
+            usageType = item.usageType,
+            whereToUse = item.whereToUse,
+            isAddFrequently = false
+        )
+        _isIncome.value = item.amount > 0
     }
 
 }

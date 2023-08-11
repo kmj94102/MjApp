@@ -31,4 +31,12 @@ class AccountBookClient @Inject constructor(
     /** 고정 내역 조회 **/
     suspend fun fetchFixedAccountBook() = runCatching { service.fetchFixedAccountBookItem() }
 
+    /** 즐겨 찾기 조회 **/
+    suspend fun fetchFrequentlyAccountBookItems() =
+        runCatching { service.fetchFrequentlyAccountBookItems() }
+
+    /** 즐겨 찾기 삭제 **/
+    suspend fun deleteFrequentlyAccountBookItem(id: Int) =
+        runCatching { service.deleteFrequentlyAccountBookItem(id)}
+
 }

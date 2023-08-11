@@ -3,9 +3,11 @@ package com.example.network.repository
 import com.example.network.model.AccountBookInsertItem
 import com.example.network.model.DateConfiguration
 import com.example.network.model.FixedAccountBook
+import com.example.network.model.FrequentlyItem
 import com.example.network.model.getFailureThrow
 import com.example.network.model.printStackTrace
 import com.example.network.service.AccountBookClient
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -45,5 +47,17 @@ class AccountBookRepositoryImpl @Inject constructor(
             .onSuccess { emit(it) }
             .getFailureThrow()
     }
+
+    /** 즐겨 찾기 아이템 조회 **/
+    override fun fetchFrequentlyAccountBookItems() = flow {
+        client
+            .fetchFrequentlyAccountBookItems()
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
+
+    /** 즐겨 찾기 삭제 **/
+    override suspend fun deleteFrequentlyAccountBookItem(id: Int) =
+        client.deleteFrequentlyAccountBookItem(id).printStackTrace()
 
 }

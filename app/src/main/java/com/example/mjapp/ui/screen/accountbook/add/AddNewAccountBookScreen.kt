@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +27,7 @@ import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.ImageDoubleCard
 import com.example.mjapp.ui.dialog.DateSelectDialog
+import com.example.mjapp.ui.dialog.FrequentlyDialog
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
@@ -134,6 +136,8 @@ fun AddNewAccountBookMediumItem(
     viewModel: AddNewAccountBookItemViewModel,
     onDateSelect: () -> Unit
 ) {
+    var isShow by remember { mutableStateOf(false) }
+
     LazyColumn(
         contentPadding = PaddingValues(top = 10.dp, bottom = 30.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -158,7 +162,9 @@ fun AddNewAccountBookMediumItem(
         item {
             DoubleCard(
                 topCardColor = color,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .nonRippleClickable { isShow = true }
             ) {
                 Text(
                     text = "즐겨찾기에서 찾기",
@@ -212,6 +218,12 @@ fun AddNewAccountBookMediumItem(
         }
 
     }
+
+    FrequentlyDialog(
+        isShow = isShow,
+        onDismiss = { isShow = false },
+        onSelect = viewModel::updateWithFrequently
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)

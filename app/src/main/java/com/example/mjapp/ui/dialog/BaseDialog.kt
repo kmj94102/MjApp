@@ -23,9 +23,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.airbnb.lottie.compose.LottieAnimation
 import com.example.mjapp.R
+import com.example.mjapp.ui.custom.CommonLottieAnimation
 import com.example.mjapp.ui.custom.DoubleCardButton
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.structure.BaseStatus
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -124,6 +127,92 @@ fun DialogCloseButton(
         iconSize = 21.dp,
         iconRes = R.drawable.ic_close,
         onClick = onClose
+    )
+}
+
+@Composable
+fun StatusDialog(
+    status: BaseStatus,
+    isShow: Boolean,
+    isCancelable: Boolean = true,
+    title: String,
+    onDismiss: () -> Unit,
+    topButtonContents: @Composable RowScope.() -> Unit = { DialogCloseButton(onClose = onDismiss) },
+    bodyContents: @Composable ColumnScope.() -> Unit,
+    bottomButtonContents: @Composable RowScope.() -> Unit = {}
+) {
+    BaseDialog(
+        isShow = isShow,
+        isCancelable = isCancelable,
+        title = title,
+        topButtonContents = topButtonContents,
+        bodyContents = {
+            when {
+                status.isLoading -> {
+                    CommonLottieAnimation(
+                        resId = R.raw.lottie_loading,
+                        modifier = Modifier
+                            .padding(vertical = 30.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+
+                status.isNetworkError -> {
+                    CommonLottieAnimation(
+                        resId = R.raw.lottie_error,
+                        modifier = Modifier
+                            .padding(vertical = 30.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+
+                else -> {
+                    bodyContents()
+                }
+            }
+        },
+        bottomButtonContents = bottomButtonContents,
+        onDismiss = onDismiss
+    )
+}
+
+@Composable
+fun ConfirmCancelStatusDialog(
+    status: BaseStatus,
+    isShow: Boolean,
+    isCancelable: Boolean = true,
+    title: String,
+    cancelText: String = "취소",
+    onCancelClick: () -> Unit,
+    confirmText: String = "확인",
+    onConfirmClick: () -> Unit,
+    onDismiss: () -> Unit,
+    topButtonContents: @Composable RowScope.() -> Unit = { DialogCloseButton(onClose = onDismiss) },
+    bodyContents: @Composable ColumnScope.() -> Unit,
+    color: Color,
+) {
+    StatusDialog(
+        status = status,
+        isShow = isShow,
+        isCancelable = isCancelable,
+        title = title,
+        topButtonContents = topButtonContents,
+        bodyContents = bodyContents,
+        bottomButtonContents = {
+            DoubleCardButton(
+                text = cancelText,
+                onClick = onCancelClick,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            DoubleCardButton(
+                text = confirmText,
+                onClick = onConfirmClick,
+                topCardColor = color,
+                modifier = Modifier.weight(1f)
+            )
+        },
+        onDismiss = onDismiss
     )
 }
 

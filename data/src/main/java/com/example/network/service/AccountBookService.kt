@@ -30,4 +30,12 @@ interface AccountBookService {
     @POST("/select/accountBook/fixed")
     suspend fun fetchFixedAccountBookItem(): List<FixedAccountBook>
 
+    /** 즐겨 찾기 조회 **/
+    @POST("/select/accountBook/frequently")
+    suspend fun fetchFrequentlyAccountBookItems(): List<FrequentlyItem>
+
+    /** 즐겨 찾기 삭제 **/
+    @DELETE("/delete/accountBook/frequently")
+    suspend fun deleteFrequentlyAccountBookItem(@Query("id") id: Int)
+
 }

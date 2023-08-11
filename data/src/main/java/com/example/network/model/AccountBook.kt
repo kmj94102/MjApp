@@ -167,3 +167,10 @@ data class FixedAccountBook(
         )
     }
 }
+
+data class FrequentlyItem(
+    val id: Int,
+    val amount: Int,
+    val usageType: String,
+    val whereToUse: String
+)

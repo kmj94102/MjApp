@@ -49,6 +49,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.ConditionAsyncImage
 import com.example.mjapp.ui.custom.ConditionImage
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.dialog.viewmodel.PokemonDetailViewModel
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorLightGray

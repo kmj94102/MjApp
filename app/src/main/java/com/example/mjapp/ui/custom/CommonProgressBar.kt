@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.theme.MyColorLightGray
-import com.example.mjapp.ui.theme.MyColorPurple
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.util.textStyle12B
 
@@ -25,6 +24,8 @@ fun CommonProgressBar(
     modifier: Modifier = Modifier,
     percent: Int,
     progressColor: Color = MyColorRed,
+    backgroundColor: Color = MyColorLightGray,
+    isTextVisible: Boolean = true
 ) {
     val width = percent / 100.0f
     val isStart = remember { mutableStateOf(false) }
@@ -41,7 +42,7 @@ fun CommonProgressBar(
         modifier = modifier
             .height(20.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(MyColorLightGray)
+            .background(backgroundColor)
     ) {
         Box(
             modifier = Modifier
@@ -50,12 +51,14 @@ fun CommonProgressBar(
                 .clip(RoundedCornerShape(10.dp))
                 .background(progressColor)
         )
-        Text(
-            text = "$percent %",
-            style = textStyle12B(),
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .align(Alignment.CenterStart)
-        )
+        if (isTextVisible) {
+            Text(
+                text = "$percent %",
+                style = textStyle12B(),
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .align(Alignment.CenterStart)
+            )
+        }
     }
 }

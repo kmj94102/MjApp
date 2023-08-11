@@ -27,6 +27,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonLottieAnimation
 import com.example.mjapp.ui.custom.DoubleCardButton
 import com.example.mjapp.ui.custom.DoubleCardTextField
+import com.example.mjapp.ui.dialog.viewmodel.PokemonSearchViewModel
 import com.example.mjapp.ui.screen.game.pokemon.PokemonCardImage
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
