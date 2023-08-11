@@ -22,6 +22,7 @@ import com.example.network.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -66,6 +67,7 @@ class HomeViewModel @Inject constructor(
                 endLoading()
             }
             .catch { it.printStackTrace() }
+            .onCompletion { endLoading() }
             .launchIn(viewModelScope)
     }
 
