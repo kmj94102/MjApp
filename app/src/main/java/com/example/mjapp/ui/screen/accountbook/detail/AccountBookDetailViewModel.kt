@@ -9,9 +9,14 @@ import com.example.mjapp.ui.screen.navigation.NavScreen
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.network.model.AccountBookDetailInfo
 import com.example.network.model.DateConfiguration
+import com.example.network.model.NetworkError
 import com.example.network.repository.AccountBookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,7 +55,7 @@ class AccountBookDetailViewModel @Inject constructor(
         )
     }
 
-    private fun fetchThisMonthDetail() = viewModelScope.launch {
+    private fun fetchThisMonthDetail() {
         repository
             .fetchThisMonthDetail(
                 DateConfiguration(
@@ -58,9 +63,14 @@ class AccountBookDetailViewModel @Inject constructor(
                     baseDate = 25
                 )
             )
-            .onSuccess {
-                _info.value = it.modifyDateFormat()
+            .onStart { startLoading() }
+            .onEach { _info.value = it.modifyDateFormat() }
+            .catch {
+                if (it is NetworkError) updateNetworkErrorState(true)
+                else updateMessage(it.message ?: "오류가 발생하였습니다.")
             }
+            .onCompletion { endLoading() }
+            .launchIn(viewModelScope)
     }
 
     fun updateSelectDate(date: String) {

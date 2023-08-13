@@ -16,9 +16,9 @@ interface AccountBookRepository {
     ): Result<String>
 
     /** 이번달 상세 조회 **/
-    suspend fun fetchThisMonthDetail(
+    fun fetchThisMonthDetail(
         dateConfiguration: DateConfiguration
-    ): Result<AccountBookDetailInfo>
+    ): Flow<AccountBookDetailInfo>
 
     /** 고정 내역 추가 **/
     suspend fun insertFixedAccountBookItem(

@@ -1,6 +1,5 @@
 package com.example.mjapp.ui.screen.accountbook.detail
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +28,7 @@ import com.example.mjapp.ui.custom.AccountBookMonthCalendar
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardButton
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.custom.ImageDoubleCard
 import com.example.mjapp.ui.custom.UnderLineText
 import com.example.mjapp.ui.screen.accountbook.TitleAmountRow
 import com.example.mjapp.ui.screen.accountbook.add.IncomeExpenditureType
@@ -195,18 +195,13 @@ fun UsageHistoryItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        DoubleCard(
+        ImageDoubleCard(
+            resId = IncomeExpenditureType.getImageByType(item.usageType),
+            imageSize = DpSize(30.dp, 30.dp),
+            innerPadding = PaddingValues(3.dp),
             topCardColor = if (item.amount < 0) MyColorRed else MyColorTurquoise,
-            modifier = Modifier.width(33.dp)
-        ) {
-            Image(
-                painter = painterResource(id = IncomeExpenditureType.getImageByType(item.usageType)),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(30.dp)
-                    .padding(3.dp)
-            )
-        }
+            modifier = Modifier.size(33.dp)
+        )
 
         Text(
             text = item.whereToUse,

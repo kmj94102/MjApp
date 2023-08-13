@@ -7,6 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -23,10 +26,12 @@ import com.example.mjapp.ui.custom.CenteredDoubleCard
 import com.example.mjapp.ui.custom.DashLine
 import com.example.mjapp.ui.custom.ImageDoubleCard
 import com.example.mjapp.ui.custom.TitleText
+import com.example.mjapp.ui.dialog.UsageHistoryDialog
 import com.example.mjapp.ui.screen.accountbook.add.IncomeExpenditureType
 import com.example.mjapp.ui.structure.BaseContainer
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.*
+import com.example.network.model.DateConfiguration
 import com.example.network.model.LastMonthAnalysis
 import com.example.network.model.LastMonthAnalysisItem
 import com.example.network.model.ThisMonthSummary
@@ -364,6 +369,11 @@ fun SummaryThisYearContainer(
     modifier: Modifier = Modifier,
     list: List<ThisYearSummaryItem>
 ) {
+    var isShow by remember { mutableStateOf(false) }
+    var dateConfiguration by remember {
+        mutableStateOf(DateConfiguration(date = "2023.01.01", baseDate = 25))
+    }
+
     DoubleCard(
         bottomCardColor = MyColorTurquoise,
         modifier = modifier.fillMaxWidth()
@@ -397,7 +407,7 @@ fun SummaryThisYearContainer(
         )
 
         Text(
-            text = "2023년",
+            text = "${getToday("yyyy")}년",
             style = textStyle12().copy(color = MyColorGray, textAlign = TextAlign.End),
             modifier = Modifier
                 .fillMaxWidth()
@@ -414,6 +424,10 @@ fun SummaryThisYearContainer(
             list.forEach {
                 SummaryThisYearItem(
                     item = it,
+                    onItemClick = { startDate ->
+                        dateConfiguration = DateConfiguration.create(startDate, 25)
+                        isShow = true
+                    },
                     modifier = Modifier
                         .weight(1f)
                 )
@@ -422,16 +436,23 @@ fun SummaryThisYearContainer(
 
         Spacer(modifier = Modifier.height(10.dp))
     }
+
+    UsageHistoryDialog(
+        isShow = isShow,
+        dateConfiguration = dateConfiguration,
+        onDismiss = { isShow = false }
+    )
 }
 
 @Composable
 fun SummaryThisYearItem(
     item: ThisYearSummaryItem,
+    onItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier.nonRippleClickable { onItemClick(item.startDate) }
     ) {
         CenteredDoubleCard(
             topCardColor = when {

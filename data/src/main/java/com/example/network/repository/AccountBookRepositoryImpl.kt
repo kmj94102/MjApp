@@ -28,8 +28,12 @@ class AccountBookRepositoryImpl @Inject constructor(
     ) = client.insertNewAccountBookItem(item.uploadFormat(isIncome)).printStackTrace()
 
     /** 이번달 상세 조회 **/
-    override suspend fun fetchThisMonthDetail(dateConfiguration: DateConfiguration) =
-        client.fetchThisMonthDetail(dateConfiguration).printStackTrace()
+    override fun fetchThisMonthDetail(dateConfiguration: DateConfiguration) = flow {
+        client
+            .fetchThisMonthDetail(dateConfiguration)
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
 
     /** 고정 내역 등록 **/
     override suspend fun insertFixedAccountBookItem(item: FixedAccountBook) = runCatching {
