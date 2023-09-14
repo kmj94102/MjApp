@@ -16,7 +16,7 @@ enum class TypeInfo (val originalName: String, val koreanName: String, val image
     Psychic("psychic", "에스퍼", R.drawable.img_psychic, 0xFFFF6675),
     Bug("bug", "벌레", R.drawable.img_bug, 0xFF83C300),
     Rock("rock", "바위", R.drawable.img_rock, 0xFFC8B686),
-    Ghost("ghost", "고스트", R.drawable.img_ghost, 0xF4C6AB2),
+    Ghost("ghost", "고스트", R.drawable.img_ghost, 0xFF4C6AB2),
     Dragon("dragon", "드래곤", R.drawable.img_dragon, 0xFF006FC9),
     Dark("dark", "악", R.drawable.img_dark, 0xFF5B5466),
     Steel("steel", "강철", R.drawable.img_steel, 0xFF5A8EA2),

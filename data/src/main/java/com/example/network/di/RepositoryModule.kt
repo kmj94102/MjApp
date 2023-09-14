@@ -39,4 +39,9 @@ interface RepositoryModule {
         homeRepositoryImpl: HomeRepositoryImpl
     ): HomeRepository
 
+    @Binds
+    fun bindInternetRepository(
+        internetRepositoryImpl: InternetRepositoryImpl
+    ): InternetRepository
+
 }

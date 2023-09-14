@@ -357,12 +357,12 @@ fun CalendarPlanContainer(
                     .background(MyColorBlack)
             )
 
-            info.taskList.forEach {
+            info.taskList.forEach { item ->
                 CommonRadio(
-                    text = it.contents,
-                    check = it.isCompleted,
+                    text = item.contents,
+                    check = item.isCompleted,
                     onCheckedChange = {
-
+//                        onTaskClick(item.id, item.isCompleted.not())
                     },
                     modifier = Modifier
                         .fillMaxWidth()

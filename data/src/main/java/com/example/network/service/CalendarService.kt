@@ -5,6 +5,7 @@ import com.example.network.model.HomeInfoResult
 import com.example.network.model.HomeParam
 import com.example.network.model.PlanTasks
 import com.example.network.model.ScheduleItem
+import com.example.network.model.TaskUpdateItem
 import retrofit2.http.*
 
 interface CalendarService {
@@ -34,5 +35,9 @@ interface CalendarService {
     /** 계획 삭제 **/
     @DELETE("/delete/plan-tasks")
     suspend fun deletePlanTasks(@Query("id") id: Int)
+
+    /** 계획 업데이트 **/
+    @POST("/update/task")
+    suspend fun updateTask(@Body item: TaskUpdateItem)
 
 }

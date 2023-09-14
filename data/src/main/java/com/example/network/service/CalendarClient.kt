@@ -3,6 +3,7 @@ package com.example.network.service
 import com.example.network.model.HomeParam
 import com.example.network.model.PlanTasks
 import com.example.network.model.ScheduleItem
+import com.example.network.model.TaskUpdateItem
 import javax.inject.Inject
 
 class CalendarClient @Inject constructor(
@@ -28,5 +29,8 @@ class CalendarClient @Inject constructor(
 
     /** 계획 삭제 **/
     suspend fun deletePlanTasks(id: Int) = runCatching { service.deletePlanTasks(id) }
+
+    /** 계획 업데이트 **/
+    suspend fun updateTaskItem(item: TaskUpdateItem) = runCatching { service.updateTask(item) }
 
 }

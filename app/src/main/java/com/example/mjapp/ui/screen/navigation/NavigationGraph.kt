@@ -25,6 +25,7 @@ import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
+import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
 
@@ -315,6 +316,16 @@ fun NavGraphBuilder.otherScreens(
     composable(
         route = BottomNavItems.Other.item.routeWithPostFix
     ) {
-        OtherScreen()
+        OtherScreen {
+            navController.navigate(it)
+        }
+    }
+
+    composable(
+        route = NavScreen.InternetFavorites.item.routeWithPostFix
+    ) {
+        InternetFavoritesScreen(
+            onBackClick = onBackClick
+        )
     }
 }

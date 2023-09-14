@@ -2,6 +2,7 @@ package com.example.network.repository
 
 import com.example.network.model.PlanTasksModify
 import com.example.network.model.ScheduleModifier
+import com.example.network.model.TaskUpdateItem
 import com.example.network.model.getFailureThrow
 import com.example.network.service.CalendarClient
 import kotlinx.coroutines.flow.flow
@@ -42,4 +43,8 @@ class CalendarRepositoryImpl @Inject constructor(
     override suspend fun deletePlanTasks(id: Int) {
         client.deletePlanTasks(id).getFailureThrow()
     }
+
+    /** 계획 업데이트 **/
+    override suspend fun updateTask(item: TaskUpdateItem) =
+        client.updateTaskItem(item)
 }

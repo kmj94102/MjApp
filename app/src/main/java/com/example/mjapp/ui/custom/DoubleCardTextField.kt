@@ -14,6 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.theme.MyColorBlack
@@ -21,6 +22,7 @@ import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16
+import com.example.mjapp.util.textStyle16B
 
 @Composable
 fun DoubleCardTextField(
@@ -89,7 +91,7 @@ fun DoubleCardText(
     onClick: () -> Unit,
     text: String,
     hint: String = "",
-    textStyle: TextStyle = textStyle16(),
+    textStyle: TextStyle = textStyle16B().copy(textAlign = TextAlign.Center),
     textColor: Color = MyColorBlack,
     emptyTextColor: Color = MyColorGray,
     innerPadding: PaddingValues = PaddingValues(vertical = 10.dp, horizontal = 15.dp)

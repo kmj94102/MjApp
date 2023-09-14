@@ -31,3 +31,8 @@ data class PlanTasksModify(
         taskList = taskList.filter { it.contents.trim().isNotEmpty() }
     )
 }
+
+data class TaskUpdateItem(
+    val id: Int,
+    val isCompleted: Boolean
+)

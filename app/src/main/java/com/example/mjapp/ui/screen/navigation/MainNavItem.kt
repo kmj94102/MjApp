@@ -94,4 +94,10 @@ sealed class NavScreen(val item: MainNavItem) {
     ) {
         const val Date = "date"
     }
+
+    object InternetFavorites: NavScreen(
+        MainNavItem(
+            route = "InternetFavoritesScreen"
+        )
+    )
 }
