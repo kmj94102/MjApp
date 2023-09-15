@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,8 +35,10 @@ import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorSkyBlue
 import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.Constants
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun InternetFavoritesScreen(
@@ -108,11 +109,8 @@ fun InternetFavoritesHeight(
 fun InternetFavoritesMedium(
     viewModel: InternetFavoritesViewModel
 ) {
-    var address = runCatching { viewModel.list[0].address }.getOrElse { "https://www.naver.com" }
     val context = LocalContext.current
-    val webView = WebViewHolder(context).apply {
-        loadUrl(address)
-    }.webView
+    val webViewHolder = WebViewHolder(context).apply { loadUrl(Constants.BaseUrl) }
 
     Column(
         modifier = Modifier
@@ -128,37 +126,30 @@ fun InternetFavoritesMedium(
         ) {
             AndroidView(
                 modifier = Modifier.weight(1f),
-                factory = { webView }
+                factory = { webViewHolder.webView },
             )
         }
 
-        Row(
+        Text(
+            text = "새로고침",
+            style = textStyle16B(),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, bottom = 15.dp)
-        ) {
-            Text(
-                text = "앱에서 열기",
-                style = textStyle16B(),
-                modifier = Modifier.nonRippleClickable { })
-            Spacer(modifier = Modifier.weight(1f))
+                .align(Alignment.End)
+                .padding(PaddingValues(top = 10.dp, bottom = 15.dp))
+                .nonRippleClickable { viewModel.reload() })
 
-            Text(
-                text = "새로고침",
-                style = textStyle16B(),
-                modifier = Modifier.nonRippleClickable { webView.reload() })
-        }
-
-        val selectIndex = viewModel.selectIndex.value
-        LaunchedEffect(selectIndex) {
-            runCatching {
-                val newAddress = viewModel.list[selectIndex].address
-                if (address != newAddress) {
-                    address = newAddress
-                    webView.loadUrl(address)
-                }
+        LaunchedEffect(Unit) {
+            viewModel.loadState.collectLatest {
+                webViewHolder.loadUrl(it)
             }
         }
+
+        LaunchedEffect(Unit) {
+            viewModel.reloadState.collectLatest {
+                webViewHolder.reload()
+            }
+        }
+
     }
 }
 

@@ -63,7 +63,6 @@ fun DoubleCard(
             shape = RoundedCornerShape(connerSize),
             modifier = Modifier
                 .heightIn(min = minHeight)
-                .fillMaxWidth()
                 .constrainAs(bottomCard) {
                     top.linkTo(parent.top, 3.dp)
                     start.linkTo(parent.start, 3.dp)
@@ -71,6 +70,7 @@ fun DoubleCard(
                     bottom.linkTo(topCard.bottom, (-3).dp)
 
                     height = Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
                 }
         ) {}
 

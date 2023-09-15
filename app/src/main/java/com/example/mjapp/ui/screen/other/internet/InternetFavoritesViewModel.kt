@@ -9,6 +9,10 @@ import com.example.mjapp.util.clearAndAddAll
 import com.example.network.model.InternetFavorite
 import com.example.network.repository.InternetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,6 +30,19 @@ class InternetFavoritesViewModel @Inject constructor(
 
     private val _selectIndex = mutableIntStateOf(0)
     val selectIndex: State<Int> = _selectIndex
+
+    private val selectAddress: String
+        get() = runCatching {
+            _list[_selectIndex.intValue].address
+        }.getOrElse {
+            "https://www.naver.com"
+        }
+
+    private val _reloadState = MutableSharedFlow<Unit>()
+    val reloadState: SharedFlow<Unit> = _reloadState
+
+    private val _loadState = MutableStateFlow(selectAddress)
+    val loadState: StateFlow<String> = _loadState
 
     init {
         fetchFavorites()
@@ -48,6 +65,7 @@ class InternetFavoritesViewModel @Inject constructor(
             .onStart { startLoading() }
             .onEach {
                 _list.clearAndAddAll(it)
+                updateSelectIndex(0)
                 endLoading()
             }
             .catch {
@@ -59,6 +77,11 @@ class InternetFavoritesViewModel @Inject constructor(
 
     fun updateSelectIndex(index: Int) {
         _selectIndex.intValue = index
+        _loadState.value = selectAddress
+    }
+
+    fun reload() = viewModelScope.launch {
+        _reloadState.emit(Unit)
     }
 
 }

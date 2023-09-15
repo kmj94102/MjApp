@@ -69,12 +69,10 @@ class WebViewHolder(context: Context) {
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
-            println("+++++ ibOnPageStarted")
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
-            println("+++++ onPageFinished")
         }
     }
 
@@ -117,6 +115,10 @@ class WebViewHolder(context: Context) {
 
     fun loadUrl(url: String) {
         webView.loadUrl(url)
+    }
+
+    fun reload() {
+        webView.reload()
     }
 
 }

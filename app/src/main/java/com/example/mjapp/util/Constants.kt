@@ -8,4 +8,5 @@ object Constants {
     const val ElswordIntroduce = "elsword_introduce"
     const val ElswordCounter = "elsword_counter"
     const val Date = "date"
+    const val BaseUrl = "https://www.naver.com"
 }
