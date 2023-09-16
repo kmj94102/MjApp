@@ -9,26 +9,26 @@ import retrofit2.http.Query
 
 interface ElswordService {
     /** 퀘스트 등록 **/
-    @POST("/insert/elsword/quest")
+    @POST("/elsword/insert/quest")
     suspend fun insertQuest(@Body item: ElswordQuest): String
 
     /** 퀘스트 삭제 **/
-    @DELETE("/delete/elsword/quest")
+    @DELETE("/elsword/delete/quest")
     suspend fun deleteQuest(@Query("id") id: Int)
 
     /** 퀘스트 조회 **/
-    @GET("/select/elsword/quest")
+    @GET("/elsword/select/quest")
     suspend fun fetchQuestList(): List<ElswordQuestSimpleResult>
 
     /** 퀘스트 상세 조회 **/
-    @GET("/select/elsword/quest/detail")
+    @GET("/elsword/select/quest/detail")
     suspend fun fetchQuestDetailList(): List<ElswordQuestDetailResult>
 
     /** 퀘스트 업데이트 **/
-    @POST("/update/elsword/quest")
+    @POST("/elsword/update/quest")
     suspend fun updateQuest(@Body item: ElswordQuestUpdate)
 
     /** 퀘스트 카운터 업데이트 **/
-    @POST("/update/elsword/counter")
+    @POST("/elsword/update/counter")
     suspend fun updateQuestCounter(@Body item: ElswordCounterUpdateItem): Int
 }

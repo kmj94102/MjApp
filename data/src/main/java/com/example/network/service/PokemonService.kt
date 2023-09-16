@@ -10,11 +10,11 @@ import retrofit2.http.Query
 interface PokemonService {
 
     /** 포켓몬 번호로 정보 조회 **/
-    @GET("/pokemon")
+    @GET("/pokemon/select")
     suspend fun fetchPokemonWithNumber(@Query("number") number: String): PokemonInfo
 
     /** 포켓몬 리스트 조회 **/
-    @GET("/pokemonList")
+    @GET("/pokemon/select/list")
     suspend fun fetchPokemonList(
         @Query("name") name: String,
         @Query("skip") skip: Int,
@@ -22,43 +22,43 @@ interface PokemonService {
     ): PokemonListResult
 
     /** 포켓몬 상세 조회 **/
-    @GET("/pokemon/detail/{number}")
+    @GET("/pokemon/select/detail/{number}")
     suspend fun fetchPokemonDetail(@Path("number") number: String): PokemonDetailInfo
 
     /** 포켓몬 추가 **/
-    @POST("/insert/pokemon")
+    @POST("/pokemon/insert")
     suspend fun insertPokemon(@Body item: PokemonInfo): String
 
     /** 포켓몬 잡은 상태 업데이트 **/
-    @POST("/update/pokemon/catch")
+    @POST("/pokemon/update/catch")
     suspend fun updatePokemonCatch(@Body item: UpdatePokemonCatch): String
 
     /** 특성 추가 **/
-    @POST("/insert/char")
+    @POST("/pokemon/insert/char")
     suspend fun insertCharacteristic(@Body item: CharacteristicInfo): String
 
     /**
      * 포켓몬 간략한 조회 (진화 추가용)
      * **/
-    @GET("/select/pokemon/brief-list/{search}")
+    @GET("/pokemon/select/briefList/{search}")
     suspend fun fetchBriefPokemonList(@Path("search") search: String): List<BriefPokemonInfo>
 
     /**
      * 포켓몬 진화 추가
      **/
-    @POST("/insert/pokemon/evolution")
+    @POST("/pokemon/insert/evolution")
     suspend fun insertPokemonEvolution(@Body item: List<PokemonEvolution>): String
 
     /**
      * 포켓몬 기존 spotlight 조회
      * **/
-    @POST("/select/pokemon/before-image-info")
+    @POST("/pokemon/select/beforeImageInfo")
     suspend fun fetchPokemonBeforeSpotlights(): List<PokemonSpotlightItem>
 
     /**
      * 포켓몬 spotlight 업데이트
      * **/
-    @POST("/update/pokemon/image")
+    @POST("/pokemon/update/image")
     suspend fun updatePokemonSpotlight(@Body item: PokemonSpotlightItem): String
 
 }
