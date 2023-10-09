@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -7,12 +9,12 @@ plugins {
 }
 android {
     namespace 'com.example.mjapp'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.mjapp"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -33,7 +35,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        tasks.withType(KotlinCompile).configureEach {
+            kotlinOptions.jvmTarget = "1.8"
+        }
     }
     buildFeatures {
         compose true
@@ -50,12 +54,12 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.fragment:fragment-ktx:1.6.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.fragment:fragment-ktx:1.6.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.compose.material3:material3:1.2.0-alpha02'
+    implementation 'androidx.compose.material3:material3:1.2.0-alpha09'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation project(path: ':data')
     testImplementation 'junit:junit:4.13.2'
@@ -66,7 +70,7 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
-    implementation 'androidx.activity:activity-compose:1.7.2'
+    implementation 'androidx.activity:activity-compose:1.8.0'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
@@ -76,7 +80,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager-indicators:0.31.3-beta"
     implementation "androidx.compose.ui:ui-util:$compose_ui_version"
 
-    def lifecycle_version = "2.6.1"
+    def lifecycle_version = "2.6.2"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
@@ -87,25 +91,25 @@ dependencies {
     implementation "io.coil-kt:coil-compose:2.3.0"
 
     // Lottie
-    def lottieVersion = "6.0.0"
+    def lottieVersion = "6.1.0"
     implementation "com.airbnb.android:lottie:$lottieVersion"
     implementation "com.airbnb.android:lottie-compose:$lottieVersion"
 
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
 
     // compose navigation
-    def nav_version = "2.6.0"
+    def nav_version = "2.7.4"
     implementation "androidx.navigation:navigation-compose:$nav_version"
     implementation "com.google.accompanist:accompanist-navigation-animation:0.24.13-rc"
 
     // hilt
-    implementation "com.google.dagger:hilt-android:2.44"
+    implementation "com.google.dagger:hilt-android:2.46"
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
-    kapt "com.google.dagger:hilt-compiler:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.46"
 
-    def paging_version = "3.2.0-rc01"
+    def paging_version = "3.2.0-rc02"
     implementation "androidx.paging:paging-runtime:$paging_version"
-    implementation "androidx.paging:paging-compose:3.2.0-rc01"
+    implementation "androidx.paging:paging-compose:3.3.0-alpha02"
 
 }
