@@ -29,6 +29,20 @@ fun textStyle12B(): TextStyle = TextStyle(
     fontSize = 12.sp
 )
 
+fun textStyle18(): TextStyle = TextStyle(
+    color = MyColorBlack,
+    fontFamily = myFont,
+    fontWeight = FontWeight.Normal,
+    fontSize = 18.sp
+)
+
+fun textStyle18B(): TextStyle = TextStyle(
+    color = MyColorBlack,
+    fontFamily = myFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 18.sp
+)
+
 fun textStyle16(): TextStyle = TextStyle(
     color = MyColorBlack,
     fontFamily = myFont,

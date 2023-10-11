@@ -100,4 +100,17 @@ sealed class NavScreen(val item: MainNavItem) {
             route = "InternetFavoritesScreen"
         )
     )
+
+    object EnglishWords: NavScreen(
+        MainNavItem(
+            route = "EnglishWordsScreen"
+        )
+    )
+
+    object Memorize: NavScreen(
+        MainNavItem(
+            route = "MemorizeScreen",
+            routeWithPostFix = "MemorizeScreen/{${Constants.Day}}"
+        )
+    )
 }

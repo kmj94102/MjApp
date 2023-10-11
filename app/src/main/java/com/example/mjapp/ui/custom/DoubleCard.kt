@@ -86,7 +86,7 @@ fun DoubleCard(
                 .constrainAs(topCard) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
-                    end.linkTo(parent.end, 3.dp)
+                    end.linkTo(parent.end, 6.dp)
                 }
         ) {
             contents()

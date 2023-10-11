@@ -25,6 +25,8 @@ import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
+import com.example.mjapp.ui.screen.other.english_words.EnglishWordsScreen
+import com.example.mjapp.ui.screen.other.english_words.memorize.MemorizeScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
@@ -320,11 +322,38 @@ fun NavGraphBuilder.otherScreens(
             navController.navigate(it)
         }
     }
-
+    /** 인터넷 즐겨찾기 화면 **/
     composable(
         route = NavScreen.InternetFavorites.item.routeWithPostFix
     ) {
         InternetFavoritesScreen(
+            onBackClick = onBackClick
+        )
+    }
+    /** 영단어 암기 화면 **/
+    composable(
+        route = NavScreen.EnglishWords.item.routeWithPostFix
+    ) {
+        EnglishWordsScreen(
+            onBackClick = onBackClick,
+            goToScreen = { route, args ->
+                navController.navigate(
+                    makeRouteWithArgs(
+                        route,
+                        args
+                    )
+                )
+            }
+        )
+    }
+    /** 영단어 암기하기 화면 **/
+    composable(
+        route = NavScreen.Memorize.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(Constants.Day) { type = NavType.IntType }
+        )
+    ) {
+        MemorizeScreen(
             onBackClick = onBackClick
         )
     }

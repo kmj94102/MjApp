@@ -44,4 +44,9 @@ interface RepositoryModule {
         internetRepositoryImpl: InternetRepositoryImpl
     ): InternetRepository
 
+    @Binds
+    fun bindVocabularyRepository(
+        vocabularyRepositoryImpl: VocabularyRepositoryImpl
+    ): VocabularyRepository
+
 }

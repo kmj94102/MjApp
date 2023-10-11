@@ -134,4 +134,17 @@ object NetworkModule {
         accountBookService: AccountBookService
     ): AccountBookClient = AccountBookClient(accountBookService)
 
+    @Provides
+    @Singleton
+    fun provideVocabularyService(
+        @Named("internal") retrofit: Retrofit
+    ): VocabularyService =
+        retrofit.create(VocabularyService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideVocabularyClient(
+        vocabularyBookService: VocabularyService
+    ): VocabularyClient = VocabularyClient(vocabularyBookService)
+
 }

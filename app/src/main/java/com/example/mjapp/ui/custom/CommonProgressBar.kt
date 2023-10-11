@@ -1,64 +1,90 @@
 package com.example.mjapp.ui.custom
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorLightGray
-import com.example.mjapp.ui.theme.MyColorRed
-import com.example.mjapp.util.textStyle12B
+import com.example.mjapp.ui.theme.MyColorWhite
 
 @Composable
 fun CommonProgressBar(
-    modifier: Modifier = Modifier,
-    percent: Int,
-    progressColor: Color = MyColorRed,
-    backgroundColor: Color = MyColorLightGray,
-    isTextVisible: Boolean = true
+    modifier: Modifier,
+    height: Dp = 15.dp,
+    thumbColor: Color = MyColorWhite,
+    activeTrackColor: Color = MyColorBeige,
+    inactiveTrackColor: Color = MyColorLightGray,
+    max: Int,
+    currentPosition: Int,
+    onValueChanged: (Float) -> Unit
 ) {
-    val width = percent / 100.0f
-    val isStart = remember { mutableStateOf(false) }
-    val state by animateFloatAsState(
-        targetValue = if (isStart.value) width else 0.0f,
-        animationSpec = tween(durationMillis = 2500)
-    )
+    var currentDragX by remember { mutableFloatStateOf(0f) }
+    var position by remember { mutableFloatStateOf(0f) }
+    var isDrag by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        isStart.value = true
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = {
+                        isDrag = true
+                        currentDragX = it.x
+                    },
+                    onDragEnd = {
+                        isDrag = false
+                        val newProgress = currentDragX / size.width
+                        onValueChanged(newProgress)
+                    },
+                    onDrag = { change, _ ->
+                        currentDragX = change.position.x
+                    }
+                )
+            }
+    ) {
+        val height10Percent = size.height / 10
+        currentDragX = if (isDrag) currentDragX else (currentPosition.toFloat() / max) * size.width
+
+        drawRoundRect(
+            size = Size(size.width, size.height),
+            color = inactiveTrackColor,
+            cornerRadius = CornerRadius(size.height, size.height)
+        )
+
+        drawRoundRect(
+            size = Size(currentDragX.coerceIn(0f, size.width), size.height),
+            color = activeTrackColor,
+            cornerRadius = CornerRadius(size.height, size.height)
+        )
+
+        drawCircle(
+            radius = size.height / 2 - height10Percent,
+            color = thumbColor,
+            center = Offset(
+                currentDragX.coerceIn(0f, size.width) - height10Percent * 6,
+                center.y
+            )
+        )
     }
 
-    Box(
-        modifier = modifier
-            .height(20.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(backgroundColor)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(state)
-                .height(20.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(progressColor)
-        )
-        if (isTextVisible) {
-            Text(
-                text = "$percent %",
-                style = textStyle12B(),
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .align(Alignment.CenterStart)
-            )
-        }
+    LaunchedEffect(currentPosition) {
+        position = currentPosition.toFloat()
     }
 }

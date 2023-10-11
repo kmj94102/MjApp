@@ -22,7 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonButton
-import com.example.mjapp.ui.custom.CommonProgressBar
+import com.example.mjapp.ui.custom.CommonAnimatedProgressBar
 import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
@@ -154,7 +154,7 @@ fun ElswordCounterItem(
             )
         }
 
-        CommonProgressBar(
+        CommonAnimatedProgressBar(
             percent = elswordCounter.progress.toInt(),
             modifier = Modifier
                 .fillMaxWidth()

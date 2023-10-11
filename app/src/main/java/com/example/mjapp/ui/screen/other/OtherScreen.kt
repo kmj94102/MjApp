@@ -37,7 +37,7 @@ fun OtherScreen(
         PageMoveCardItem(
             text = "영단어 암기",
             imageRes = R.drawable.ic_english_study,
-            onClick = {}
+            onClick = { goToScreen(NavScreen.EnglishWords.item.routeWithPostFix) }
         ),
     )
 
