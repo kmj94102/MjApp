@@ -17,4 +17,16 @@ class VocabularyRepositoryImpl @Inject constructor(
             }
             .getFailureThrow()
     }
+
+    override fun fetchExamination(day: Int) = flow {
+        client
+            .fetchExamination(DayParam(day))
+            .onSuccess {
+                emit(
+                    it.filter { item -> item.word.isNotEmpty() }
+                        .map { item -> item.copy(meaning = "") }
+                )
+            }
+            .getFailureThrow()
+    }
 }

@@ -26,6 +26,7 @@ import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.other.english_words.EnglishWordsScreen
+import com.example.mjapp.ui.screen.other.english_words.exam.ExamScreen
 import com.example.mjapp.ui.screen.other.english_words.memorize.MemorizeScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
 import com.example.mjapp.util.Constants
@@ -354,6 +355,17 @@ fun NavGraphBuilder.otherScreens(
         )
     ) {
         MemorizeScreen(
+            onBackClick = onBackClick
+        )
+    }
+    /** 영단어 테스트 화면 **/
+    composable(
+        route = NavScreen.Exam.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(Constants.Day) { type = NavType.IntType }
+        )
+    ) {
+        ExamScreen(
             onBackClick = onBackClick
         )
     }

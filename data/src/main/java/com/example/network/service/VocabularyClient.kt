@@ -9,4 +9,8 @@ class VocabularyClient @Inject constructor(
     suspend fun fetchVocabularyList(item: DayParam) = runCatching {
         service.fetchVocabularyList(item)
     }
+
+    suspend fun fetchExamination(item: DayParam) = runCatching {
+        service.fetchExamination(item)
+    }
 }

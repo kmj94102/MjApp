@@ -29,3 +29,9 @@ data class Vocabulary(
     val id: Int,
     val word: String
 )
+
+data class Examination(
+    val id: Int,
+    val word: String,
+    val meaning: String = ""
+)

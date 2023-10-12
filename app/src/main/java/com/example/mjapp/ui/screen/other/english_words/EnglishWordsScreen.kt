@@ -45,8 +45,10 @@ fun EnglishWordsScreen(
         status = status,
         headerContent = {
             EnglishWordsHeader(
+                title = "영단어 암기",
+                day = viewModel.day.intValue,
                 onBackClick = onBackClick,
-                viewModel = viewModel
+                onDayClick = {}
             )
         },
         bodyContent = {
@@ -61,8 +63,10 @@ fun EnglishWordsScreen(
 
 @Composable
 fun EnglishWordsHeader(
+    title: String = "",
+    day: Int,
     onBackClick: () -> Unit,
-    viewModel: EnglishWordsViewModel,
+    onDayClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -73,13 +77,15 @@ fun EnglishWordsHeader(
             onClick = onBackClick
         )
 
-        Text(text = "영단어 암기", style = textStyle18(), modifier = Modifier.align(Alignment.Center))
+        Text(text = title, style = textStyle18(), modifier = Modifier.align(Alignment.Center))
 
         UnderLineText(
-            textValue = "Day ${viewModel.day.intValue}",
+            textValue = "Day $day",
             textStyle = textStyle18B(),
             underLineColor = MyColorBeige,
-            modifier = Modifier.align(Alignment.CenterEnd)
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .nonRippleClickable(onDayClick)
         )
     }
 }
@@ -108,7 +114,9 @@ fun EnglishWordsBody(
             EnglishWordsItem(
                 title = "단어 테스트하기",
                 iconRes = R.drawable.ic_exam,
-                onClick = {}
+                onClick = {
+                    goToScreen(NavScreen.Exam.item.route)
+                }
             )
         }
         item {
