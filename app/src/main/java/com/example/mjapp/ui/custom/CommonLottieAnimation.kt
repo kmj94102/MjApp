@@ -14,6 +14,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 @Composable
 fun CommonLottieAnimation(
     @RawRes resId: Int,
+    iterations: Int = LottieConstants.IterateForever,
     modifier: Modifier
 ) {
     val composition by rememberLottieComposition(
@@ -22,7 +23,7 @@ fun CommonLottieAnimation(
     val progress by animateLottieCompositionAsState(
         composition = composition,
         isPlaying = true,
-        iterations = LottieConstants.IterateForever
+        iterations = iterations
     )
 
     LottieAnimation(

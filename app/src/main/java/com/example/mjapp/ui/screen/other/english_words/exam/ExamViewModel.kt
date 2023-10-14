@@ -1,14 +1,17 @@
 package com.example.mjapp.ui.screen.other.english_words.exam
 
 import androidx.compose.runtime.IntState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.clearAndAddAll
 import com.example.network.model.Examination
+import com.example.network.model.ExaminationScoringResult
 import com.example.network.repository.VocabularyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -29,6 +32,9 @@ class ExamViewModel @Inject constructor(
 
     private val _list = mutableStateListOf<Examination>()
     val list: List<Examination> = _list
+
+    private val _result = mutableStateOf(ExaminationScoringResult())
+    val result: State<ExaminationScoringResult> = _result
 
     init {
         savedStateHandle.get<Int>(Constants.Day)?.let {
@@ -54,5 +60,20 @@ class ExamViewModel @Inject constructor(
             _list.clear()
             _list.addAll(updatedList)
         }
+    }
+
+    fun examinationScoring(
+        onResult: () -> Unit
+    ) {
+        repository
+            .fetchExaminationScoring(_list)
+            .onStart { startLoading() }
+            .onEach {
+                onResult()
+                _result.value = it
+            }
+            .onCompletion { endLoading() }
+            .catch {  }
+            .launchIn(viewModelScope)
     }
 }

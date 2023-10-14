@@ -1,6 +1,7 @@
 package com.example.network.service
 
 import com.example.network.model.DayParam
+import com.example.network.model.Examination
 import javax.inject.Inject
 
 class VocabularyClient @Inject constructor(
@@ -12,5 +13,9 @@ class VocabularyClient @Inject constructor(
 
     suspend fun fetchExamination(item: DayParam) = runCatching {
         service.fetchExamination(item)
+    }
+
+    suspend fun fetchExaminationScoring(items: List<Examination>) = runCatching {
+        service.fetchExaminationScoring(items)
     }
 }

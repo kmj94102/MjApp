@@ -13,6 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -21,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardButton
+import com.example.mjapp.ui.dialog.ExamResultDialog
 import com.example.mjapp.ui.screen.other.english_words.EnglishWordsHeader
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
@@ -35,6 +39,7 @@ fun ExamScreen(
     viewModel: ExamViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
+    var isShow by remember { mutableStateOf(false) }
 
     HighMediumLowContainer(
         status = status,
@@ -54,7 +59,19 @@ fun ExamScreen(
                 topCardColor = MyColorBlue,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                viewModel.examinationScoring {
+                    isShow = true
+                }
             }
+        }
+    )
+
+    ExamResultDialog(
+        isShow = isShow,
+        data = viewModel.result.value,
+        onDismiss = {
+            isShow = false
+            onBackClick()
         }
     )
 }

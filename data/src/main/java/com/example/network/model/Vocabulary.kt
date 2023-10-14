@@ -35,3 +35,21 @@ data class Examination(
     val word: String,
     val meaning: String = ""
 )
+
+data class ExaminationScoringResult(
+    val totalSize: Int = 0,
+    val correctCount: Int = 0,
+    val wrongItems: List<Vocabulary> = listOf()
+) {
+    fun getScore(): String {
+        val score = 100f / totalSize * correctCount
+
+        return if(score % 1 == 0.0f) {
+            String.format("%.0f점", score)
+        } else {
+            String.format("%.2f점", score)
+        }
+    }
+
+    fun getCount() = " ($correctCount/${totalSize})"
+}

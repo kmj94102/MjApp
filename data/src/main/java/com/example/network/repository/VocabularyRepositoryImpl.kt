@@ -1,6 +1,7 @@
 package com.example.network.repository
 
 import com.example.network.model.DayParam
+import com.example.network.model.Examination
 import com.example.network.model.getFailureThrow
 import com.example.network.service.VocabularyClient
 import kotlinx.coroutines.flow.flow
@@ -27,6 +28,13 @@ class VocabularyRepositoryImpl @Inject constructor(
                         .map { item -> item.copy(meaning = "") }
                 )
             }
+            .getFailureThrow()
+    }
+
+    override fun fetchExaminationScoring(items: List<Examination>) = flow {
+        client
+            .fetchExaminationScoring(items)
+            .onSuccess { emit(it) }
             .getFailureThrow()
     }
 }
