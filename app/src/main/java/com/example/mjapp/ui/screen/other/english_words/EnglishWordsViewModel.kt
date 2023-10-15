@@ -15,7 +15,7 @@ class EnglishWordsViewModel @Inject constructor(
     val day: IntState = _day
 
     fun updateDay(day: Int) {
-        _day.value = day
+        _day.intValue = day
     }
 
 }

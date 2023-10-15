@@ -28,6 +28,7 @@ import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.other.english_words.EnglishWordsScreen
 import com.example.mjapp.ui.screen.other.english_words.exam.ExamScreen
 import com.example.mjapp.ui.screen.other.english_words.memorize.MemorizeScreen
+import com.example.mjapp.ui.screen.other.english_words.wrong_answer.WrongAnswerScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
@@ -366,6 +367,27 @@ fun NavGraphBuilder.otherScreens(
         )
     ) {
         ExamScreen(
+            onBackClick = onBackClick,
+            goToWrongAnswer = { day ->
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.WrongAnswers.item.route,
+                        day.toString()
+                    )
+                ) {
+                    navController.popBackStack()
+                }
+            }
+        )
+    }
+    /** 오답노트 화면 **/
+    composable(
+        route = NavScreen.WrongAnswers.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(Constants.Day) { type = NavType.IntType }
+        )
+    ) {
+        WrongAnswerScreen(
             onBackClick = onBackClick
         )
     }

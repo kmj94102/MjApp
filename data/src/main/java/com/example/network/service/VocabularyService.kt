@@ -4,6 +4,7 @@ import com.example.network.model.DayParam
 import com.example.network.model.Examination
 import com.example.network.model.ExaminationScoringResult
 import com.example.network.model.VocabularyList
+import com.example.network.model.WrongAnswer
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -17,5 +18,8 @@ interface VocabularyService {
 
     @POST("/vocabulary/select/examination/scoring")
     suspend fun fetchExaminationScoring(@Body items: List<Examination>): ExaminationScoringResult
+
+    @POST("/vocabulary/select/wrongAnswer")
+    suspend fun fetchWrongAnswer(@Body items: DayParam): List<WrongAnswer>
 
 }

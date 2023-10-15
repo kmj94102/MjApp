@@ -53,3 +53,12 @@ data class ExaminationScoringResult(
 
     fun getCount() = " ($correctCount/${totalSize})"
 }
+
+data class WrongAnswer(
+    val id: Int,
+    val day: Int,
+    val word: String,
+    val meaning: String,
+    val hint: String,
+    val count: Int
+)

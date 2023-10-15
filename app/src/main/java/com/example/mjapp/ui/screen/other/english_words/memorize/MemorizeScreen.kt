@@ -38,8 +38,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonProgressBar
 import com.example.mjapp.ui.custom.DoubleCard
-import com.example.mjapp.ui.custom.IconBox
-import com.example.mjapp.ui.custom.UnderLineText
+import com.example.mjapp.ui.screen.other.english_words.EnglishEmpty
+import com.example.mjapp.ui.screen.other.english_words.EnglishWordsHeader
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
@@ -65,40 +65,23 @@ fun MemorizeScreen(
     HighMediumLowContainer(
         status = status,
         heightContent = {
-            MemorizeHeader(onBackClick = onBackClick, viewModel = viewModel)
+            EnglishWordsHeader(
+                day = viewModel.day.intValue,
+                onBackClick = onBackClick,
+                onDaySelect = viewModel::updateDay
+            )
         },
         mediumContent = {
-            MemorizeBody(viewModel = viewModel)
+            if (viewModel.list.isNotEmpty()) {
+                MemorizeBody(viewModel = viewModel)
+            } else {
+                EnglishEmpty(message = "단어장을 준비 중입니다.")
+            }
         },
         lowContent = {
             MemorizePlayer(viewModel = viewModel)
         }
     )
-}
-
-@Composable
-fun MemorizeHeader(
-    onBackClick: () -> Unit,
-    viewModel: MemorizeViewModel
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        IconBox(
-            boxColor = MyColorBeige,
-            onClick = onBackClick
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        UnderLineText(
-            textValue = "Day ${viewModel.day.intValue}",
-            textStyle = textStyle18B(),
-            underLineColor = MyColorBeige,
-        )
-    }
 }
 
 @Composable
@@ -202,10 +185,10 @@ fun MemorizePlayer(
     var isPlaying by remember { mutableStateOf(false) }
     var time by remember { mutableStateOf("00:00 / 00:00") }
     var currentPosition by remember { mutableIntStateOf(0) }
+    val address by viewModel.address.collectAsStateWithLifecycle()
 
     runCatching {
-
-        player.setDataSource(viewModel.address)
+        player.setDataSource(address)
         player.prepareAsync()
 
         player.setOnPreparedListener {
@@ -215,7 +198,7 @@ fun MemorizePlayer(
         player.setOnCompletionListener {
             player.stop()
             player.reset()
-            player.setDataSource(viewModel.address)
+            player.setDataSource(address)
             player.prepareAsync()
             currentPosition = 0
             isPlaying = false
@@ -311,7 +294,7 @@ fun MemorizePlayer(
                             runCatching {
                                 player.stop()
                                 player.reset()
-                                player.setDataSource(viewModel.address)
+                                player.setDataSource(address)
                                 player.prepareAsync()
                                 player.start()
                                 currentPosition = 0
@@ -324,6 +307,15 @@ fun MemorizePlayer(
                 Text(text = time, style = textStyle12B())
             }
         }
+    }
+
+    LaunchedEffect(address) {
+        player.stop()
+        player.reset()
+        player.setDataSource(address)
+        player.prepareAsync()
+        currentPosition = 0
+        isPlaying = false
     }
 
     LaunchedEffect(isPlaying) {

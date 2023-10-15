@@ -49,7 +49,7 @@ class ExamViewModel @Inject constructor(
             .onStart { startLoading() }
             .onEach { _list.clearAndAddAll(it) }
             .onCompletion { endLoading() }
-            .catch {  }
+            .catch { updateNetworkErrorState(true) }
             .launchIn(viewModelScope)
     }
 
@@ -73,7 +73,12 @@ class ExamViewModel @Inject constructor(
                 _result.value = it
             }
             .onCompletion { endLoading() }
-            .catch {  }
+            .catch { updateMessage(it.message ?: "오류가 발생하였습니다.") }
             .launchIn(viewModelScope)
+    }
+
+    fun updateDay(day: Int) {
+        _day.intValue = day
+        fetchExamination()
     }
 }

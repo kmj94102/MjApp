@@ -24,13 +24,15 @@ fun ExamResultDialog(
     isShow: Boolean,
     data: ExaminationScoringResult,
     onDismiss: () -> Unit,
+    goToWrongAnswer: () -> Unit,
 ) {
     ConfirmCancelDialog(
         isShow = isShow,
         isCancelable = false,
         title = "채점 결과",
+        cancelText = "오답보기",
         onCancelClick = {
-            onDismiss()
+            goToWrongAnswer()
         },
         onConfirmClick = {
             onDismiss()

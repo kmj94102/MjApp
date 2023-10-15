@@ -120,4 +120,11 @@ sealed class NavScreen(val item: MainNavItem) {
             routeWithPostFix = "ExamScreen/{${Constants.Day}}"
         )
     )
+
+    object WrongAnswers: NavScreen(
+        MainNavItem(
+            route = "WrongAnswer",
+            routeWithPostFix = "WrongAnswer/{${Constants.Day}}"
+        )
+    )
 }

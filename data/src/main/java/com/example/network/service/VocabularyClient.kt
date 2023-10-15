@@ -18,4 +18,8 @@ class VocabularyClient @Inject constructor(
     suspend fun fetchExaminationScoring(items: List<Examination>) = runCatching {
         service.fetchExaminationScoring(items)
     }
+
+    suspend fun fetchWrongAnswer(item: DayParam) = runCatching {
+        service.fetchWrongAnswer(item)
+    }
 }

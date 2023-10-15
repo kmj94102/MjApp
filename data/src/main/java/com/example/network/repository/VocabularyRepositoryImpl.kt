@@ -37,4 +37,11 @@ class VocabularyRepositoryImpl @Inject constructor(
             .onSuccess { emit(it) }
             .getFailureThrow()
     }
+
+    override fun fetchWrongAnswer(day: Int) = flow {
+        client
+            .fetchWrongAnswer(DayParam(day))
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
 }

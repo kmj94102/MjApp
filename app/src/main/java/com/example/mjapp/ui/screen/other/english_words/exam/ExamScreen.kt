@@ -25,6 +25,7 @@ import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardButton
 import com.example.mjapp.ui.dialog.ExamResultDialog
+import com.example.mjapp.ui.screen.other.english_words.EnglishEmpty
 import com.example.mjapp.ui.screen.other.english_words.EnglishWordsHeader
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
@@ -36,6 +37,7 @@ import com.example.mjapp.util.textStyle16B
 @Composable
 fun ExamScreen(
     onBackClick: () -> Unit,
+    goToWrongAnswer: (Int) -> Unit,
     viewModel: ExamViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
@@ -47,20 +49,26 @@ fun ExamScreen(
             EnglishWordsHeader(
                 day = viewModel.day.intValue,
                 onBackClick = onBackClick,
-                onDayClick = {}
+                onDaySelect = viewModel::updateDay
             )
         },
         mediumContent = {
-            ExamMedium(viewModel = viewModel)
+            if (viewModel.list.isNotEmpty()) {
+                ExamMedium(viewModel = viewModel)
+            } else {
+                EnglishEmpty("시험 문제를 준비 중입니다.")
+            }
         },
         lowContent = {
-            DoubleCardButton(
-                text = "제출하기",
-                topCardColor = MyColorBlue,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                viewModel.examinationScoring {
-                    isShow = true
+            if (viewModel.list.isNotEmpty()) {
+                DoubleCardButton(
+                    text = "제출하기",
+                    topCardColor = MyColorBlue,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    viewModel.examinationScoring {
+                        isShow = true
+                    }
                 }
             }
         }
@@ -72,6 +80,10 @@ fun ExamScreen(
         onDismiss = {
             isShow = false
             onBackClick()
+        },
+        goToWrongAnswer = {
+            isShow = false
+            goToWrongAnswer(viewModel.day.intValue)
         }
     )
 }

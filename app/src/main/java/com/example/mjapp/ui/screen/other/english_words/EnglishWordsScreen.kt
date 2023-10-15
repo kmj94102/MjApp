@@ -3,8 +3,10 @@ package com.example.mjapp.ui.screen.other.english_words
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,6 +15,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,15 +26,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.R
+import com.example.mjapp.ui.custom.CommonLottieAnimation
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.UnderLineText
+import com.example.mjapp.ui.dialog.OneSelectDialog
 import com.example.mjapp.ui.screen.navigation.NavScreen
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
+import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle18
 import com.example.mjapp.util.textStyle18B
 
@@ -48,7 +57,7 @@ fun EnglishWordsScreen(
                 title = "영단어 암기",
                 day = viewModel.day.intValue,
                 onBackClick = onBackClick,
-                onDayClick = {}
+                onDaySelect = viewModel::updateDay
             )
         },
         bodyContent = {
@@ -66,8 +75,10 @@ fun EnglishWordsHeader(
     title: String = "",
     day: Int,
     onBackClick: () -> Unit,
-    onDayClick: () -> Unit
+    onDaySelect: (Int) -> Unit
 ) {
+    var isShow by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,9 +96,23 @@ fun EnglishWordsHeader(
             underLineColor = MyColorBeige,
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .nonRippleClickable(onDayClick)
+                .nonRippleClickable { isShow = true }
         )
     }
+
+    OneSelectDialog(
+        isShow =  isShow,
+        title = "Day 선택",
+        list = (1..60).map { "Day $it" },
+        color = MyColorBeige,
+        selectItem = "Day $day",
+        onDismiss = { isShow = false },
+        onSelect = {
+            runCatching {
+                onDaySelect(it.replace("Day ", "").toInt())
+            }
+        }
+    )
 }
 
 @Composable
@@ -123,9 +148,33 @@ fun EnglishWordsBody(
             EnglishWordsItem(
                 title = "오답 노트 보기",
                 iconRes = R.drawable.ic_wrong_answer_notes,
-                onClick = {}
+                onClick = {
+                    goToScreen(NavScreen.WrongAnswers.item.route)
+                }
             )
         }
+    }
+}
+
+@Composable
+fun EnglishEmpty(
+    message: String
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        CommonLottieAnimation(
+            resId = R.raw.lottie_error,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+        )
+        Text(
+            text = message,
+            style = textStyle16().copy(color = MyColorGray),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
     }
 }
 
