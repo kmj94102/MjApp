@@ -83,14 +83,20 @@ class PokemonClient @Inject constructor(
     suspend fun updateCounter(count: Int, number: String) =
         runCatching { dao.updateCounter(count, number) }
 
+    /** 포켓몬 카운터 히스트리 조회 **/
+    fun fetchPokemonCounterHistory() = runCatching { dao.fetchPokemonCounterHistory() }
+
     /** 카운터 증가폭 업데이트 **/
     suspend fun updateCustomIncrease(customIncrease: Int, number: String) =
         runCatching { dao.updateCustomIncrease(customIncrease, number) }
 
     /** 카운터 삭제 **/
-    suspend fun deletePokemonCounter(number: String) = runCatching { dao.deleteCounter(number) }
+    suspend fun deletePokemonCounter(index: Int) = runCatching { dao.deleteCounter(index) }
 
     /** 잡기 상태 업데이트 **/
     suspend fun updateCatch(number: String) = runCatching { dao.updateCatch(number) }
+
+    /** 카운터 복구 업데이트 **/
+    suspend fun updateRestore(index: Int) = runCatching { dao.updateRestore(index) }
 
 }

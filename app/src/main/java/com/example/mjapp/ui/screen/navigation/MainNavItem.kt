@@ -44,6 +44,12 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
+    object PokemonCounterHistory: NavScreen(
+        MainNavItem(
+            route = "PokemonCounterHistory"
+        )
+    )
+
     object PokemonImageChange: NavScreen(
         MainNavItem(
             route = "PokemonImageChange"

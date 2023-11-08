@@ -146,7 +146,7 @@ fun HomeBody(
                     PokemonCounterCard(
                         counter = it,
                         updateCounter = { value -> viewModel.updateCounter(value, it.number) },
-                        deleteCounter = { viewModel.deleteCounter(it.number) },
+                        deleteCounter = { viewModel.deleteCounter(it.index) },
                         updateCatch = { viewModel.updateCatch(it.number) },
                         onSettingClick = { onSettingsClick(it) },
                         modifier = Modifier

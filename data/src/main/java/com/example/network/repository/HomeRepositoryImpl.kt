@@ -49,8 +49,8 @@ class HomeRepositoryImpl @Inject constructor(
         pokemonClient.updateCounter(count, number)
     }
 
-    override suspend fun deletePokemonCounter(number: String) {
-        pokemonClient.deletePokemonCounter(number)
+    override suspend fun deletePokemonCounter(index: Int) {
+        pokemonClient.deletePokemonCounter(index)
     }
 
     override suspend fun updateCatch(number: String) {

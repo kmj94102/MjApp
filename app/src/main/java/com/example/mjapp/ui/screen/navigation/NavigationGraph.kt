@@ -21,6 +21,7 @@ import com.example.mjapp.ui.screen.game.elsword.counter.add.ElswordCounterAddScr
 import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
 import com.example.mjapp.ui.screen.game.pokemon.add.PokemonAddScreen
 import com.example.mjapp.ui.screen.game.pokemon.change.PokemonImageChangeScreen
+import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterHistoryScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
@@ -142,6 +143,17 @@ fun NavGraphBuilder.gameScreens(
         route = NavScreen.PokemonCounter.item.routeWithPostFix
     ) {
         PokemonCounterScreen(
+            onBackClick = onBackClick,
+            goToHistory = {
+                navController.navigate(NavScreen.PokemonCounterHistory.item.routeWithPostFix)
+            }
+        )
+    }
+    /** 포켓몬 카운터 히스토리 화면 **/
+    composable(
+        route = NavScreen.PokemonCounterHistory.item.routeWithPostFix
+    ) {
+        PokemonCounterHistoryScreen(
             onBackClick = onBackClick
         )
     }

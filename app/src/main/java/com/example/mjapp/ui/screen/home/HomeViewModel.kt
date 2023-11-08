@@ -105,8 +105,8 @@ class HomeViewModel @Inject constructor(
         repository.updateCounter(count, number)
     }
 
-    fun deleteCounter(number: String) = viewModelScope.launch {
-        repository.deletePokemonCounter(number)
+    fun deleteCounter(index: Int) = viewModelScope.launch {
+        repository.deletePokemonCounter(index)
     }
 
     fun updateCatch(number: String) = viewModelScope.launch {

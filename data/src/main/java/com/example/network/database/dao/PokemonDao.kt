@@ -26,7 +26,13 @@ interface PokemonDao {
     @Query("UPDATE PokemonCounterEntity SET isCatch = 1 WHERE number = :number")
     suspend fun updateCatch(number: String)
 
-    @Query("DELETE FROM PokemonCounterEntity WHERE number = :number")
-    suspend fun deleteCounter(number: String)
+    @Query("DELETE FROM PokemonCounterEntity WHERE `index` = :index")
+    suspend fun deleteCounter(index: Int)
+
+    @Query("SELECT `index`, number, image, shinyImage, count, customIncrease FROM PokemonCounterEntity WHERE isCatch = 1 ORDER BY `index` DESC")
+    fun fetchPokemonCounterHistory(): Flow<List<PokemonCounter>>
+
+    @Query("UPDATE PokemonCounterEntity SET isCatch = 0 WHERE `index` = :index")
+    suspend fun updateRestore(index: Int)
 
 }

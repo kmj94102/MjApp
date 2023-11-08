@@ -41,6 +41,7 @@ import com.example.network.model.PokemonCounter
 @Composable
 fun PokemonCounterScreen(
     onBackClick: () -> Unit,
+    goToHistory: () -> Unit,
     viewModel: PokemonCounterViewModel = hiltViewModel()
 ) {
     var isCustomIncreaseSettingShow by remember { mutableStateOf(false) }
@@ -51,9 +52,9 @@ fun PokemonCounterScreen(
     HeaderBodyContainer(
         status = status,
         headerContent = {
-            IconBox(
-                boxColor = MyColorRed,
-                onClick = onBackClick,
+            PokemonCounterHeader(
+                onBackClick = onBackClick,
+                goToHistory = goToHistory
             )
         },
         bodyContent = {
@@ -91,6 +92,25 @@ fun PokemonCounterScreen(
 }
 
 @Composable
+fun PokemonCounterHeader(
+    onBackClick: () -> Unit,
+    goToHistory: () -> Unit
+) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        IconBox(
+            boxColor = MyColorRed,
+            onClick = onBackClick,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        IconBox(
+            boxColor = MyColorTurquoise,
+            iconRes = R.drawable.ic_history,
+            onClick = goToHistory,
+        )
+    }
+}
+
+@Composable
 fun PokemonCounterBody(
     viewModel: PokemonCounterViewModel,
     onSettingClick: (PokemonCounter) -> Unit,
@@ -111,7 +131,7 @@ fun PokemonCounterBody(
                         viewModel.updateCounter(value, pokemonCounter.number)
                     },
                     deleteCounter = {
-                        viewModel.deleteCounter(pokemonCounter.number)
+                        viewModel.deleteCounter(pokemonCounter.index)
                     },
                     updateCatch = {
                         viewModel.updateCatch(pokemonCounter.number)

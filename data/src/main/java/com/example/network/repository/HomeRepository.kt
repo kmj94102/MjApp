@@ -16,7 +16,7 @@ interface HomeRepository {
 
     suspend fun updateCounter(count: Int, number: String)
 
-    suspend fun deletePokemonCounter(number: String)
+    suspend fun deletePokemonCounter(index: Int)
 
     suspend fun updateCatch(number: String)
 
