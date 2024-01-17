@@ -113,6 +113,7 @@ fun QuestStatusChangeDialog(
                                 valueRange = (0..item.max).toList(),
                                 enable = item.isProceed(),
                                 onValueChange = item::updateProgress,
+                                initialSelectedValue = item.progress,
                                 modifier = Modifier.padding(top = 5.dp)
                             )
                         }

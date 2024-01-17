@@ -18,6 +18,7 @@ import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import kotlin.math.abs
+import kotlin.math.max
 
 /**
  * 커스텀 Slider
@@ -35,10 +36,16 @@ fun <T> CommonSlider(
     disableTrackColor: Color = MyColorGray,
     enable: Boolean,
     valueRange: List<T>,
-    onValueChange: (T) -> Unit
+    onValueChange: (T) -> Unit,
+    initialSelectedValue: Int
 ) {
     var currentDragX by remember { mutableFloatStateOf(0f) }
     var offsetList by remember { mutableStateOf(listOf<Offset>()) }
+    var isEnable by remember { mutableStateOf(false) }
+
+    LaunchedEffect(enable) {
+        isEnable = enable
+    }
 
     Canvas(
         modifier = modifier
@@ -46,9 +53,13 @@ fun <T> CommonSlider(
             .height(height)
             .pointerInput(Unit) {
                 detectDragGestures(
-                    onDragStart = { currentDragX = it.x },
+                    onDragStart = {
+                        if (isEnable.not()) return@detectDragGestures
+                        currentDragX = it.x
+                    },
                     onDragEnd = {},
                     onDrag = { change, _ ->
+                        if (isEnable.not()) return@detectDragGestures
                         val (nearestIndex, nearestOffset) = offsetList
                             .mapIndexed { index, offset -> index to offset }
                             .minByOrNull { (_, offset) -> abs(change.position.x - offset.x) }
@@ -62,6 +73,9 @@ fun <T> CommonSlider(
     ) {
         val with10Percent = size.width / 10
         val height10Percent = size.height / 10
+
+        val initWith = (size.width / valueRange.size - 1) * initialSelectedValue
+//        currentDragX = initWith
 
         val interval = (size.width - with10Percent) / (valueRange.size - 1)
         offsetList = List(valueRange.size) { index ->
@@ -84,16 +98,17 @@ fun <T> CommonSlider(
         }
 
         drawRoundRect(
-            size = Size(currentDragX.coerceIn(with10Percent, size.width), size.height),
+            size = Size(currentDragX.coerceIn(max(initWith, with10Percent), size.width), size.height),
             color = if (enable) activeTrackColor else disableTrackColor,
             cornerRadius = CornerRadius(size.height, size.height)
         )
 
+        val circleWidth = currentDragX.coerceIn(initWith, size.width) - height10Percent * 6
         drawCircle(
             radius = size.height / 2 - height10Percent,
             color = thumbColor,
             center = Offset(
-                currentDragX.coerceIn(with10Percent, size.width) - height10Percent * 6,
+                if (circleWidth < 0) height10Percent * 6 else circleWidth,
                 center.y
             )
         )
