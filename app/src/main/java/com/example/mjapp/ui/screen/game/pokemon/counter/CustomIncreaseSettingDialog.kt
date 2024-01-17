@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -26,6 +27,7 @@ import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.isNumeric
 import com.example.mjapp.util.textStyle16
 import com.example.network.model.PokemonCounter
+import kotlin.math.min
 
 @Composable
 fun CustomIncreaseSettingDialog(
@@ -71,9 +73,12 @@ fun CustomIncreaseSettingDialog(
                 value = customIncrease.value,
                 onTextChange = {
                     if (isNumeric(it)) {
+                        customIncrease.value = "${min(it.toInt(), 999_999)}"
+                    } else if(it.isEmpty()) {
                         customIncrease.value = it
                     }
                 },
+                keyboardType = KeyboardType.Number,
                 hint = "증가폭 입력",
                 bottomCardColor = MyColorRed,
                 modifier = Modifier
