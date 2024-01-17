@@ -21,9 +21,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.custom.OutlineText
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
+import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12B
 
@@ -101,6 +103,7 @@ fun ElswordIntroduceMedium(
                     item {
                         ElswordLineCard(
                             image = viewModel.currentCharacter.jobImage[it],
+                            name = viewModel.currentCharacter.jobName[it],
                             color = viewModel.currentCharacter.color,
                             modifier = Modifier.fillMaxWidth(1f)
                         )
@@ -148,6 +151,7 @@ fun ElswordIntroduceLow(
 fun ElswordLineCard(
     @DrawableRes
     image: Int,
+    name: String,
     color: Color,
     modifier: Modifier = Modifier
 ) {
@@ -158,6 +162,14 @@ fun ElswordLineCard(
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.align(Alignment.Center)
+            )
+            OutlineText(
+                text = name,
+                style = textStyle12B().copy(color = MyColorWhite),
+                outlineColor = MyColorBlack,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 5.dp)
             )
         }
     }
