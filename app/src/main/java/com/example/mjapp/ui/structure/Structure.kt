@@ -110,7 +110,7 @@ fun BaseContainer(
 fun HeaderBodyContainer(
     status: BaseStatus,
     paddingValues: PaddingValues =
-        PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
+        PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 0.dp),
     reload: (() -> Unit)? = null,
     onBackClick: (() -> Unit)? = null,
     color: Color = MyColorRed,
