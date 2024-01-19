@@ -446,7 +446,10 @@ private fun ListContainer(
                         myCalendar.itemList.forEachIndexed { index, item ->
                             when (item) {
                                 is CalendarItem.PlanInfo -> {
-                                    ListPlanContainer(info = item)
+                                    ListPlanContainer(
+                                        info = item,
+                                        onTaskClick = viewModel::updateTask
+                                    )
                                 }
 
                                 is CalendarItem.ScheduleInfo -> {
@@ -500,6 +503,7 @@ fun ListScheduleContainer(
 @Composable
 fun ListPlanContainer(
     info: CalendarItem.PlanInfo,
+    onTaskClick: (Int, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -508,12 +512,12 @@ fun ListPlanContainer(
             .padding(10.dp)
     ) {
         Text(text = info.title, style = textStyle16B().copy(fontSize = 18.sp))
-        info.taskList.forEach {
+        info.taskList.forEach { item ->
             CommonRadio(
-                text = it.contents,
-                check = it.isCompleted,
+                text = item.contents,
+                check = item.isCompleted,
                 onCheckedChange = {
-
+                    onTaskClick(item.id, item.isCompleted.not())
                 },
                 modifier = Modifier
                     .fillMaxWidth()
