@@ -199,6 +199,7 @@ private fun CalendarContainer(
                                 CalendarPlanContainer(
                                     info = calendarItem,
                                     modifier = Modifier.fillMaxWidth(),
+                                    onTaskClick = viewModel::updateTask,
                                     deleteListener = viewModel::deletePlanTasks
                                 )
                             }
@@ -310,6 +311,7 @@ fun CalendarScheduleContainer(
 fun CalendarPlanContainer(
     info: CalendarItem.PlanInfo,
     deleteListener: (Int) -> Unit,
+    onTaskClick: (Int, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     DoubleCard(
@@ -362,7 +364,7 @@ fun CalendarPlanContainer(
                     text = item.contents,
                     check = item.isCompleted,
                     onCheckedChange = {
-//                        onTaskClick(item.id, item.isCompleted.not())
+                        onTaskClick(item.id, item.isCompleted.not())
                     },
                     modifier = Modifier
                         .fillMaxWidth()

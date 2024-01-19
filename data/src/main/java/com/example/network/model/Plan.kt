@@ -34,5 +34,6 @@ data class PlanTasksModify(
 
 data class TaskUpdateItem(
     val id: Int,
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+    val date: String
 )

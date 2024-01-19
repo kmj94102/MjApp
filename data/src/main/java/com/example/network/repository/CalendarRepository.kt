@@ -3,7 +3,6 @@ package com.example.network.repository
 import com.example.network.model.MyCalendarInfo
 import com.example.network.model.PlanTasksModify
 import com.example.network.model.ScheduleModifier
-import com.example.network.model.TaskUpdateItem
 import kotlinx.coroutines.flow.Flow
 
 interface CalendarRepository {
@@ -27,6 +26,6 @@ interface CalendarRepository {
     suspend fun deletePlanTasks(id: Int)
 
     /** 계획 업데이트 **/
-    suspend fun updateTask(item: TaskUpdateItem): Result<Unit>
+    fun updateTask(id: Int, isCompleted: Boolean, date: String): Flow<MyCalendarInfo>
 
 }

@@ -38,6 +38,6 @@ interface CalendarService {
 
     /** 계획 업데이트 **/
     @POST("/calendar/update/task")
-    suspend fun updateTask(@Body item: TaskUpdateItem)
+    suspend fun updateTask(@Body item: TaskUpdateItem): CalendarResult
 
 }

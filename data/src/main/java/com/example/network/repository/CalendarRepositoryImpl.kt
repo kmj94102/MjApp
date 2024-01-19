@@ -45,6 +45,11 @@ class CalendarRepositoryImpl @Inject constructor(
     }
 
     /** 계획 업데이트 **/
-    override suspend fun updateTask(item: TaskUpdateItem) =
-        client.updateTaskItem(item)
+    override fun updateTask(id: Int, isCompleted: Boolean, date: String) = flow {
+        client
+            .updateTaskItem(TaskUpdateItem(id, isCompleted, date))
+            .onSuccess { emit(it.toMyCalendarInfo()) }
+            .getFailureThrow()
+    }
+
 }

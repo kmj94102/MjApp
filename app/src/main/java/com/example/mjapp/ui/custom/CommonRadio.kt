@@ -13,7 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorLightGray
@@ -44,11 +48,13 @@ fun CommonRadio(
     ) {
         val borderColor = animateColorAsState(
             targetValue = if (check) color else MyColorLightGray,
-            animationSpec = tween(durationMillis = 250)
+            animationSpec = tween(durationMillis = 250),
+            label = ""
         )
         val fillColor = animateColorAsState(
             targetValue = if (check) color else MyColorWhite,
-            animationSpec = tween(durationMillis = 500)
+            animationSpec = tween(durationMillis = 500),
+            label = ""
         )
 
         Box(
@@ -59,7 +65,20 @@ fun CommonRadio(
                 .background(fillColor.value)
         )
         Spacer(modifier = Modifier.padding(start = 8.dp))
-        Text(text = text, style = textStyle.copy(color = if (isEnable) MyColorBlack else MyColorLightGray))
+        Text(
+            text = buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        textDecoration = if (check) TextDecoration.LineThrough else TextDecoration.None,
+                    )
+                ) {
+                    append(text)
+                }
+            },
+            style = textStyle.copy(
+                color = if (check) MyColorLightGray else MyColorBlack,
+            )
+        )
 
     }
 }

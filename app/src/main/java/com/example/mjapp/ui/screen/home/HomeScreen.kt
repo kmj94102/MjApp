@@ -117,6 +117,7 @@ fun HomeBody(
                             CalendarPlanContainer(
                                 info = it,
                                 modifier = Modifier.fillMaxWidth(),
+                                onTaskClick = { _, _ -> },
                                 deleteListener = viewModel::deletePlanTasks
                             )
                         }

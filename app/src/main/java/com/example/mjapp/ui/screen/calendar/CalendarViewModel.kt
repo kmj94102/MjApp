@@ -9,7 +9,6 @@ import com.example.mjapp.util.getToday
 import com.example.network.model.MyCalendar
 import com.example.network.model.MyCalendarInfo
 import com.example.network.model.NetworkError
-import com.example.network.model.TaskUpdateItem
 import com.example.network.model.fetchMyCalendarByMonth
 import com.example.network.repository.CalendarRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -109,15 +108,12 @@ class CalendarViewModel @Inject constructor(
         fetchCalendar()
     }
 
-    fun updateTask(id: Int, isCompleted: Boolean) = viewModelScope.launch {
+    fun updateTask(id: Int, isCompleted: Boolean) {
         repository
-            .updateTask(TaskUpdateItem(id, isCompleted))
-            .onSuccess {
-                runCatching {
-                    selectItem?.itemList
-                }
-            }
-            .onFailure { updateMessage(it.message ?: "오류가 발생하였습니다.") }
+            .updateTask(id, isCompleted, selectDate.value)
+            .onEach { setCalendarItem(it) }
+            .catch { updateMessage(it.message ?: "오류 발생") }
+            .launchIn(viewModelScope)
     }
 
 }
