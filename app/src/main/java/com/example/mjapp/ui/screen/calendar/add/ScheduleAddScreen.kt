@@ -153,6 +153,7 @@ fun ScheduleAddMedium(
             DoubleCardText(
                 bottomCardColor = MyColorPurple,
                 text = scheduleModifier.date.ifEmpty { "날짜 선택" },
+                textStyle = textStyle16B(),
                 onClick = {
                     viewModel.updateSelectItem(ScheduleAddViewModel.ScheduleDate)
                     onDateSelect()
@@ -166,6 +167,7 @@ fun ScheduleAddMedium(
                 DoubleCardText(
                     bottomCardColor = MyColorPurple,
                     text = scheduleModifier.startTime.ifEmpty { "시작 시간" },
+                    textStyle = textStyle16B(),
                     onClick = {
                         viewModel.updateSelectItem(ScheduleAddViewModel.StartTime)
                         onTimeSelect()
@@ -177,6 +179,7 @@ fun ScheduleAddMedium(
                 DoubleCardText(
                     bottomCardColor = MyColorPurple,
                     text = scheduleModifier.endTime.ifEmpty { "종료 시간" },
+                    textStyle = textStyle16B(),
                     onClick = {
                         viewModel.updateSelectItem(ScheduleAddViewModel.EndTime)
                         onTimeSelect()
@@ -190,6 +193,7 @@ fun ScheduleAddMedium(
             DoubleCardText(
                 bottomCardColor = MyColorPurple,
                 text = scheduleModifier.getRecurrenceInfo(),
+                textStyle = textStyle16B(),
                 onClick = onRecurrenceSelect,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -200,6 +204,7 @@ fun ScheduleAddMedium(
                 DoubleCardText(
                     bottomCardColor = MyColorPurple,
                     text = scheduleModifier.recurrenceEndDate.ifEmpty { "반복 종료일" },
+                    textStyle = textStyle16B(),
                     onClick = {
                         viewModel.updateSelectItem(ScheduleAddViewModel.RecurrenceEndDate)
                         onDateSelect()

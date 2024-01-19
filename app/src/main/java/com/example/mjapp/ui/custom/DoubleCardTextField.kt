@@ -91,7 +91,7 @@ fun DoubleCardText(
     onClick: () -> Unit,
     text: String,
     hint: String = "",
-    textStyle: TextStyle = textStyle16B().copy(textAlign = TextAlign.Center),
+    textStyle: TextStyle = textStyle16B(textAlign = TextAlign.Center),
     textColor: Color = MyColorBlack,
     emptyTextColor: Color = MyColorGray,
     innerPadding: PaddingValues = PaddingValues(vertical = 10.dp, horizontal = 15.dp)

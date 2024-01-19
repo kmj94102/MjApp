@@ -61,7 +61,7 @@ fun PlanAddScreen(
         mediumContent = {
             PlanAddMedium(
                 viewModel = viewModel,
-                onDateSelect = {}
+                onDateSelect = { isDateSelectDialogShow = true }
             )
         },
         lowContent = {
@@ -120,7 +120,6 @@ fun PlanAddHeight(
 fun PlanAddMedium(
     viewModel: PlanAddViewModel,
     onDateSelect: () -> Unit,
-
 ) {
     val planTasks = viewModel.planTasks.value
 
@@ -133,6 +132,7 @@ fun PlanAddMedium(
             DoubleCardText(
                 bottomCardColor = MyColorPurple,
                 text = planTasks.planDate.ifEmpty { "날짜 선택" },
+                textStyle = textStyle16B(),
                 onClick = onDateSelect,
                 modifier = Modifier.fillMaxWidth()
             )
