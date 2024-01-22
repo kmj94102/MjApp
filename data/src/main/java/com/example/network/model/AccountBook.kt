@@ -2,6 +2,7 @@ package com.example.network.model
 
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 sealed class AccountBookHistory
 
@@ -48,7 +49,7 @@ data class AccountBookInsertItem(
 
     fun uploadFormat(isIncome: Boolean) = copy(
         date = "${date.replace(".", "-")}T10:00:00.000Z",
-        amount = if (isIncome) amount else amount * -1
+        amount = if (isIncome) abs(amount) else abs(amount) * -1
     )
 
     companion object {
@@ -188,7 +189,7 @@ data class FixedAccountBook(
     }
 }
 
-data class FrequentlyItem(
+data class FixedItem(
     val id: Int,
     val amount: Int,
     val usageType: String,

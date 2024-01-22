@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.clearAndAddAll
-import com.example.network.model.FrequentlyItem
+import com.example.network.model.FixedItem
 import com.example.network.repository.AccountBookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -20,8 +20,8 @@ class FrequentlyViewModel @Inject constructor(
     private val repository: AccountBookRepository
 ) : BaseViewModel() {
 
-    private val _list = mutableStateListOf<FrequentlyItem>()
-    val list: List<FrequentlyItem> = _list
+    private val _list = mutableStateListOf<FixedItem>()
+    val list: List<FixedItem> = _list
 
     fun fetchFrequentlyAccountBook() {
         repository

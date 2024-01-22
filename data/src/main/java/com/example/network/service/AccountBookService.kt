@@ -33,7 +33,7 @@ interface AccountBookService {
 
     /** 즐겨 찾기 조회 **/
     @POST("/accountBook/select/frequently")
-    suspend fun fetchFrequentlyAccountBookItems(): List<FrequentlyItem>
+    suspend fun fetchFrequentlyAccountBookItems(): List<FixedItem>
 
     /** 즐겨 찾기 삭제 **/
     @DELETE("/accountBook/delete/frequently")

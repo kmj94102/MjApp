@@ -32,7 +32,7 @@ interface AccountBookRepository {
     fun fetchFixedAccountBook(): Flow<List<FixedAccountBook>>
 
     /** 즐겨 찾기 조회 **/
-    fun fetchFrequentlyAccountBookItems(): Flow<List<FrequentlyItem>>
+    fun fetchFrequentlyAccountBookItems(): Flow<List<FixedItem>>
 
     /** 즐겨 찾기 삭제 **/
     suspend fun deleteFrequentlyAccountBookItem(id: Int): Result<Unit>

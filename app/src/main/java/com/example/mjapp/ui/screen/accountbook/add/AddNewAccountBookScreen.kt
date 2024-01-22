@@ -46,6 +46,7 @@ fun AddNewAccountBookItemScreen(
     val status by viewModel.status.collectAsStateWithLifecycle()
     HighMediumLowContainer(
         status = status,
+        onBackClick = onBackClick,
         heightContent = {
             AddNewAccountBookHeightItem(
                 onBackClick = onBackClick,
@@ -222,7 +223,7 @@ fun AddNewAccountBookMediumItem(
     FrequentlyDialog(
         isShow = isShow,
         onDismiss = { isShow = false },
-        onSelect = viewModel::updateWithFrequently
+        onSelect = viewModel::updateWithFixedItem
     )
 }
 

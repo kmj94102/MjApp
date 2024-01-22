@@ -9,7 +9,7 @@ import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.isNumeric
 import com.example.mjapp.util.removeNumberFormat
 import com.example.network.model.AccountBookInsertItem
-import com.example.network.model.FrequentlyItem
+import com.example.network.model.FixedItem
 import com.example.network.repository.AccountBookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -84,7 +84,10 @@ class AddNewAccountBookItemViewModel @Inject constructor(
                 item = _item.value,
                 isIncome = _isIncome.value
             )
-            .onSuccess { updateMessage(it) }
+            .onSuccess {
+                updateMessage(it)
+                updateFinish()
+            }
             .onFailure {
                 it.printStackTrace()
                 updateMessage("등록 실패")
@@ -95,7 +98,7 @@ class AddNewAccountBookItemViewModel @Inject constructor(
         _isIncome.value = isIncome
     }
 
-    fun updateWithFrequently(item: FrequentlyItem) {
+    fun updateWithFixedItem(item: FixedItem) {
         _item.value = _item.value.copy(
             amount = item.amount,
             usageType = item.usageType,

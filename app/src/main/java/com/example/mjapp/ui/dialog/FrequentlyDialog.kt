@@ -44,7 +44,7 @@ import com.example.mjapp.util.formatAmountWithSign
 import com.example.mjapp.util.rememberLifecycleEvent
 import com.example.mjapp.util.textStyle12B
 import com.example.mjapp.util.textStyle16B
-import com.example.network.model.FrequentlyItem
+import com.example.network.model.FixedItem
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -52,7 +52,7 @@ import kotlin.math.absoluteValue
 fun FrequentlyDialog(
     isShow: Boolean,
     onDismiss: () -> Unit,
-    onSelect: (FrequentlyItem) -> Unit,
+    onSelect: (FixedItem) -> Unit,
     viewModel: FrequentlyViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
@@ -108,7 +108,7 @@ fun FrequentlyDialog(
 @Composable
 fun FrequentlySpinner(
     modifier: Modifier = Modifier,
-    selectList: List<FrequentlyItem>,
+    selectList: List<FixedItem>,
     isSetting: Boolean,
     state: PagerState,
     onDelete: (Int) -> Unit
