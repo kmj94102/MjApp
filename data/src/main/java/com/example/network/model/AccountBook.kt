@@ -3,6 +3,8 @@ package com.example.network.model
 import java.text.SimpleDateFormat
 import java.util.*
 
+sealed class AccountBookHistory
+
 data class AccountBookItem(
     val id: Int = 0,
     val date: String,
@@ -10,7 +12,10 @@ data class AccountBookItem(
     val amount: Int,
     val usageType: String,
     val whereToUse: String
-)
+) : AccountBookHistory()
+
+data class AccountBookHistoryDate(val date: String) : AccountBookHistory()
+
 
 data class AccountBookInsertItem(
     val id: Int = 0,
@@ -118,6 +123,21 @@ data class AccountBookDetailInfo(
             it.copy(date = it.date.replace("-", "."))
         }
     )
+
+    fun getHistoryList(): List<AccountBookHistory> {
+        val historyList = mutableListOf<AccountBookHistory>()
+        list
+            .groupBy { it.date }
+            .forEach { (date, items) ->
+                runCatching {
+                    historyList.add(AccountBookHistoryDate("$date(${items[0].dateOfWeek})"))
+                    items.map {
+                        historyList.add(it)
+                    }
+                }
+            }
+        return historyList
+    }
 
     companion object {
         fun init() = AccountBookDetailInfo(

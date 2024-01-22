@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +32,8 @@ import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.textStyle12
 import com.example.network.model.AccountBookDetailInfo
+import com.example.network.model.AccountBookHistoryDate
+import com.example.network.model.AccountBookItem
 import com.example.network.model.DateConfiguration
 
 @Composable
@@ -104,27 +107,26 @@ fun UsageHistoryBody(
         }
 
         else -> {
-            val groupList = info.list.groupBy { it.date }
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 contentPadding = PaddingValues(vertical = 10.dp),
                 modifier = modifier
             ) {
-                groupList.forEach { (group, calendarInfo) ->
-                    item {
-                        Text(
-                            text = "$group ( )",
-                            style = textStyle12().copy(MyColorGray),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MyColorWhite)
-                                .padding(top = 5.dp)
-                        )
-                    }
-                    calendarInfo.forEach { accountBookItem ->
-                        item {
+                items(info.getHistoryList()) {
+                    when(it) {
+                        is AccountBookHistoryDate -> {
+                            Text(
+                                text = it.date,
+                                style = textStyle12().copy(MyColorGray),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MyColorWhite)
+                                    .padding(top = 5.dp)
+                            )
+                        }
+                        is AccountBookItem -> {
                             UsageHistoryItem(
-                                item = accountBookItem,
+                                item = it,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
