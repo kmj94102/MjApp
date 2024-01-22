@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.ui.custom.AccountBookMonthCalendar
 import com.example.mjapp.ui.custom.DoubleCard
@@ -38,6 +40,7 @@ import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.util.formatAmountWithSign
+import com.example.mjapp.util.rememberLifecycleEvent
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle16B
 import com.example.network.model.AccountBookDetailInfo
@@ -47,6 +50,7 @@ import com.example.network.model.AccountBookItem
 fun AccountBookDetailScreen(
     onBackClick: () -> Unit,
     goToNewAccountBookItem: (String) -> Unit,
+    goToFixedAccountBookItem: () -> Unit,
     viewModel: AccountBookDetailViewModel = hiltViewModel()
 ) {
     val info = viewModel.info.value
@@ -63,10 +67,18 @@ fun AccountBookDetailScreen(
         lowContent = {
             AccountBookDetailLow(
                 goToNewAccountBookItem = goToNewAccountBookItem,
+                goToFixedAccountBookItem = goToFixedAccountBookItem,
                 viewModel = viewModel
             )
         }
     )
+
+    val lifecycleEvent = rememberLifecycleEvent()
+    LaunchedEffect(lifecycleEvent) {
+        if (lifecycleEvent == Lifecycle.Event.ON_RESUME) {
+            viewModel.fetchThisMonthDetail()
+        }
+    }
 }
 
 @Composable
@@ -221,6 +233,7 @@ fun UsageHistoryItem(
 @Composable
 fun AccountBookDetailLow(
     goToNewAccountBookItem: (String) -> Unit,
+    goToFixedAccountBookItem: () -> Unit,
     viewModel: AccountBookDetailViewModel
 ) {
     Row(
@@ -228,8 +241,8 @@ fun AccountBookDetailLow(
     ) {
         DoubleCardButton(
             bottomCardColor = MyColorTurquoise,
-            text = "고정 내역 추가",
-            onClick = {},
+            text = "고정 내역으로 등록",
+            onClick = goToFixedAccountBookItem,
             modifier = Modifier
                 .weight(1f)
         )
@@ -237,7 +250,7 @@ fun AccountBookDetailLow(
 
         DoubleCardButton(
             topCardColor = MyColorTurquoise,
-            text = "신규 내역 추가",
+            text = "신규 내역 등록",
             onClick = { goToNewAccountBookItem(viewModel.selectDate.value) },
             modifier = Modifier
                 .weight(1f)

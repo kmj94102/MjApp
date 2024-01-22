@@ -54,7 +54,7 @@ class AccountBookDetailViewModel @Inject constructor(
         )
     }
 
-    private fun fetchThisMonthDetail() {
+    fun fetchThisMonthDetail() {
         repository
             .fetchThisMonthDetail(
                 DateConfiguration.create(date = date, baseDate = 25)

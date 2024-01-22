@@ -278,7 +278,7 @@ fun NavGraphBuilder.accountBookScreens(
         AddNewAccountBookItemScreen(onBackClick)
     }
 
-    /** 고정 내역 등록 화면 **/
+    /** 고정 내역으로 등록 화면 **/
     composable(
         route = NavScreen.RegistrationFixedAccountBookItem.item.routeWithPostFix,
         arguments = listOf(
@@ -318,6 +318,9 @@ fun NavGraphBuilder.accountBookScreens(
                         it
                     )
                 )
+            },
+            goToFixedAccountBookItem = {
+                navController.navigate(NavScreen.AddFixedAccountBook.item.routeWithPostFix)
             }
         )
     }

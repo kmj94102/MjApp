@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.R
@@ -65,6 +67,13 @@ fun AccountBookScreen(
             viewModel = viewModel,
             goToDetail = goToDetail
         )
+    }
+
+    val lifecycleEvent = rememberLifecycleEvent()
+    LaunchedEffect(lifecycleEvent) {
+        if (lifecycleEvent == Lifecycle.Event.ON_RESUME) {
+            viewModel.fetchSummaryThisMonth()
+        }
     }
 }
 
@@ -121,7 +130,7 @@ fun BaseDateAndAddButtonsRow(
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )
-                Text(text = "고정 내역 추가", style = textStyle16().copy(fontSize = 14.sp))
+                Text(text = "고정 내역으로 등록", style = textStyle16B().copy(fontSize = 14.sp))
             }
         }
         Spacer(modifier = Modifier.width(10.dp))
@@ -145,7 +154,7 @@ fun BaseDateAndAddButtonsRow(
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )
-                Text(text = "신규 내역 추가", style = textStyle16().copy(fontSize = 14.sp))
+                Text(text = "신규 내역 등록", style = textStyle16B().copy(fontSize = 14.sp))
             }
         }
     }

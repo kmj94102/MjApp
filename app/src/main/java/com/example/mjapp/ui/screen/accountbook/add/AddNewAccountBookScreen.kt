@@ -167,7 +167,7 @@ fun AddNewAccountBookMediumItem(
                     .nonRippleClickable { isShow = true }
             ) {
                 Text(
-                    text = "즐겨찾기에서 찾기",
+                    text = "고정 내역에서 찾기",
                     style = textStyle16B(),
                     modifier = Modifier
                         .padding(vertical = 10.dp)
@@ -289,7 +289,7 @@ fun AddNewAccountBookLowItem(
 ) {
     Column {
         CommonRadio(
-            text = "즐겨찾기 등록",
+            text = "고정내역에 추가",
             check = viewModel.item.value.isAddFrequently,
             onCheckedChange = {
                 viewModel.updateIsAddFrequently()
