@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -18,12 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle16B
 import com.example.mjapp.R
 import com.example.mjapp.ui.screen.accountbook.detail.AccountBookCalendar
 import com.example.mjapp.ui.theme.*
-import com.example.network.model.MyCalendar
+import com.example.mjapp.util.nonRippleClickable
+import com.example.mjapp.util.textStyle16B
 
 @Composable
 fun AccountBookMonthCalendar(
@@ -42,18 +42,17 @@ fun AccountBookMonthCalendar(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            calendarInfo.forEach { info ->
+            items(calendarInfo) { info ->
                 if (info.date.isEmpty()) {
-                    item { Box(modifier = Modifier) }
+                    Box(modifier = Modifier)
                 } else {
-                    item {
-                        AccountBookDateCard(
-                            calendarItem = info,
-                            selectDate = selectDate,
-                            today = today,
-                            onClick = onSelectChange
-                        )
-                    }
+
+                    AccountBookDateCard(
+                        calendarItem = info,
+                        selectDate = selectDate,
+                        today = today,
+                        onClick = onSelectChange
+                    )
                 }
             }
         }

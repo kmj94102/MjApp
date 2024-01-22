@@ -119,17 +119,12 @@ fun AccountBookDetailMedium(
             .fillMaxWidth()
             .padding(vertical = 15.dp)
     ) {
-        DoubleCard(
-            bottomCardColor = MyColorTurquoise,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        DoubleCard(bottomCardColor = MyColorTurquoise) {
             AccountBookMonthCalendar(
                 today = viewModel.date,
                 calendarInfo = viewModel.calendarList,
                 selectDate = viewModel.selectDate.value,
-                onSelectChange = {
-                    viewModel.updateSelectDate(it)
-                },
+                onSelectChange = viewModel::updateSelectDate,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
@@ -159,13 +154,15 @@ fun AccountBookDetailMedium(
                 )
 
                 if (viewModel.itemList.isEmpty()) {
-                    Text(
-                        text = "내역이 없습니다.",
-                        style = textStyle16().copy(MyColorGray),
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            text = "내역이 없습니다.",
+                            style = textStyle16().copy(MyColorGray)
+                        )
+                    }
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(10.dp),

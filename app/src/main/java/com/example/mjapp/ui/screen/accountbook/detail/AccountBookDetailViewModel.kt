@@ -40,7 +40,6 @@ class AccountBookDetailViewModel @Inject constructor(
         get() = _info.value.list.filter { it.date == _selectDate.value }
 
     init {
-        fetchCalendar()
         fetchThisMonthDetail()
     }
 
@@ -58,13 +57,13 @@ class AccountBookDetailViewModel @Inject constructor(
     private fun fetchThisMonthDetail() {
         repository
             .fetchThisMonthDetail(
-                DateConfiguration(
-                    date = "${date.replace(".", "-")}T10:00:00.000Z",
-                    baseDate = 25
-                )
+                DateConfiguration.create(date = date, baseDate = 25)
             )
             .onStart { startLoading() }
-            .onEach { _info.value = it.modifyDateFormat() }
+            .onEach {
+                _info.value = it.modifyDateFormat()
+                fetchCalendar()
+            }
             .catch {
                 if (it is NetworkError) updateNetworkErrorState(true)
                 else updateMessage(it.message ?: "오류가 발생하였습니다.")

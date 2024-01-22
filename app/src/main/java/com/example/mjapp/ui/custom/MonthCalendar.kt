@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -44,18 +45,16 @@ fun MonthCalendar(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            calendarInfo.forEach { info ->
+            items(calendarInfo) { info ->
                 if (info.date.isEmpty()) {
-                    item { Box(modifier = Modifier) }
+                    Box(modifier = Modifier)
                 } else {
-                    item {
-                        DateCard(
-                            calendarItem = info,
-                            selectDate = selectDate,
-                            today = today,
-                            onClick = onSelectChange
-                        )
-                    }
+                    DateCard(
+                        calendarItem = info,
+                        selectDate = selectDate,
+                        today = today,
+                        onClick = onSelectChange
+                    )
                 }
             }
         }

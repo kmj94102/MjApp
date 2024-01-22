@@ -303,7 +303,7 @@ fun AnalyzeLastMonthContainer(
 
         Text(
             text = "${info.start} ~ ${info.end}",
-            style = textStyle12().copy(color = MyColorGray, textAlign = TextAlign.End),
+            style = textStyle12(color = MyColorGray, textAlign = TextAlign.End),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 5.dp, bottom = 5.dp, end = 15.dp)
@@ -315,6 +315,15 @@ fun AnalyzeLastMonthContainer(
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .padding(bottom = 10.dp)
+            )
+        }
+        if (info.result.isEmpty()) {
+            Text(
+                text = "사용 내역이 없습니다.",
+                style = textStyle12(color = MyColorGray, textAlign = TextAlign.Center),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 15.dp)
             )
         }
         Spacer(modifier = Modifier.height(5.dp))

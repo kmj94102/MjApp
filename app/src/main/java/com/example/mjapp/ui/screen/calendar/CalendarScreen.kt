@@ -140,7 +140,6 @@ private fun CalendarContainer(
     Column(modifier = modifier) {
         DoubleCard(
             bottomCardColor = MyColorPurple,
-            modifier = Modifier.fillMaxWidth()
         ) {
             MonthCalendar(
                 today = viewModel.today,
