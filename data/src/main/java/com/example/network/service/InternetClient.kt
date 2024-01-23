@@ -14,4 +14,6 @@ class InternetClient @Inject constructor(
 
     fun fetchFavorites() = dao.fetchInternetFavorites()
 
+    suspend fun deleteItem(id: Int) = runCatching { dao.deleteItem(id) }
+
 }

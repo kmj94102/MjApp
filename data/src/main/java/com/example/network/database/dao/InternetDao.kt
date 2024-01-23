@@ -14,7 +14,10 @@ interface InternetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInternetFavorite(internetEntity: InternetEntity)
 
-    @Query("SELECT name, address FROM InternetEntity")
+    @Query("SELECT * FROM InternetEntity")
     fun fetchInternetFavorites(): Flow<List<InternetFavorite>>
+
+    @Query("DELETE FROM InternetEntity WHERE id=:id")
+    suspend fun deleteItem(id: Int)
 
 }

@@ -10,4 +10,6 @@ interface InternetRepository {
 
     fun fetchFavorites(): Flow<List<InternetFavorite>>
 
+    suspend fun deleteItem(id: Int)
+
 }

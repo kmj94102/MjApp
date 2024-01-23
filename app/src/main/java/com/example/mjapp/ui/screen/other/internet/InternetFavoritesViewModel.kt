@@ -84,4 +84,8 @@ class InternetFavoritesViewModel @Inject constructor(
         _reloadState.emit(Unit)
     }
 
+    fun deleteItem(id: Int) = viewModelScope.launch {
+        repository.deleteItem(id)
+    }
+
 }

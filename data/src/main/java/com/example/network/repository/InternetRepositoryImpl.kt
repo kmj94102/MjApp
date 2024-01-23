@@ -12,4 +12,8 @@ class InternetRepositoryImpl @Inject constructor(
 
     override fun fetchFavorites() =
         client.fetchFavorites()
+
+    override suspend fun deleteItem(id: Int){
+        client.deleteItem(id)
+    }
 }

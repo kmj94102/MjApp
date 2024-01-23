@@ -1,6 +1,9 @@
 package com.example.mjapp.ui.screen.other.internet
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -8,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,16 +24,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.R
-import com.example.mjapp.ui.custom.DoubleCardText
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.WebViewHolder
+import com.example.mjapp.ui.dialog.InsertFavoriteDeleteDialog
 import com.example.mjapp.ui.dialog.InsertFavoriteDialog
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
@@ -38,6 +45,7 @@ import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
+import com.example.network.model.InternetFavorite
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -69,9 +77,7 @@ fun InternetFavoritesScreen(
         onDismiss = {
             isShow = false
         },
-        onInsert = {
-            viewModel.insertFavorite(it)
-        }
+        onInsert = viewModel::insertFavorite
     )
 }
 
@@ -157,20 +163,74 @@ fun InternetFavoritesMedium(
 fun InternetFavoritesLow(
     viewModel: InternetFavoritesViewModel
 ) {
+    var selectItem by remember { mutableStateOf(InternetFavorite.crate()) }
+    var isShow by remember { mutableStateOf(false) }
+
     LazyRow(
         contentPadding = PaddingValues(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        viewModel.list.forEachIndexed { index, internetFavorite ->
-            item {
-                DoubleCardText(
-                    onClick = { viewModel.updateSelectIndex(index) },
-                    text = internetFavorite.name,
-                    topCardColor = if (index == viewModel.selectIndex.value) MyColorBeige else MyColorWhite,
-                    bottomCardColor = if (index == viewModel.selectIndex.value) MyColorWhite else MyColorBeige,
-                    modifier = Modifier.padding(end = 10.dp)
-                )
+        itemsIndexed(viewModel.list) { index, internetFavorite ->
+            val topCardColor =
+                if (index == viewModel.selectIndex.value) MyColorBeige else MyColorWhite
+            val bottomCardColor =
+                if (index == viewModel.selectIndex.value) MyColorWhite else MyColorBeige
+
+            Box(
+                modifier = Modifier
+                    .nonRippleClickable { viewModel.updateSelectIndex(index) }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = {
+                                viewModel.updateSelectIndex(index)
+                            },
+                            onLongPress = {
+                                selectItem = internetFavorite
+                                isShow = true
+                            }
+                        )
+                    }
+            ) {
+                Card(
+                    shape = RoundedCornerShape(10.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = bottomCardColor,
+                    ),
+                    border = BorderStroke(1.dp, MyColorBlack),
+                    modifier = Modifier.padding(top = 3.dp, start = 3.dp)
+                ) {
+                    Text(
+                        text = internetFavorite.name,
+                        style = textStyle16B().copy(fontSize = 14.sp),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+
+                Card(
+                    shape = RoundedCornerShape(10.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = topCardColor
+                    ),
+                    border = BorderStroke(1.dp, MyColorBlack),
+                    modifier = Modifier.padding(end = 3.dp, bottom = 3.dp)
+                ) {
+                    Text(
+                        text = internetFavorite.name,
+                        style = textStyle16B().copy(fontSize = 14.sp),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
             }
         }
     }
+
+    InsertFavoriteDeleteDialog(
+        isShow = isShow,
+        favorite = selectItem,
+        onDismiss = { isShow = false },
+        onDelete = {
+            viewModel.deleteItem(selectItem.id)
+        }
+    )
 }
