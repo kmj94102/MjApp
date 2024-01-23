@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,6 +32,8 @@ import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.formatAmount
+import com.example.mjapp.util.textStyle16
+import com.example.mjapp.util.textStyle16B
 
 @Composable
 fun AddFixedAccountBookScreen(
@@ -123,7 +127,8 @@ fun AddFixedAccountBookMedium(
         item {
             DoubleCardText(
                 onClick = onDateSelect,
-                text = viewModel.item.value.date,
+                text = "${viewModel.item.value.date}일",
+                textStyle = textStyle16B(textAlign = TextAlign.Start),
                 hint = "고정 날짜",
                 bottomCardColor = color,
                 modifier = Modifier.fillMaxWidth()
@@ -134,7 +139,15 @@ fun AddFixedAccountBookMedium(
             DoubleCardTextField(
                 value = viewModel.item.value.amount.formatAmount(),
                 onTextChange = viewModel::updateAmount,
+                textStyle = textStyle16().copy(textAlign = TextAlign.End),
                 keyboardType = KeyboardType.Number,
+                tailIcon = {
+                    Text(
+                        text = "원",
+                        style = textStyle16(),
+                        modifier = Modifier.padding(end = 10.dp)
+                    )
+                },
                 hint = "수입/지출 금액",
                 bottomCardColor = color,
                 modifier = Modifier.fillMaxWidth()
