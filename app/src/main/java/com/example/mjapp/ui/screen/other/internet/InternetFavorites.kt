@@ -40,7 +40,7 @@ import com.example.mjapp.ui.dialog.InsertFavoriteDialog
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
-import com.example.mjapp.ui.theme.MyColorSkyBlue
+import com.example.mjapp.ui.theme.MyColorPurple
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.nonRippleClickable
@@ -104,7 +104,7 @@ fun InternetFavoritesHeight(
         )
 
         IconBox(
-            boxColor = MyColorSkyBlue,
+            boxColor = MyColorPurple,
             iconRes = R.drawable.ic_plus,
             onClick = addFavorite
         )

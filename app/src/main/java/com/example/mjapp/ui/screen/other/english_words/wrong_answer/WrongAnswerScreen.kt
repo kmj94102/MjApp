@@ -26,8 +26,8 @@ import com.example.mjapp.ui.screen.other.english_words.EnglishWordsHeader
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
-import com.example.mjapp.ui.theme.MyColorBlue
-import com.example.mjapp.ui.theme.MyColorLightGray
+import com.example.mjapp.ui.theme.MyColorGray
+import com.example.mjapp.ui.theme.MyColorPurple
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle16B
 import com.example.mjapp.util.textStyle18B
@@ -96,8 +96,8 @@ fun WrongAnswerItem(
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = item.count.toString(),
-                    style = textStyle18B().copy(color = MyColorLightGray),
+                    text = "${item.count}회",
+                    style = textStyle18B(color = MyColorGray),
                 )
             }
             Box(
@@ -107,14 +107,14 @@ fun WrongAnswerItem(
                     .background(MyColorBlack)
             )
             Text(
-                text = item.meaning, style = textStyle16B().copy(color = MyColorBlue),
+                text = item.meaning, style = textStyle16B(color = MyColorPurple),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp)
                     .padding(top = 10.dp)
             )
             Text(
-                text = item.hint.replace("\\\\\\\\\\\\", "\n"),
+                text = item.hint.replace("\\\\\\", "\n"),
                 style = textStyle12().copy(fontSize = 14.sp),
                 modifier = Modifier
                     .fillMaxWidth()

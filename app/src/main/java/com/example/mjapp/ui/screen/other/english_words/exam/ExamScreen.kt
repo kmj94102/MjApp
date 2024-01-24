@@ -30,8 +30,8 @@ import com.example.mjapp.ui.screen.other.english_words.EnglishWordsHeader
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
-import com.example.mjapp.ui.theme.MyColorBlue
 import com.example.mjapp.ui.theme.MyColorGray
+import com.example.mjapp.ui.theme.MyColorPurple
 import com.example.mjapp.util.textStyle16B
 
 @Composable
@@ -63,7 +63,7 @@ fun ExamScreen(
             if (viewModel.list.isNotEmpty()) {
                 DoubleCardButton(
                     text = "제출하기",
-                    topCardColor = MyColorBlue,
+                    topCardColor = MyColorPurple,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     viewModel.examinationScoring {

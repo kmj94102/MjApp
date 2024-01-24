@@ -43,7 +43,7 @@ import com.example.mjapp.ui.screen.other.english_words.EnglishWordsHeader
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
-import com.example.mjapp.ui.theme.MyColorBlue
+import com.example.mjapp.ui.theme.MyColorPurple
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle12B
@@ -157,14 +157,14 @@ fun MemorizeItem(
                             .background(MyColorBlack)
                     )
                     Text(
-                        text = it.meaning, style = textStyle16B().copy(color = MyColorBlue),
+                        text = it.meaning, style = textStyle16B().copy(color = MyColorPurple),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 15.dp)
                             .padding(top = 10.dp)
                     )
                     Text(
-                        text = it.hint.replace("\\\\\\\\\\\\", "\n"),
+                        text = it.hint.replace("\\\\\\", "\n"),
                         style = textStyle12().copy(fontSize = 14.sp),
                         modifier = Modifier
                             .fillMaxWidth()
