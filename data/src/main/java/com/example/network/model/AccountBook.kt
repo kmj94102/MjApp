@@ -86,7 +86,8 @@ data class LastMonthAnalysis(
 
 data class LastMonthAnalysisItem(
     val usageType: String,
-    val amount: Int
+    val amount: Int,
+    val percentage: Float
 )
 
 data class ThisYearSummaryItem(

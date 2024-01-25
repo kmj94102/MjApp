@@ -285,7 +285,6 @@ fun AnalyzeLastMonthContainer(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxWidth()
                 .background(MyColorTurquoise)
         ) {
             Text(
@@ -346,7 +345,7 @@ fun AnalyzeLastMonthItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         ImageDoubleCard(
             resId = IncomeExpenditureType.getImageByType(item.usageType),
@@ -371,7 +370,7 @@ fun AnalyzeLastMonthItem(
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                text = "60%",
+                text = "${item.percentage}%",
                 style = textStyle12().copy(color = MyColorGray, fontSize = 10.sp),
                 modifier = Modifier.fillMaxWidth()
             )
