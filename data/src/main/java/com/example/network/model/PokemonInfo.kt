@@ -18,6 +18,7 @@ data class PokemonInfo(
     val isCatch: Boolean = false
 ) {
     fun toPokemonCounterEntity() = PokemonCounterEntity(
+        name = name,
         number = number,
         image = image,
         shinyImage = shinyImage,
@@ -78,6 +79,7 @@ data class PokemonDetailInfo(
         "${pokemonInfo.classification} | ${pokemonInfo.characteristic.replace(",", ", ")}"
 
     fun toPokemonCounterEntity() = PokemonCounterEntity(
+        name = pokemonInfo.name,
         number = pokemonInfo.number,
         image = pokemonInfo.image,
         shinyImage = pokemonInfo.shinyImage,

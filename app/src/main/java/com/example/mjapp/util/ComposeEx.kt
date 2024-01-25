@@ -2,6 +2,8 @@ package com.example.mjapp.util
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -131,4 +133,24 @@ fun rememberLifecycleEvent(lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.
         }
     }
     return state
+}
+
+inline fun <T> LazyListScope.items(
+    items: List<T>,
+    noinline key: ((item: T) -> Any)? = null,
+    noinline contentType: (item: T) -> Any? = { null },
+    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
+    crossinline emptyItemContent: @Composable LazyItemScope.() -> Unit,
+) {
+    if (items.isEmpty()) {
+        item { emptyItemContent() }
+    } else {
+        items(
+            count = items.size,
+            key = if (key != null) { index: Int -> key(items[index]) } else null,
+            contentType = { index: Int -> contentType(items[index]) }
+        ) {
+            itemContent(items[it])
+        }
+    }
 }

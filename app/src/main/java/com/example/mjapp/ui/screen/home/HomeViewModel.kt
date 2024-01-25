@@ -17,7 +17,6 @@ import com.example.network.model.HomeParam
 import com.example.network.model.MyCalendar
 import com.example.network.model.MyCalendarInfo
 import com.example.network.model.PokemonCounter
-import com.example.network.model.UpdatePokemonCatch
 import com.example.network.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -39,7 +38,15 @@ class HomeViewModel @Inject constructor(
     private val _list = mutableStateListOf<MyCalendar>()
     val list: List<MyCalendar> = _list
 
-    val pokemonList: List<PokemonCounter> get() = homeInfo.value.pokemonInfo
+    private val pokemonList: List<PokemonCounter> get() = homeInfo.value.pokemonInfo
+
+    private val pokemonSelectIndex = mutableIntStateOf(0)
+    val pokemonItem: PokemonCounter? get() = runCatching {
+        pokemonList[pokemonSelectIndex.intValue]
+    }.getOrNull()
+
+    val itemSelectInfo: String get() =
+        "${pokemonSelectIndex.intValue + 1}/${pokemonList.size}"
 
     val elswordQuestList: List<ElswordCounter> get() = homeInfo.value.questInfo
 
@@ -98,34 +105,16 @@ class HomeViewModel @Inject constructor(
         repository.deletePlanTasks(id)
     }
 
-    fun updateCounter(
-        count: Int,
-        number: String
-    ) = viewModelScope.launch {
-        repository.updateCounter(count, number)
+    fun updatePokemonSelectIndex(value: Int) {
+        val newValue = pokemonSelectIndex.intValue + value
+        pokemonSelectIndex.intValue = if (newValue < 0) {
+            pokemonList.size - 1
+        } else if (newValue >= pokemonList.size) {
+            0
+        } else {
+            newValue
+        }
     }
-
-    fun deleteCounter(index: Int) = viewModelScope.launch {
-        repository.deletePokemonCounter(index)
-    }
-
-    fun updateCatch(number: String) = viewModelScope.launch {
-        repository.updateCatch(number)
-        repository.updatePokemonCatch(
-            UpdatePokemonCatch(
-                number = number,
-                isCatch = true
-            )
-        )
-    }
-
-    fun updateCustomIncrease(
-        customIncrease: Int,
-        number: String
-    ) = viewModelScope.launch {
-        repository.updateCustomIncrease(customIncrease, number)
-    }
-
 
     fun updateElswordCounter(index: Int) = viewModelScope.launch {
         val tempList = elswordQuestList.toMutableList()

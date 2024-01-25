@@ -1,17 +1,29 @@
 package com.example.mjapp.ui.screen.home
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,22 +31,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
+import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.OutlineText
 import com.example.mjapp.ui.custom.WeekCalendar
 import com.example.mjapp.ui.screen.calendar.CalendarPlanContainer
 import com.example.mjapp.ui.screen.calendar.CalendarScheduleContainer
 import com.example.mjapp.ui.screen.game.elsword.ElswordCharacters
-import com.example.mjapp.ui.screen.game.pokemon.counter.CustomIncreaseSettingDialog
-import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterCard
 import com.example.mjapp.ui.structure.HeaderBodyContainer
-import com.example.mjapp.ui.theme.*
-import com.example.mjapp.util.*
+import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorGray
+import com.example.mjapp.ui.theme.MyColorPurple
+import com.example.mjapp.ui.theme.MyColorRed
+import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.getToday
+import com.example.mjapp.util.items
+import com.example.mjapp.util.nonRippleClickable
+import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle16B
+import com.example.mjapp.util.textStyle18B
+import com.example.mjapp.util.textStyle24B
 import com.example.network.model.CalendarItem
 import com.example.network.model.ElswordCounter
 import com.example.network.model.PokemonCounter
@@ -43,8 +66,6 @@ import com.example.network.model.PokemonCounter
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    var isPokemonCounterSettingShow by remember { mutableStateOf(false) }
-    var selectValue by remember { mutableStateOf(PokemonCounter.init()) }
     val status by viewModel.status.collectAsStateWithLifecycle()
 
     HeaderBodyContainer(
@@ -60,32 +81,16 @@ fun HomeScreen(
         },
         bodyContent = {
             HomeBody(
-                viewModel = viewModel,
-                onSettingsClick = {
-                    selectValue = it
-                    isPokemonCounterSettingShow = true
-                }
+                viewModel = viewModel
             )
-        }
-    )
-
-    CustomIncreaseSettingDialog(
-        isShow = isPokemonCounterSettingShow,
-        selectValue = selectValue,
-        onDismiss = {
-            isPokemonCounterSettingShow = false
-        },
-        onUpdateClick = { customIncrease, number ->
-            viewModel.updateCustomIncrease(customIncrease, number)
         }
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeBody(
-    viewModel: HomeViewModel,
-    onSettingsClick: (PokemonCounter) -> Unit
+    viewModel: HomeViewModel
 ) {
     val state = rememberPagerState { viewModel.elswordQuestList.size }
 
@@ -106,68 +111,43 @@ fun HomeBody(
             )
         }
 
-        item {
-            val list = viewModel.selectItem.itemList
-            if (list.isEmpty()) {
-                EmptySchedule()
-            } else {
-                list.forEach {
-                    when (it) {
-                        is CalendarItem.PlanInfo -> {
-                            CalendarPlanContainer(
-                                info = it,
-                                modifier = Modifier.fillMaxWidth(),
-                                onTaskClick = { _, _ -> },
-                                deleteListener = viewModel::deletePlanTasks
-                            )
-                        }
-                        is CalendarItem.ScheduleInfo -> {
-                            CalendarScheduleContainer(
-                                info = it,
-                                modifier = Modifier.fillMaxWidth(),
-                                deleteListener = viewModel::deleteSchedule
-                            )
-                        }
+        items(
+            items = viewModel.selectItem.itemList,
+            emptyItemContent = { EmptySchedule() },
+            itemContent = {
+                when (it) {
+                    is CalendarItem.PlanInfo -> {
+                        CalendarPlanContainer(
+                            info = it,
+                            modifier = Modifier.fillMaxWidth(),
+                            onTaskClick = { _, _ -> },
+                            deleteListener = viewModel::deletePlanTasks
+                        )
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
+
+                    is CalendarItem.ScheduleInfo -> {
+                        CalendarScheduleContainer(
+                            info = it,
+                            modifier = Modifier.fillMaxWidth(),
+                            deleteListener = viewModel::deleteSchedule
+                        )
+                    }
                 }
+            }
+        )
+
+        item {
+            viewModel.pokemonItem?.let {
+                PokemonHomeContainer(
+                    item = it,
+                    itemSelectInfo = viewModel.itemSelectInfo,
+                    onPrevClick = { viewModel.updatePokemonSelectIndex(-1) },
+                    onNextClick = { viewModel.updatePokemonSelectIndex(1) }
+                )
             }
         }
 
         item {
-            Spacer(modifier = Modifier.height(10.dp))
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(15.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                maxItemsInEachRow = 2,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                viewModel.pokemonList.forEach {
-                    PokemonCounterCard(
-                        counter = it,
-                        updateCounter = { value -> viewModel.updateCounter(value, it.number) },
-                        deleteCounter = { viewModel.deleteCounter(it.index) },
-                        updateCatch = { viewModel.updateCatch(it.number) },
-                        onSettingClick = { onSettingsClick(it) },
-                        modifier = Modifier
-                            .width(100.dp)
-                            .weight(1f)
-                    )
-                }
-                if (viewModel.pokemonList.size % 2 != 0) {
-                    Box(
-                        modifier = Modifier
-                            .width(100.dp)
-                            .weight(1f)
-                    )
-                }
-            }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(10.dp))
-
             if (viewModel.elswordQuestList.isEmpty()) {
                 ElswordCounterEmptyContainer()
             } else {
@@ -269,6 +249,88 @@ fun ElswordCounterContainer(
                     text = if (elswordCounter.max - 1 == elswordCounter.progress) "완료" else "다음",
                     style = textStyle16B(),
                     modifier = Modifier.padding(vertical = 3.dp, horizontal = 7.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun PokemonHomeContainer(
+    item: PokemonCounter,
+    itemSelectInfo: String,
+    onPrevClick: () -> Unit,
+    onNextClick: () -> Unit
+) {
+    DoubleCard(
+        bottomCardColor = MyColorPurple
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MyColorPurple)
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+            ) {
+                Text(
+                    text = item.name,
+                    style = textStyle16B().copy(fontSize = 18.sp),
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 10.dp)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = itemSelectInfo,
+                    style = textStyle12(color = MyColorWhite).copy(fontSize = 14.sp)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MyColorBlack)
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+            ) {
+                IconBox(
+                    boxColor = MyColorRed,
+                    boxShape = CircleShape,
+                    iconRes = R.drawable.ic_back,
+                    onClick = onPrevClick
+                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row {
+                        AsyncImage(
+                            model = item.image,
+                            contentDescription = null,
+                            placeholder = painterResource(id = R.drawable.img_egg),
+                            modifier = Modifier.size(72.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        AsyncImage(
+                            model = item.shinyImage,
+                            contentDescription = null,
+                            placeholder = painterResource(id = R.drawable.img_egg),
+                            modifier = Modifier.size(72.dp)
+                        )
+                    }
+                    Text(text = "${item.count}", style = textStyle18B(color = MyColorRed))
+                }
+                IconBox(
+                    boxColor = MyColorRed,
+                    boxShape = CircleShape,
+                    iconRes = R.drawable.ic_next,
+                    onClick = onNextClick
                 )
             }
         }
