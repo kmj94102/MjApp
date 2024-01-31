@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,9 +21,10 @@ import com.example.network.model.InternetFavorite
 fun InsertFavoriteDialog(
     isShow: Boolean,
     onDismiss: () -> Unit,
+    address: MutableState<String>,
     onInsert: (InternetFavorite) -> Unit
 ) {
-    var favorite by remember { mutableStateOf(InternetFavorite.crate()) }
+    var name by remember { mutableStateOf("") }
 
     BaseDialog(
         isShow = isShow,
@@ -31,9 +33,9 @@ fun InsertFavoriteDialog(
         bodyContents = {
             Spacer(modifier = Modifier.height(15.dp))
             DoubleCardTextField(
-                value = favorite.name,
+                value = name,
                 onTextChange = {
-                    favorite = favorite.copy(name = it)
+                    name = it
                 },
                 hint = "이름",
                 bottomCardColor = MyColorBeige,
@@ -44,9 +46,9 @@ fun InsertFavoriteDialog(
             Spacer(modifier = Modifier.height(15.dp))
 
             DoubleCardTextField(
-                value = favorite.address,
+                value = address.value,
                 onTextChange = {
-                    favorite = favorite.copy(address = it)
+                    address.value = it
                 },
                 hint = "주소",
                 bottomCardColor = MyColorBeige,
@@ -59,7 +61,13 @@ fun InsertFavoriteDialog(
         bottomButtonContents = {
             DoubleCardText(
                 onClick = {
-                    onInsert(favorite)
+                    onInsert(
+                        InternetFavorite(
+                            id = 0,
+                            address = address.value,
+                            name = name
+                        )
+                    )
                     onDismiss()
                 },
                 text = "등록하기",

@@ -1,6 +1,8 @@
 package com.example.mjapp.ui.screen.other.internet
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -25,7 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,7 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.IconBox
-import com.example.mjapp.ui.custom.WebViewHolder
+import com.example.mjapp.ui.custom.rememberWebView
 import com.example.mjapp.ui.dialog.InsertFavoriteDeleteDialog
 import com.example.mjapp.ui.dialog.InsertFavoriteDialog
 import com.example.mjapp.ui.structure.HighMediumLowContainer
@@ -42,7 +45,6 @@ import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorPurple
 import com.example.mjapp.ui.theme.MyColorWhite
-import com.example.mjapp.util.Constants
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16B
 import com.example.network.model.InternetFavorite
@@ -54,7 +56,11 @@ fun InternetFavoritesScreen(
     viewModel: InternetFavoritesViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
-    var isShow by remember { mutableStateOf(false) }
+    var isInsertDialogShow by remember { mutableStateOf(false) }
+    var isDeleteDialogShow by remember { mutableStateOf(false) }
+
+    val address = remember { mutableStateOf("") }
+    var selectItem by remember { mutableStateOf(InternetFavorite.crate()) }
 
     HighMediumLowContainer(
         status = status,
@@ -62,22 +68,53 @@ fun InternetFavoritesScreen(
             InternetFavoritesHeight(
                 onBackClick = onBackClick,
                 addFavorite = {
-                    isShow = true
+                    isInsertDialogShow = true
                 }
             )
         },
-        mediumContent = { InternetFavoritesMedium(viewModel) },
-        lowContent = { InternetFavoritesLow(viewModel) },
+        mediumContent = {
+            InternetFavoritesMedium(
+                viewModel = viewModel,
+                setInitAddress = {
+                    address.value = it
+                    isInsertDialogShow = true
+                },
+                onDelete = {
+                    selectItem = it
+                    isDeleteDialogShow = true
+                }
+            )
+        },
+        lowContent = {
+            InternetFavoritesLow(
+                viewModel = viewModel,
+                onDelete = {
+                    selectItem = it
+                    isDeleteDialogShow = true
+                }
+            )
+        },
         paddingValues = PaddingValues(top = 22.dp, start = 0.dp, end = 0.dp, bottom = 10.dp),
         reload = viewModel::fetchFavorites
     )
 
     InsertFavoriteDialog(
-        isShow = isShow,
+        isShow = isInsertDialogShow,
         onDismiss = {
-            isShow = false
+            isInsertDialogShow = false
+            address.value = ""
         },
+        address = address,
         onInsert = viewModel::insertFavorite
+    )
+
+    InsertFavoriteDeleteDialog(
+        isShow = isDeleteDialogShow,
+        favorite = selectItem,
+        onDismiss = { isDeleteDialogShow = false },
+        onDelete = {
+            viewModel.deleteItem(selectItem.id)
+        }
     )
 }
 
@@ -113,57 +150,106 @@ fun InternetFavoritesHeight(
 
 @Composable
 fun InternetFavoritesMedium(
-    viewModel: InternetFavoritesViewModel
+    viewModel: InternetFavoritesViewModel,
+    setInitAddress: (String) -> Unit,
+    onDelete: (InternetFavorite) -> Unit
 ) {
-    val context = LocalContext.current
-    val webViewHolder = WebViewHolder(context).apply { loadUrl(Constants.BaseUrl) }
+    var isFavorite by remember { mutableStateOf(false) }
+    val webView = rememberWebView {
+        viewModel.updateUrl(it)
+        isFavorite = viewModel.isFavorite()
+    }
 
-    Column(
+    Card(
+        shape = RoundedCornerShape(10.dp),
+        border = BorderStroke(1.dp, MyColorBlack),
         modifier = Modifier
             .fillMaxSize()
-            .padding(PaddingValues(horizontal = 20.dp))
+            .padding(top = 20.dp, bottom = 10.dp, start = 20.dp, end = 20.dp)
     ) {
-        Card(
-            shape = RoundedCornerShape(10.dp),
-            border = BorderStroke(1.dp, MyColorBlack),
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .weight(1f)
-        ) {
+        Column {
             AndroidView(
                 modifier = Modifier.weight(1f),
-                factory = { webViewHolder.webView },
+                factory = { webView },
             )
-        }
-
-        Text(
-            text = "새로고침",
-            style = textStyle16B(),
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(PaddingValues(top = 10.dp, bottom = 15.dp))
-                .nonRippleClickable { viewModel.reload() })
-
-        LaunchedEffect(Unit) {
-            viewModel.loadState.collectLatest {
-                webViewHolder.loadUrl(it)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MyColorBlack)
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MyColorBeige)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .nonRippleClickable {
+                            if (webView.canGoBack()) {
+                                webView.goBack()
+                            }
+                        }
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.ic_next),
+                    contentDescription = null,
+                    modifier = Modifier.nonRippleClickable {
+                        if (webView.canGoForward()) {
+                            webView.goForward()
+                        }
+                    }
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.ic_home),
+                    contentDescription = null,
+                    modifier = Modifier.nonRippleClickable(viewModel::goToHome)
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.ic_reload),
+                    contentDescription = null,
+                    modifier = Modifier.nonRippleClickable { webView.reload() }
+                )
+                Image(
+                    painter = painterResource(
+                        id = if (isFavorite) {
+                            R.drawable.ic_star_fill
+                        } else {
+                            R.drawable.ic_star
+                        }
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.nonRippleClickable {
+                        if (isFavorite) {
+                            viewModel.selectItem?.let(onDelete)
+                        } else {
+                            webView.url?.let(setInitAddress)
+                        }
+                    }
+                )
             }
         }
+    }
 
-        LaunchedEffect(Unit) {
-            viewModel.reloadState.collectLatest {
-                webViewHolder.reload()
+    LaunchedEffect(Unit) {
+        viewModel.loadState.collectLatest {
+            if (webView.url != it) {
+                webView.loadUrl(it)
             }
         }
-
     }
 }
 
 @Composable
 fun InternetFavoritesLow(
-    viewModel: InternetFavoritesViewModel
+    viewModel: InternetFavoritesViewModel,
+    onDelete: (InternetFavorite) -> Unit
 ) {
-    var selectItem by remember { mutableStateOf(InternetFavorite.crate()) }
     var isShow by remember { mutableStateOf(false) }
 
     LazyRow(
@@ -186,7 +272,7 @@ fun InternetFavoritesLow(
                                 viewModel.updateSelectIndex(index)
                             },
                             onLongPress = {
-                                selectItem = internetFavorite
+                                onDelete(internetFavorite)
                                 isShow = true
                             }
                         )
@@ -224,13 +310,4 @@ fun InternetFavoritesLow(
             }
         }
     }
-
-    InsertFavoriteDeleteDialog(
-        isShow = isShow,
-        favorite = selectItem,
-        onDismiss = { isShow = false },
-        onDelete = {
-            viewModel.deleteItem(selectItem.id)
-        }
-    )
 }
