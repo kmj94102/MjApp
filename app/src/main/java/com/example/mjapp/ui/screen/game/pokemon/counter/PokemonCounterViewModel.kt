@@ -3,8 +3,8 @@ package com.example.mjapp.ui.screen.game.pokemon.counter
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.structure.BaseViewModel
+import com.example.mjapp.util.clearAndAddAll
 import com.example.network.model.PokemonCounter
-import com.example.network.model.UpdatePokemonCatch
 import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -28,13 +28,8 @@ class PokemonCounterViewModel @Inject constructor(
     private fun fetchPokemonCounter() {
         repository
             .fetchPokemonCounter()
-            .onEach {
-                _list.clear()
-                _list.addAll(it)
-            }
-            .catch {
-                _list.clear()
-            }
+            .onEach { _list.clearAndAddAll(it) }
+            .catch { _list.clear() }
             .launchIn(viewModelScope)
     }
 
@@ -56,11 +51,5 @@ class PokemonCounterViewModel @Inject constructor(
 
     fun updateCatch(number: String) = viewModelScope.launch {
         repository.updateCatch(number)
-        repository.updatePokemonCatch(
-            UpdatePokemonCatch(
-                number = number,
-                isCatch = true
-            )
-        )
     }
 }

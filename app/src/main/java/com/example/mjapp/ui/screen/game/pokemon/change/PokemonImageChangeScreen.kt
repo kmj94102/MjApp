@@ -131,7 +131,7 @@ fun PokemonImageChangeScreen(
                 }
 
                 CommonTextField(
-                    value = viewModel.number.value,
+                    value = viewModel.state.value.number,
                     onTextChange = {
                         viewModel.updateNumber(it)
                     },

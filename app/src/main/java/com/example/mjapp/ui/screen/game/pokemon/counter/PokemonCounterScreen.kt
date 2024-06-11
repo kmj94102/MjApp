@@ -44,9 +44,9 @@ fun PokemonCounterScreen(
     goToHistory: () -> Unit,
     viewModel: PokemonCounterViewModel = hiltViewModel()
 ) {
-    var isCustomIncreaseSettingShow by remember { mutableStateOf(false) }
-    var isPokemonSearchShow by remember { mutableStateOf(false) }
-    val selectValue = remember { mutableStateOf(PokemonCounter.init()) }
+    var uiState by remember {
+        mutableStateOf(PokemonCounterUiState())
+    }
     val status by viewModel.status.collectAsStateWithLifecycle()
 
     HeaderBodyContainer(
@@ -61,30 +61,32 @@ fun PokemonCounterScreen(
             PokemonCounterBody(
                 viewModel = viewModel,
                 onSettingClick = {
-                    selectValue.value = it
-                    isCustomIncreaseSettingShow = true
+                    uiState = uiState.copy(
+                        selectValue = it,
+                        isCustomSettingDialogShow = true
+                    )
                 },
                 onAddClick = {
-                    isPokemonSearchShow = true
+                    uiState = uiState.copy(
+                        isSearchDialogShow = true
+                    )
                 }
             )
         }
     )
 
     CustomIncreaseSettingDialog(
-        isShow = isCustomIncreaseSettingShow,
-        selectValue = selectValue.value,
-        onDismiss = {
-            isCustomIncreaseSettingShow = false
-        },
+        isShow = uiState.isCustomSettingDialogShow,
+        selectValue = uiState.selectValue,
+        onDismiss = { uiState = uiState.copy(isCustomSettingDialogShow = false) },
         onUpdateClick = { customIncrease, number ->
             viewModel.updateCustomIncrease(customIncrease, number)
         }
     )
 
     PokemonSearchDialog(
-        isShow = isPokemonSearchShow,
-        onDismiss = { isPokemonSearchShow = false },
+        isShow = uiState.isSearchDialogShow,
+        onDismiss = { uiState = uiState.copy(isSearchDialogShow = false) },
         onSelect = { number, _ ->
             viewModel.insertPokemonCounter(number)
         }
@@ -192,6 +194,7 @@ fun PokemonCounterCard(
                 )
             }
             Spacer(modifier = Modifier.height(7.dp))
+
             Row(
                 modifier = Modifier
                     .padding(horizontal = 5.dp)
@@ -213,6 +216,7 @@ fun PokemonCounterCard(
                 )
             }
             Spacer(modifier = Modifier.height(7.dp))
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -228,30 +232,7 @@ fun PokemonCounterCard(
                 )
             }
             Spacer(modifier = Modifier.height(5.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
-            ) {
-                CommonButton(
-                    text = "- 1",
-                    backgroundColor = MyColorWhite,
-                    borderColor = MyColorRed,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    updateCounter(maxOf(0, counter.count - 1))
-                }
-                Spacer(modifier = Modifier.width(5.dp))
-                CommonButton(
-                    text = "- ${counter.customIncrease}",
-                    backgroundColor = MyColorWhite,
-                    borderColor = MyColorRed,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    updateCounter(maxOf(0, counter.count - counter.customIncrease))
-                }
-            }
-            Spacer(modifier = Modifier.height(5.dp))
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -276,6 +257,32 @@ fun PokemonCounterCard(
                 }
             }
             Spacer(modifier = Modifier.height(5.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+            ) {
+                CommonButton(
+                    text = "- 1",
+                    backgroundColor = MyColorWhite,
+                    borderColor = MyColorRed,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    updateCounter(maxOf(0, counter.count - 1))
+                }
+                Spacer(modifier = Modifier.width(5.dp))
+                CommonButton(
+                    text = "- ${counter.customIncrease}",
+                    backgroundColor = MyColorWhite,
+                    borderColor = MyColorRed,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    updateCounter(maxOf(0, counter.count - counter.customIncrease))
+                }
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+
             CommonButton(
                 text = "GET",
                 backgroundColor = MyColorRed,

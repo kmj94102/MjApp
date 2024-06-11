@@ -20,14 +20,11 @@ class PokemonImageChangeViewModel @Inject constructor(
 
     private val _list = mutableStateListOf<PokemonSpotlightItem>()
 
-    private val _number = mutableStateOf("")
-    val number: State<String> = _number
-
-    private val _index = mutableStateOf(0)
-    val index: State<Int> = _index
+    private val _state = mutableStateOf(PokemonImageChangeState())
+    val state: State<PokemonImageChangeState> = _state
 
     val item: PokemonSpotlightItem?
-        get() = _list.getOrNull(_index.value)
+        get() = _list.getOrNull(_state.value.index)
 
 
     private val _status = mutableStateOf<Status>(Status.Init)
@@ -49,32 +46,38 @@ class PokemonImageChangeViewModel @Inject constructor(
     }
 
     fun prevItem() {
-        if (_index.value == 0) {
-            _index.value = _list.lastIndex
+        val value = _state.value
+        val newIndex = if (value.index == 0) {
+            _list.lastIndex
         } else {
-            _index.value = _index.value - 1
+           value.index - 1
         }
+        _state.value = value.copy(index = newIndex)
+
         getNumber()
     }
 
     fun nextItem() {
-        if (_index.value == _list.lastIndex) {
-            _index.value = 0
+        val value = _state.value
+        val newIndex = if (value.index == _list.lastIndex) {
+            0
         } else {
-            _index.value = _index.value + 1
+            value.index + 1
         }
+        _state.value = value.copy(index = newIndex)
+
         getNumber()
     }
 
     fun updateNumber(number: String) {
-        _number.value = number
+        _state.value = _state.value.copy(number = number)
     }
 
     fun updateSpotlight() = viewModelScope.launch {
-        _list.getOrNull(_index.value)?.let {
+        _list.getOrNull(_state.value.index)?.let {
             val result = repository.updatePokemonSpotlight(
                 item = PokemonSpotlightItem(
-                    number = _number.value,
+                    number = _state.value.number,
                     spotlight = getNewImage()
                 )
             )
@@ -83,19 +86,19 @@ class PokemonImageChangeViewModel @Inject constructor(
     }
 
     private fun getNumber() {
-        _list.getOrNull(_index.value)?.let { info ->
-            _number.value = info.number
+        _list.getOrNull(_state.value.index)?.let { info ->
+            _state.value = _state.value.copy(number = info.number)
         }
     }
 
     fun getNewImage() =
-        "https://firebasestorage.googleapis.com/v0/b/mbank-2a250.appspot.com/o/${_number.value}.png?alt=media&token=d7d5689b-085f-4945-9ec6-6c61e94a4235"
+        "https://firebasestorage.googleapis.com/v0/b/mbank-2a250.appspot.com/o/${_state.value.number}.png?alt=media&token=d7d5689b-085f-4945-9ec6-6c61e94a4235"
 
     fun updateIndex(number: String) {
         val newIndex = _list.indexOfFirst { it.number == number }
 
         if (newIndex != -1) {
-            _index.value = newIndex
+            _state.value = _state.value.copy(index = newIndex)
         }
         getNumber()
     }

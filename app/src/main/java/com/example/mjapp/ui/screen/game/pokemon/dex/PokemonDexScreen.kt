@@ -54,8 +54,7 @@ fun PokemonDexScreen(
     onBackClick: () -> Unit,
     viewModel: PokemonDexViewModel = hiltViewModel()
 ) {
-    var isDetailDialogShow by remember { mutableStateOf(false) }
-    var isSearchDialogShow by remember { mutableStateOf(false) }
+    var uiState by remember { mutableStateOf(PokemonDexUiState()) }
     val status by viewModel.status.collectAsState()
 
     HeaderBodyContainer(
@@ -66,31 +65,31 @@ fun PokemonDexScreen(
             PokemonDexHeader(
                 onBackClick = onBackClick,
                 viewModel = viewModel,
-                onSearchClick = { isSearchDialogShow = true }
+                onSearchClick = { uiState = uiState.copy(isSearchDialogShow = true) }
             )
         },
         bodyContent = {
             PokemonDexBody(
                 viewModel = viewModel,
-                onDetailClick = { isDetailDialogShow = true }
+                onDetailClick = { uiState = uiState.copy(isDetailDialogShow = true) }
             )
         }
     )
 
     PokemonDetailDialog(
-        isShow = isDetailDialogShow,
-        number = viewModel.selectNumber.value,
+        isShow = uiState.isDetailDialogShow,
+        number = viewModel.state.value.selectNumber,
         onCatchStateChange = { viewModel.updateCatchState(it) },
-        onDismiss = { isDetailDialogShow = false },
+        onDismiss = { uiState = uiState.copy(isDetailDialogShow = false) },
         onSelectChange = { viewModel.updateSelectNumber(it) }
     )
 
     PokemonNameSearchDialog(
-        isShow = isSearchDialogShow,
-        onDismiss = { isSearchDialogShow = false },
+        isShow = uiState.isSearchDialogShow,
+        onDismiss = { uiState = uiState.copy(isSearchDialogShow = false) },
         onSearch = {
             viewModel.updateSearchValue(it)
-            isSearchDialogShow = false
+            uiState = uiState.copy(isSearchDialogShow = false)
         }
     )
 }
@@ -101,6 +100,7 @@ fun PokemonDexHeader(
     viewModel: PokemonDexViewModel,
     onSearchClick: () -> Unit
 ) {
+    val state = viewModel.state.value
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -109,7 +109,7 @@ fun PokemonDexHeader(
             onClick = onBackClick
         )
         Text(
-            text = viewModel.search.value,
+            text = state.search,
             style = textStyle16B().copy(textAlign = TextAlign.Center),
             modifier = Modifier
                 .weight(1f)
@@ -117,7 +117,7 @@ fun PokemonDexHeader(
         )
         IconBox(
             iconRes = R.drawable.ic_shiny,
-            iconColor = if (viewModel.isShiny.value) MyColorRed else MyColorGray,
+            iconColor = if (state.isShiny) MyColorRed else MyColorGray,
             boxColor = MyColorWhite,
             onClick = viewModel::toggleShinyState
         )
@@ -139,8 +139,9 @@ fun PokemonDexBody(
 ) {
     val state = rememberLazyGridState()
     val index by remember { derivedStateOf { state.firstVisibleItemIndex } }
+    val dataState = viewModel.state.value
 
-    if (viewModel.list.isEmpty()) {
+    if (dataState.list.isEmpty()) {
         PokemonListEmptyItem()
     } else {
         LazyVerticalGrid(
@@ -151,10 +152,10 @@ fun PokemonDexBody(
             contentPadding = PaddingValues(top = 15.dp, bottom = 50.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            items(viewModel.list.size) {
+            items(dataState.list.size) {
                 PokemonItem(
-                    info = viewModel.list[it],
-                    isShiny = viewModel.isShiny.value,
+                    info = dataState.list[it],
+                    isShiny = dataState.isShiny,
                     onClick = { number ->
                         viewModel.updateSelectNumber(number)
                         onDetailClick()
@@ -164,7 +165,7 @@ fun PokemonDexBody(
         }
     }
     LaunchedEffect(index) {
-        if (viewModel.isMoreDate.value) {
+        if (dataState.isMoreDate) {
             viewModel.fetchMoreData(index)
         }
     }
@@ -197,9 +198,7 @@ fun PokemonItem(
 ) {
     Column(
         modifier = Modifier
-            .nonRippleClickable {
-                onClick(info.number)
-            }
+            .nonRippleClickable { onClick(info.number) }
     ) {
         AsyncImageDoubleCard(
             condition = isShiny,
@@ -213,7 +212,7 @@ fun PokemonItem(
             modifier = Modifier.size(71.dp)
         )
         Text(
-            text = "No.${info.number}",
+            text = info.getNumberFormat(),
             style = textStyle12().copy(fontSize = 10.sp),
             modifier = Modifier.padding(top = 5.dp)
         )

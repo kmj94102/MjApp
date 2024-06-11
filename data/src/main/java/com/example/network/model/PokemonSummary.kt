@@ -41,4 +41,6 @@ data class PokemonSummary(
     val spotlight: String,
     val shinySpotlight: String,
     val isCatch: Boolean
-)
+) {
+    fun getNumberFormat() = "No.${number}"
+}
