@@ -35,6 +35,7 @@ fun CommonRadio(
     check: Boolean,
     color: Color = MyColorPurple,
     shape: Shape = CircleShape,
+    isLineThrough: Boolean = false,
     onCheckedChange: (String) -> Unit,
 ) {
 
@@ -69,14 +70,15 @@ fun CommonRadio(
             text = buildAnnotatedString {
                 withStyle(
                     style = SpanStyle(
-                        textDecoration = if (check) TextDecoration.LineThrough else TextDecoration.None,
+                        textDecoration = if (check.not() && isLineThrough)
+                            TextDecoration.LineThrough else TextDecoration.None,
                     )
                 ) {
                     append(text)
                 }
             },
             style = textStyle.copy(
-                color = if (check) MyColorLightGray else MyColorBlack,
+                color = if (check) MyColorBlack else MyColorLightGray,
             )
         )
 
