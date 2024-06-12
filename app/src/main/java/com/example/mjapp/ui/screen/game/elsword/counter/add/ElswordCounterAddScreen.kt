@@ -65,7 +65,7 @@ fun ElswordCounterAddBody(
         verticalArrangement = Arrangement.spacedBy(15.dp),
         modifier = Modifier.padding(top = 15.dp)
     ) {
-        viewModel.list.forEach {
+        viewModel.state.value.list.forEach {
             item {
                 ElswordCounterItem(
                     elswordCounter = it,
@@ -80,6 +80,7 @@ fun ElswordCounterAddBody(
 fun ElswordCounterAddCard(
     viewModel: ElswordCounterAddViewModel
 ) {
+    val item = viewModel.state.value
     DoubleCard(
         bottomCardColor = MyColorRed,
         modifier = Modifier
@@ -93,7 +94,7 @@ fun ElswordCounterAddCard(
                 .padding(top = 10.dp, bottom = 15.dp)
         ) {
             CommonTextField(
-                value = viewModel.name.value,
+                value = item.name,
                 onTextChange = viewModel::updateName,
                 hint = "퀘스트 명",
                 unfocusedIndicatorColor = MyColorGray,
@@ -102,7 +103,7 @@ fun ElswordCounterAddCard(
                 modifier = Modifier.fillMaxWidth()
             )
             CommonTextField(
-                value = "${viewModel.maxCount.value}",
+                value = "${item.maxCount}",
                 onTextChange = viewModel::updateMaxCount,
                 keyboardType = KeyboardType.Number,
                 hint = "퀘스트 개수",

@@ -63,8 +63,7 @@ fun ElswordCounterScreen(
     goToAdd: () -> Unit,
     viewModel: ElswordCounterViewModel = hiltViewModel()
 ) {
-    var isStatusChangeShow by remember { mutableStateOf(false) }
-    var isQuestSelectShow by remember { mutableStateOf(false) }
+    var uiState by remember { mutableStateOf(ElswordCounterUiState()) }
     val status by viewModel.status.collectAsStateWithLifecycle()
 
     HeaderBodyContainer(
@@ -79,29 +78,30 @@ fun ElswordCounterScreen(
             ElswordCounterBody(
                 viewModel = viewModel,
                 goToAdd = goToAdd,
-                onStatusChangeClick = { isStatusChangeShow = true },
-                onQuestClick = { isQuestSelectShow = true }
+                onStatusChangeClick = { uiState = uiState.copy(isStatusChangeShow = true) },
+                onQuestClick = { uiState = uiState.copy(isQuestSelectShow = true) }
             )
         }
     )
 
+    val item = viewModel.state.value
     QuestSelectDialog(
-        list = viewModel.list.map { it.name },
-        selectItem = viewModel.list.getOrNull(viewModel.selectCounter.value)?.name ?: "",
-        isShow = isQuestSelectShow,
-        onDismiss = { isQuestSelectShow = false },
+        list = item.list.map { it.name },
+        selectItem = item.list.getOrNull(item.selectCounter)?.name ?: "",
+        isShow = uiState.isQuestSelectShow,
+        onDismiss = { uiState = uiState.copy(isQuestSelectShow = false) },
         onSelect = {
-            isQuestSelectShow = false
+            uiState = uiState.copy(isQuestSelectShow = false)
             viewModel.chaneSelector(it)
         }
     )
 
     QuestStatusChangeDialog(
-        item = ElswordQuestStatus(viewModel.dialogItem.value),
-        isShow = isStatusChangeShow,
-        onDismiss = { isStatusChangeShow = false },
+        item = ElswordQuestStatus(item.dialogItem),
+        isShow = uiState.isStatusChangeShow,
+        onDismiss = { uiState = uiState.copy(isStatusChangeShow = false) },
         onUpdate = { name, type, progress ->
-            isStatusChangeShow = false
+            uiState = uiState.copy(isStatusChangeShow = false)
             viewModel.updateQuest(name, type, progress)
         }
     )
@@ -133,7 +133,8 @@ fun ElswordCounterBody(
     onStatusChangeClick: () -> Unit,
     onQuestClick: () -> Unit
 ) {
-    viewModel.list.getOrNull(viewModel.selectCounter.value)?.let {
+    val item = viewModel.state.value
+    item.list.getOrNull(item.selectCounter)?.let {
         ElswordCounterContents(
             detailInfo = it,
             onSelect = { name ->
@@ -141,7 +142,7 @@ fun ElswordCounterBody(
                 onStatusChangeClick()
             },
             onListChange = {
-                if (viewModel.list.size >= 2) {
+                if (item.list.size >= 2) {
                     onQuestClick()
                 }
             }
@@ -257,7 +258,7 @@ fun ElswordQuestImage(
     color: Color,
     modifier: Modifier = Modifier
 ) {
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "")
     val imageAlpha by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 0.5f,
@@ -266,7 +267,8 @@ fun ElswordQuestImage(
                 durationMillis = 1000
             },
             repeatMode = RepeatMode.Reverse
-        )
+        ),
+        label = ""
     )
 
     val textAlpha by infiniteTransition.animateFloat(
@@ -277,7 +279,8 @@ fun ElswordQuestImage(
                 durationMillis = 1000
             },
             repeatMode = RepeatMode.Reverse
-        )
+        ),
+        label = ""
     )
 
     Box(modifier = modifier) {

@@ -9,9 +9,7 @@ import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +34,7 @@ class PokemonDexViewModel @Inject constructor(
                 skip = page,
                 limit = limit
             )
-            .onStart { startLoading() }
+            .setLoadingState()
             .onEach { (isMoreDate, list) ->
                 _state.value = _state.value.copy(
                     isMoreDate = isMoreDate,
@@ -46,7 +44,6 @@ class PokemonDexViewModel @Inject constructor(
             .catch {
                 if (it is NetworkError) updateNetworkErrorState()
             }
-            .onCompletion { endLoading() }
             .launchIn(viewModelScope)
     }
 

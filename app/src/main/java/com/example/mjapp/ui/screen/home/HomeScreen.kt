@@ -92,7 +92,8 @@ fun HomeScreen(
 fun HomeBody(
     viewModel: HomeViewModel
 ) {
-    val state = rememberPagerState { viewModel.elswordQuestList.size }
+    val list = viewModel.state.value.getElswordQuestList()
+    val state = rememberPagerState { list.size }
 
     LazyColumn(
         contentPadding = PaddingValues(top = 22.dp, bottom = 50.dp),
@@ -103,16 +104,16 @@ fun HomeBody(
     ) {
         item {
             WeekCalendar(
-                selectDate = viewModel.selectItem.detailDate,
+                selectDate = viewModel.state.value.getSelectCalendarItem().detailDate,
                 today = viewModel.today,
-                list = viewModel.list,
+                list = viewModel.state.value.list,
                 onDateSelect = viewModel::updateSelectDate,
                 modifier = Modifier.fillMaxWidth()
             )
         }
 
         items(
-            items = viewModel.selectItem.itemList,
+            items = viewModel.state.value.getSelectCalendarItem().itemList,
             emptyItemContent = { EmptySchedule() },
             itemContent = {
                 when (it) {
@@ -137,10 +138,10 @@ fun HomeBody(
         )
 
         item {
-            viewModel.pokemonItem?.let {
+            viewModel.state.value.getPokemonCounter()?.let {
                 PokemonHomeContainer(
                     item = it,
-                    itemSelectInfo = viewModel.itemSelectInfo,
+                    itemSelectInfo = viewModel.state.value.getPokemonCounterProgress(),
                     onPrevClick = { viewModel.updatePokemonSelectIndex(-1) },
                     onNextClick = { viewModel.updatePokemonSelectIndex(1) }
                 )
@@ -148,12 +149,12 @@ fun HomeBody(
         }
 
         item {
-            if (viewModel.elswordQuestList.isEmpty()) {
+            if (list.isEmpty()) {
                 ElswordCounterEmptyContainer()
             } else {
                 HorizontalPager(state = state) { index ->
                     ElswordCounterContainer(
-                        elswordCounter = viewModel.elswordQuestList[index]
+                        elswordCounter = list[index]
                     ) {
                         viewModel.updateElswordCounter(index)
                     }

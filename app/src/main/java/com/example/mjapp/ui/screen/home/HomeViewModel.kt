@@ -1,7 +1,6 @@
 package com.example.mjapp.ui.screen.home
 
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.custom.getLastDayOfWeek
@@ -10,13 +9,9 @@ import com.example.mjapp.ui.custom.getWeeklyDateRange
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.getToday
 import com.example.mjapp.util.toStringFormat
-import com.example.network.model.ElswordCounter
 import com.example.network.model.ElswordCounterUpdateItem
-import com.example.network.model.HomeInfoResult
 import com.example.network.model.HomeParam
-import com.example.network.model.MyCalendar
 import com.example.network.model.MyCalendarInfo
-import com.example.network.model.PokemonCounter
 import com.example.network.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -33,29 +28,15 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val today = getToday()
-    private val homeInfo = mutableStateOf(HomeInfoResult())
-
-    private val _list = mutableStateListOf<MyCalendar>()
-    val list: List<MyCalendar> = _list
-
-    private val pokemonList: List<PokemonCounter> get() = homeInfo.value.pokemonInfo
-
-    private val pokemonSelectIndex = mutableIntStateOf(0)
-    val pokemonItem: PokemonCounter? get() = runCatching {
-        pokemonList[pokemonSelectIndex.intValue]
-    }.getOrNull()
-
-    val itemSelectInfo: String get() =
-        "${pokemonSelectIndex.intValue + 1}/${pokemonList.size}"
-
-    val elswordQuestList: List<ElswordCounter> get() = homeInfo.value.questInfo
-
-    private val index = mutableIntStateOf(0)
-    val selectItem: MyCalendar get() = _list.getOrElse(index.intValue) { MyCalendar() }
+    private val _state = mutableStateOf(HomeState())
+    val state: State<HomeState> = _state
 
     init {
-        _list.addAll(getWeeklyDateRange(today))
-        index.intValue = _list.indexOfFirst { it.detailDate == today }
+        val list = getWeeklyDateRange(today)
+        _state.value = _state.value.copy(
+            list = list,
+            index = list.indexOfFirst { it.detailDate == today }
+        )
         fetchHomeInfo()
     }
 
@@ -67,8 +48,8 @@ class HomeViewModel @Inject constructor(
             .fetchHomeInfo(HomeParam(startDate = start, endDate = end))
             .onStart { startLoading() }
             .onEach {
-                homeInfo.value = it
-                homeInfo.value.calendarInfo.forEach { info ->
+                _state.value = _state.value.copy(homeInfo = it)
+                it.calendarInfo.forEach { info ->
                     setCalendarItem(info.toMyCalendarInfo())
                 }
                 endLoading()
@@ -79,22 +60,28 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateSelectDate(date: String) {
-        index.intValue = _list.indexOfFirst { it.detailDate == date }
+        _state.value = _state.value.copy(
+            index = _state.value.list.indexOfFirst { it.detailDate == date }
+        )
     }
 
     private fun setCalendarItem(item: MyCalendarInfo) {
-        val index = _list.indexOfFirst { myCalendar ->
-            myCalendar.detailDate == item.date
+        val newList = _state.value.list.map {
+            if (it.detailDate == item.date) {
+                it.copy(
+                    isHoliday = item.isHoliday,
+                    isSpecialDay = item.isSpecialDay,
+                    dateInfo = item.info,
+                    itemList = item.list.toMutableList()
+                )
+            } else {
+                it
+            }
         }
 
-        if (index != -1) {
-            _list[index] = _list[index].copy(
-                isHoliday = item.isHoliday,
-                isSpecialDay = item.isSpecialDay,
-                dateInfo = item.info,
-                itemList = item.list.toMutableList()
-            )
-        }
+        _state.value = _state.value.copy(
+            list = newList
+        )
     }
 
     fun deleteSchedule(id: Int) = viewModelScope.launch {
@@ -106,18 +93,24 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updatePokemonSelectIndex(value: Int) {
-        val newValue = pokemonSelectIndex.intValue + value
-        pokemonSelectIndex.intValue = if (newValue < 0) {
-            pokemonList.size - 1
-        } else if (newValue >= pokemonList.size) {
+        val newValue = _state.value.pokemonSelectIndex + value
+        val listSize = _state.value.getPokemonCounterListSize()
+
+        val newIndex = if (newValue < 0) {
+            listSize - 1
+        } else if (newValue >= listSize) {
             0
         } else {
             newValue
         }
+
+        _state.value = _state.value.copy(
+            pokemonSelectIndex = newIndex
+        )
     }
 
     fun updateElswordCounter(index: Int) = viewModelScope.launch {
-        val tempList = elswordQuestList.toMutableList()
+        val tempList = _state.value.getElswordQuestList().toMutableList()
         val updateItem = ElswordCounterUpdateItem(
             id = tempList[index].id,
             max = tempList[index].max
@@ -129,8 +122,9 @@ class HomeViewModel @Inject constructor(
         } else {
             tempList[index] = tempList[index].copy(progress = result)
         }
-        homeInfo.value = homeInfo.value.copy(
-            questInfo = tempList
+
+        _state.value = _state.value.copy(
+            homeInfo = _state.value.homeInfo.copy(questInfo = tempList)
         )
     }
 
