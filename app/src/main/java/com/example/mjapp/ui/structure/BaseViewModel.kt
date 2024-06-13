@@ -1,8 +1,11 @@
 package com.example.mjapp.ui.structure
 
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 
 abstract class BaseViewModel: ViewModel() {
 
@@ -28,5 +31,8 @@ abstract class BaseViewModel: ViewModel() {
     protected fun updateFinish(value: Boolean = true) {
         _status.value.updateFinish(value)
     }
+
+    fun <T> Flow<T>.setLoadingState(): Flow<T> =
+        onStart { startLoading() }.onCompletion { endLoading() }
 
 }

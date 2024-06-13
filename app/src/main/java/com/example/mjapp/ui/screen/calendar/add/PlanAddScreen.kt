@@ -46,7 +46,7 @@ fun PlanAddScreen(
     goToScheduleAdd: (String) -> Unit,
     viewModel: PlanAddViewModel = hiltViewModel()
 ) {
-    var isDateSelectDialogShow by remember { mutableStateOf(false) }
+    var isDialogShow by remember { mutableStateOf(false) }
     val status by viewModel.status.collectAsStateWithLifecycle()
 
     HighMediumLowContainer(
@@ -61,7 +61,7 @@ fun PlanAddScreen(
         mediumContent = {
             PlanAddMedium(
                 viewModel = viewModel,
-                onDateSelect = { isDateSelectDialogShow = true }
+                onDateSelect = { isDialogShow = true }
             )
         },
         lowContent = {
@@ -71,9 +71,9 @@ fun PlanAddScreen(
 
     DateSelectDialog(
         date = viewModel.planTasks.value.planDate,
-        isShow = isDateSelectDialogShow,
+        isShow = isDialogShow,
         onDismiss = {
-            isDateSelectDialogShow = false
+            isDialogShow = false
         },
         onSelect = viewModel::updateDate
     )

@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.Constants
+import com.example.mjapp.util.update
 import com.example.network.model.PlanTasksModify
 import com.example.network.model.TaskItem
 import com.example.network.model.printStackTrace
@@ -28,36 +29,42 @@ class PlanAddViewModel @Inject constructor(
     init { updateDate(initDate) }
 
     fun addPlanItem() {
-        _planTasks.value = _planTasks.value.copy(
-            taskList = _planTasks.value.taskList.toMutableList().apply {
-                add(TaskItem(contents = ""))
-            }
-        )
+        _planTasks.update {
+            it.copy(
+                taskList = _planTasks.value.taskList.toMutableList().apply {
+                    add(TaskItem(contents = ""))
+                }
+            )
+        }
     }
 
     fun removePlanItem(index: Int) = runCatching {
-        _planTasks.value = _planTasks.value.copy(
-            taskList = _planTasks.value.taskList.toMutableList().apply {
-                removeAt(index)
-                if (isEmpty()) add(TaskItem(contents = ""))
-            }
-        )
+        _planTasks.update {
+            it.copy(
+                taskList = _planTasks.value.taskList.toMutableList().apply {
+                    removeAt(index)
+                    if (isEmpty()) add(TaskItem(contents = ""))
+                }
+            )
+        }
     }.printStackTrace()
 
     fun updatePlanContents(index: Int, value: String) = runCatching {
-        _planTasks.value = _planTasks.value.copy(
-            taskList = _planTasks.value.taskList.toMutableList().apply {
-                set(index, TaskItem(contents = value))
-            }
-        )
+        _planTasks.update {
+            it.copy(
+                taskList = _planTasks.value.taskList.toMutableList().apply {
+                    set(index, TaskItem(contents = value))
+                }
+            )
+        }
     }.printStackTrace()
 
     fun updateTitle(value: String) {
-        _planTasks.value = _planTasks.value.copy(title = value)
+        _planTasks.update { it.copy(title = value) }
     }
 
     fun updateDate(value: String) {
-        _planTasks.value = _planTasks.value.copy(planDate = value)
+        _planTasks.update { it.copy(planDate = value) }
     }
 
     fun insertPlan() = viewModelScope.launch {

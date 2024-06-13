@@ -32,6 +32,7 @@ import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.dialog.DateSelectDialog
 import com.example.mjapp.ui.dialog.RecurrenceSelectDialog
 import com.example.mjapp.ui.dialog.TimeSelectDialog
+import com.example.mjapp.ui.screen.calendar.ScheduleAddUiState
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorPurple
@@ -47,10 +48,7 @@ fun ScheduleAddScreen(
     goToPlanAdd: (String) -> Unit,
     viewModel: ScheduleAddViewModel = hiltViewModel()
 ) {
-    var isDateSelectDialogShow by remember { mutableStateOf(false) }
-    var isTimeSelectDialogShow by remember { mutableStateOf(false) }
-    var isRecurrenceSelectDialogShow by remember { mutableStateOf(false) }
-
+    var uiState by remember { mutableStateOf(ScheduleAddUiState()) }
     val status by viewModel.status.collectAsStateWithLifecycle()
 
     HighMediumLowContainer(
@@ -65,9 +63,15 @@ fun ScheduleAddScreen(
         mediumContent = {
             ScheduleAddMedium(
                 viewModel = viewModel,
-                onRecurrenceSelect = { isRecurrenceSelectDialogShow = true },
-                onDateSelect = { isDateSelectDialogShow = true },
-                onTimeSelect = { isTimeSelectDialogShow = true }
+                onRecurrenceSelect = {
+                    uiState = uiState.copy(isRecurrenceSelectDialogShow = true)
+                },
+                onDateSelect = {
+                    uiState = uiState.copy(isDateSelectDialogShow = true)
+                },
+                onTimeSelect = {
+                    uiState = uiState.copy(isTimeSelectDialogShow = true)
+                }
             )
         },
         lowContent = {
@@ -76,23 +80,23 @@ fun ScheduleAddScreen(
     )
 
     DateSelectDialog(
-        date = viewModel.selectDate.value,
-        isShow = isDateSelectDialogShow,
-        onDismiss = { isDateSelectDialogShow = false },
+        date = viewModel.scheduleModifier.value.selectDate,
+        isShow = uiState.isDateSelectDialogShow,
+        onDismiss = { uiState = uiState.copy(isDateSelectDialogShow = false) },
         onSelect = viewModel::updateDate
     )
 
     TimeSelectDialog(
-        time = viewModel.selectTime.value,
-        isShow = isTimeSelectDialogShow,
-        onDismiss = { isTimeSelectDialogShow = false },
+        time = viewModel.scheduleModifier.value.selectTime,
+        isShow = uiState.isTimeSelectDialogShow,
+        onDismiss = { uiState = uiState.copy(isTimeSelectDialogShow = false) },
         onSelect = viewModel::updateTime
     )
 
     RecurrenceSelectDialog(
         initValue = viewModel.scheduleModifier.value.recurrenceType,
-        isShow = isRecurrenceSelectDialogShow,
-        onDismiss = { isRecurrenceSelectDialogShow = false },
+        isShow = uiState.isRecurrenceSelectDialogShow,
+        onDismiss = { uiState = uiState.copy(isRecurrenceSelectDialogShow = false) },
         onSelect = viewModel::updateRecurrence
     )
 }
@@ -155,7 +159,7 @@ fun ScheduleAddMedium(
                 text = scheduleModifier.date.ifEmpty { "날짜 선택" },
                 textStyle = textStyle16B(),
                 onClick = {
-                    viewModel.updateSelectItem(ScheduleAddViewModel.ScheduleDate)
+                    viewModel.updateSelectItem(ScheduleAddViewModel.SCHEDULE_DATE)
                     onDateSelect()
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -169,7 +173,7 @@ fun ScheduleAddMedium(
                     text = scheduleModifier.startTime.ifEmpty { "시작 시간" },
                     textStyle = textStyle16B(),
                     onClick = {
-                        viewModel.updateSelectItem(ScheduleAddViewModel.StartTime)
+                        viewModel.updateSelectItem(ScheduleAddViewModel.START_TIME)
                         onTimeSelect()
                     },
                     modifier = Modifier.weight(1f)
@@ -181,7 +185,7 @@ fun ScheduleAddMedium(
                     text = scheduleModifier.endTime.ifEmpty { "종료 시간" },
                     textStyle = textStyle16B(),
                     onClick = {
-                        viewModel.updateSelectItem(ScheduleAddViewModel.EndTime)
+                        viewModel.updateSelectItem(ScheduleAddViewModel.END_TIME)
                         onTimeSelect()
                     },
                     modifier = Modifier.weight(1f)
@@ -206,7 +210,7 @@ fun ScheduleAddMedium(
                     text = scheduleModifier.recurrenceEndDate.ifEmpty { "반복 종료일" },
                     textStyle = textStyle16B(),
                     onClick = {
-                        viewModel.updateSelectItem(ScheduleAddViewModel.RecurrenceEndDate)
+                        viewModel.updateSelectItem(ScheduleAddViewModel.RECURRENCE_END_DATE)
                         onDateSelect()
                     },
                     modifier = Modifier.fillMaxWidth()

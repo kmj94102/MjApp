@@ -20,6 +20,8 @@ data class ScheduleModifier(
     val recurrenceEndDate: String = "",
     val scheduleContent: String = "",
     val scheduleTitle: String = "",
+    val selectDate: String = "",
+    val selectTime: String = ""
 ) {
     fun getRecurrenceInfo() = Recurrence.getRecurrenceKoreanName(recurrenceType)
 
