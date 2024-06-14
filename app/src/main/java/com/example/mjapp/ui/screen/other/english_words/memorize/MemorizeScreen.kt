@@ -1,6 +1,7 @@
 package com.example.mjapp.ui.screen.other.english_words.memorize
 
 import android.media.MediaPlayer
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ import com.example.mjapp.ui.custom.CommonProgressBar
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.screen.other.english_words.EnglishEmpty
 import com.example.mjapp.ui.screen.other.english_words.EnglishWordsHeader
+import com.example.mjapp.ui.screen.other.english_words.WordPlayerController
 import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
@@ -52,6 +54,7 @@ import com.example.mjapp.util.textStyle18
 import com.example.mjapp.util.textStyle18B
 import com.example.network.model.VocabularyListResult
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import java.lang.Integer.max
 import java.lang.Integer.min
 
@@ -66,20 +69,20 @@ fun MemorizeScreen(
         status = status,
         heightContent = {
             EnglishWordsHeader(
-                day = viewModel.day.intValue,
+                day = viewModel.state.value.day,
                 onBackClick = onBackClick,
                 onDaySelect = viewModel::updateDay
             )
         },
         mediumContent = {
-            if (viewModel.list.isNotEmpty()) {
+            if (viewModel.state.value.list.isNotEmpty()) {
                 MemorizeBody(viewModel = viewModel)
             } else {
                 EnglishEmpty(message = "단어장을 준비 중입니다.")
             }
         },
         lowContent = {
-            MemorizePlayer(viewModel = viewModel)
+            MemorizePlayer(addressFlow = viewModel.address)
         }
     )
 }
@@ -93,7 +96,7 @@ fun MemorizeBody(
         contentPadding = PaddingValues(top = 20.dp, bottom = 30.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        viewModel.list.forEach {
+        viewModel.state.value.list.forEach {
             item {
                 MemorizeItem(item = it)
             }
@@ -177,31 +180,30 @@ fun MemorizeItem(
 }
 
 @Composable
-fun MemorizePlayer(
-    viewModel: MemorizeViewModel
-) {
-    val player = remember { MediaPlayer() }
-    var isReady by remember { mutableStateOf(false) }
-    var isPlaying by remember { mutableStateOf(false) }
-    var time by remember { mutableStateOf("00:00 / 00:00") }
-    var currentPosition by remember { mutableIntStateOf(0) }
-    val address by viewModel.address.collectAsStateWithLifecycle()
+fun MemorizePlayer(addressFlow: StateFlow<String>) {
+    var controller by remember { mutableStateOf(WordPlayerController()) }
+    val player = controller.player
+    val address by addressFlow.collectAsStateWithLifecycle()
 
     runCatching {
         player.setDataSource(address)
         player.prepareAsync()
 
         player.setOnPreparedListener {
-            isReady = true
-            time = getProgressTime(player.currentPosition, player.duration)
+            controller = controller.copy(
+                isReady = true,
+                progress = getProgressTime(it.currentPosition, it.duration)
+            )
         }
         player.setOnCompletionListener {
-            player.stop()
-            player.reset()
-            player.setDataSource(address)
-            player.prepareAsync()
-            currentPosition = 0
-            isPlaying = false
+            it.stop()
+            it.reset()
+            it.setDataSource(address)
+            it.prepareAsync()
+            controller = controller.copy(
+                currentPosition = 0,
+                isReady = false
+            )
         }
     }
 
@@ -217,14 +219,16 @@ fun MemorizePlayer(
             CommonProgressBar(
                 modifier = Modifier.fillMaxWidth(),
                 max = runCatching { player.duration }.getOrElse { 0 },
-                currentPosition = currentPosition,
+                currentPosition = controller.currentPosition,
                 onValueChanged = {
                     runCatching {
                         val position = (it * player.duration).toInt()
-                        player.seekTo(position)
-                        currentPosition = position
 
-                        time = getProgressTime(player.currentPosition, player.duration)
+                        player.seekTo(position)
+                        controller = controller.copy(
+                            currentPosition = position,
+                            progress = getProgressTime(player.currentPosition, player.duration)
+                        )
                     }
                 }
             )
@@ -246,7 +250,9 @@ fun MemorizePlayer(
                         }
                 )
                 Icon(
-                    painter = painterResource(id = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
+                    painter = painterResource(
+                        id = if (controller.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                    ),
                     contentDescription = null,
                     tint = MyColorBlack,
                     modifier = Modifier
@@ -254,14 +260,16 @@ fun MemorizePlayer(
                         .size(24.dp)
                         .nonRippleClickable {
                             runCatching {
-                                if (isReady.not()) return@nonRippleClickable
-                                isPlaying = if (isPlaying) {
-                                    player.pause()
-                                    false
-                                } else {
-                                    player.start()
-                                    true
-                                }
+                                if (controller.isReady.not()) return@nonRippleClickable
+                                controller = controller.copy(
+                                    isPlaying = if (controller.isPlaying) {
+                                        player.pause()
+                                        false
+                                    } else {
+                                        player.start()
+                                        true
+                                    }
+                                )
                             }
                         }
                 )
@@ -297,14 +305,16 @@ fun MemorizePlayer(
                                 player.setDataSource(address)
                                 player.prepareAsync()
                                 player.start()
-                                currentPosition = 0
-                                isPlaying = true
+                                controller = controller.copy(
+                                    currentPosition = 0,
+                                    isPlaying = true
+                                )
                             }
                         }
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = time, style = textStyle12B())
+                Text(text = controller.progress, style = textStyle12B())
             }
         }
     }
@@ -314,16 +324,20 @@ fun MemorizePlayer(
         player.reset()
         player.setDataSource(address)
         player.prepareAsync()
-        currentPosition = 0
-        isPlaying = false
+        controller = controller.copy(
+            currentPosition = 0,
+            isPlaying = false
+        )
     }
 
-    LaunchedEffect(isPlaying) {
-        while (isPlaying) {
+    LaunchedEffect(controller.isPlaying) {
+        while (controller.isPlaying) {
             delay(1000)
             runCatching {
-                time = getProgressTime(player.currentPosition, player.duration)
-                currentPosition = player.currentPosition
+                controller = controller.copy(
+                    progress = getProgressTime(player.currentPosition, player.duration),
+                    currentPosition= player.currentPosition
+                )
             }
         }
     }

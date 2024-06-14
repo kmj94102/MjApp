@@ -44,13 +44,13 @@ fun WrongAnswerScreen(
         status = status,
         headerContent = {
             EnglishWordsHeader(
-                day = viewModel.day.intValue,
+                day = viewModel.state.value.day,
                 onBackClick = onBackClick,
                 onDaySelect = viewModel::updateDay
             )
         },
         bodyContent = {
-            if (viewModel.list.isNotEmpty()) {
+            if (viewModel.state.value.list.isNotEmpty()) {
                 WrongAnswerBody(viewModel = viewModel)
             } else {
                 EnglishEmpty(message = "오답이 없습니다.")
@@ -68,7 +68,7 @@ fun WrongAnswerBody(
         verticalArrangement = Arrangement.spacedBy(15.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        viewModel.list.forEach {
+        viewModel.state.value.list.forEach {
             item { WrongAnswerItem(item = it) }
         }
     }

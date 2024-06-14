@@ -1,14 +1,13 @@
 package com.example.mjapp.ui.screen.other.english_words.memorize
 
-import androidx.compose.runtime.IntState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.screen.other.english_words.MemorizeState
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.Constants
-import com.example.mjapp.util.clearAndAddAll
-import com.example.network.model.VocabularyListResult
+import com.example.mjapp.util.update
 import com.example.network.repository.VocabularyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,34 +25,31 @@ class MemorizeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    private val _day = mutableIntStateOf(1)
-    val day: IntState = _day
-
-    private val _list = mutableStateListOf<VocabularyListResult>()
-    val list: List<VocabularyListResult> = _list
+    private val _state = mutableStateOf(MemorizeState())
+    val state: State<MemorizeState> = _state
 
     private val _address = MutableStateFlow("")
     val address: StateFlow<String> = _address
 
     init {
-        savedStateHandle.get<Int>(Constants.Day)?.let {
-            _day.intValue = it
+        savedStateHandle.get<Int>(Constants.Day)?.let { day ->
+            _state.update { it.copy(day = day) }
+            _address.value = getAudioAddress(day)
         }
-        _address.value = getAudioAddress()
         fetchVocabularyList()
     }
 
-    private fun getAudioAddress() =
+    private fun getAudioAddress(day: Int) =
         "https://mp3.englishbus.co.kr/KST_VOCA/MP3/1/Day_${
-            _day.intValue.toString().padStart(2, '0')
+            day.toString().padStart(2, '0')
         }.mp3"
 
     private fun fetchVocabularyList() {
         repository
-            .fetchVocabulary(_day.intValue)
+            .fetchVocabulary(_state.value.day)
             .onStart { startLoading() }
-            .onEach {
-                _list.clearAndAddAll(it)
+            .onEach { newList ->
+                _state.update { it.copy(list = newList) }
             }
             .catch { updateNetworkErrorState(true) }
             .onCompletion { endLoading() }
@@ -61,8 +57,8 @@ class MemorizeViewModel @Inject constructor(
     }
 
     fun updateDay(day: Int) {
-        _day.intValue = day
-        _address.value = getAudioAddress()
+        _state.update { it.copy(day = day) }
+        _address.value = getAudioAddress(day)
         fetchVocabularyList()
     }
 

@@ -1,14 +1,13 @@
 package com.example.mjapp.ui.screen.other.english_words.wrong_answer
 
-import androidx.compose.runtime.IntState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.screen.other.english_words.WrongAnswerState
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.Constants
-import com.example.mjapp.util.clearAndAddAll
-import com.example.network.model.WrongAnswer
+import com.example.mjapp.util.update
 import com.example.network.repository.VocabularyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -24,31 +23,28 @@ class WrongAnswerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ): BaseViewModel() {
 
-    private val _day = mutableIntStateOf(1)
-    val day: IntState = _day
-
-    private val _list = mutableStateListOf<WrongAnswer>()
-    val list: List<WrongAnswer> = _list
+    private val _state = mutableStateOf(WrongAnswerState())
+    val state: State<WrongAnswerState> = _state
 
     init {
-        savedStateHandle.get<Int>(Constants.Day)?.let {
-            _day.intValue = it
+        savedStateHandle.get<Int>(Constants.Day)?.let { day ->
+            _state.update { it.copy(day = day) }
         }
         fetchWrongAnswer()
     }
 
     private fun fetchWrongAnswer() {
         repository
-            .fetchWrongAnswer(_day.intValue)
+            .fetchWrongAnswer(_state.value.day)
             .onStart { startLoading() }
-            .onEach { _list.clearAndAddAll(it) }
+            .onEach { newList -> _state.update { it.copy(list = newList) } }
             .catch { updateNetworkErrorState(true) }
             .onCompletion { endLoading() }
             .launchIn(viewModelScope)
     }
 
     fun updateDay(day: Int) {
-        _day.intValue = day
+        _state.update { it.copy(day = day) }
         fetchWrongAnswer()
     }
 

@@ -1,17 +1,13 @@
 package com.example.mjapp.ui.screen.other.english_words.exam
 
-import androidx.compose.runtime.IntState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.screen.other.english_words.ExamState
 import com.example.mjapp.ui.structure.BaseViewModel
 import com.example.mjapp.util.Constants
-import com.example.mjapp.util.clearAndAddAll
-import com.example.network.model.Examination
-import com.example.network.model.ExaminationScoringResult
+import com.example.mjapp.util.update
 import com.example.network.repository.VocabularyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -27,38 +23,31 @@ class ExamViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    private val _day = mutableIntStateOf(1)
-    val day: IntState = _day
-
-    private val _list = mutableStateListOf<Examination>()
-    val list: List<Examination> = _list
-
-    private val _result = mutableStateOf(ExaminationScoringResult())
-    val result: State<ExaminationScoringResult> = _result
+    private val _state = mutableStateOf(ExamState())
+    val state: State<ExamState> = _state
 
     init {
-        savedStateHandle.get<Int>(Constants.Day)?.let {
-            _day.intValue = it
+        savedStateHandle.get<Int>(Constants.Day)?.let { day ->
+            _state.update { it.copy(day = day) }
         }
         fetchExamination()
     }
 
     private fun fetchExamination() {
         repository
-            .fetchExamination(_day.intValue)
+            .fetchExamination(_state.value.day)
             .onStart { startLoading() }
-            .onEach { _list.clearAndAddAll(it) }
+            .onEach { newList -> _state.update { it.copy(list = newList) } }
             .onCompletion { endLoading() }
             .catch { updateNetworkErrorState(true) }
             .launchIn(viewModelScope)
     }
 
     fun updateMeaning(index: Int, value: String) {
-        val updatedList = _list.toMutableList()
+        val updatedList = _state.value.list.toMutableList()
         runCatching {
             updatedList[index] = updatedList[index].copy(meaning = value)
-            _list.clear()
-            _list.addAll(updatedList)
+            _state.update { it.copy(list = updatedList) }
         }
     }
 
@@ -66,11 +55,11 @@ class ExamViewModel @Inject constructor(
         onResult: () -> Unit
     ) {
         repository
-            .fetchExaminationScoring(_list)
+            .fetchExaminationScoring(_state.value.list)
             .onStart { startLoading() }
-            .onEach {
+            .onEach { result ->
                 onResult()
-                _result.value = it
+                _state.update { it.copy(result = result) }
             }
             .onCompletion { endLoading() }
             .catch { updateMessage(it.message ?: "오류가 발생하였습니다.") }
@@ -78,7 +67,7 @@ class ExamViewModel @Inject constructor(
     }
 
     fun updateDay(day: Int) {
-        _day.intValue = day
+        _state.update { it.copy(day = day) }
         fetchExamination()
     }
 }

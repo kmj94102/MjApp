@@ -47,20 +47,20 @@ fun ExamScreen(
         status = status,
         heightContent = {
             EnglishWordsHeader(
-                day = viewModel.day.intValue,
+                day = viewModel.state.value.day,
                 onBackClick = onBackClick,
                 onDaySelect = viewModel::updateDay
             )
         },
         mediumContent = {
-            if (viewModel.list.isNotEmpty()) {
+            if (viewModel.state.value.list.isNotEmpty()) {
                 ExamMedium(viewModel = viewModel)
             } else {
                 EnglishEmpty("시험 문제를 준비 중입니다.")
             }
         },
         lowContent = {
-            if (viewModel.list.isNotEmpty()) {
+            if (viewModel.state.value.list.isNotEmpty()) {
                 DoubleCardButton(
                     text = "제출하기",
                     topCardColor = MyColorPurple,
@@ -76,14 +76,14 @@ fun ExamScreen(
 
     ExamResultDialog(
         isShow = isShow,
-        data = viewModel.result.value,
+        data = viewModel.state.value.result,
         onDismiss = {
             isShow = false
             onBackClick()
         },
         goToWrongAnswer = {
             isShow = false
-            goToWrongAnswer(viewModel.day.intValue)
+            goToWrongAnswer(viewModel.state.value.day)
         }
     )
 }
@@ -97,7 +97,7 @@ fun ExamMedium(
         contentPadding = PaddingValues(top = 20.dp, bottom = 30.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        viewModel.list.forEachIndexed { index, exam ->
+        viewModel.state.value.list.forEachIndexed { index, exam ->
             item {
                 DoubleCard(
                     bottomCardColor = MyColorBeige,
