@@ -56,11 +56,7 @@ fun InternetFavoritesScreen(
     viewModel: InternetFavoritesViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
-    var isInsertDialogShow by remember { mutableStateOf(false) }
-    var isDeleteDialogShow by remember { mutableStateOf(false) }
-
-    val address = remember { mutableStateOf("") }
-    var selectItem by remember { mutableStateOf(InternetFavorite.crate()) }
+    var uiState by remember { mutableStateOf(InternetUiState()) }
 
     HighMediumLowContainer(
         status = status,
@@ -68,7 +64,7 @@ fun InternetFavoritesScreen(
             InternetFavoritesHeight(
                 onBackClick = onBackClick,
                 addFavorite = {
-                    isInsertDialogShow = true
+                    uiState = uiState.copy(isInsertDialogShow = true)
                 }
             )
         },
@@ -76,12 +72,10 @@ fun InternetFavoritesScreen(
             InternetFavoritesMedium(
                 viewModel = viewModel,
                 setInitAddress = {
-                    address.value = it
-                    isInsertDialogShow = true
+                    uiState = uiState.copy(isInsertDialogShow = true, address = it)
                 },
                 onDelete = {
-                    selectItem = it
-                    isDeleteDialogShow = true
+                    uiState = uiState.copy(isDeleteDialogShow = true, selectItem = it)
                 }
             )
         },
@@ -89,8 +83,7 @@ fun InternetFavoritesScreen(
             InternetFavoritesLow(
                 viewModel = viewModel,
                 onDelete = {
-                    selectItem = it
-                    isDeleteDialogShow = true
+                    uiState = uiState.copy(isDeleteDialogShow = true, selectItem = it)
                 }
             )
         },
@@ -99,21 +92,21 @@ fun InternetFavoritesScreen(
     )
 
     InsertFavoriteDialog(
-        isShow = isInsertDialogShow,
+        isShow = uiState.isInsertDialogShow,
         onDismiss = {
-            isInsertDialogShow = false
-            address.value = ""
+            uiState = uiState.copy(isInsertDialogShow = false, address = "")
         },
-        address = address,
-        onInsert = viewModel::insertFavorite
+        address = uiState.address,
+        onInsert = viewModel::insertFavorite,
+        updateAddress = { uiState = uiState.copy(address = it) }
     )
 
     InsertFavoriteDeleteDialog(
-        isShow = isDeleteDialogShow,
-        favorite = selectItem,
-        onDismiss = { isDeleteDialogShow = false },
+        isShow = uiState.isDeleteDialogShow,
+        favorite = uiState.selectItem,
+        onDismiss = { uiState = uiState.copy(isDeleteDialogShow = false) },
         onDelete = {
-            viewModel.deleteItem(selectItem.id)
+            viewModel.deleteItem(uiState.selectItem.id)
         }
     )
 }
@@ -226,7 +219,7 @@ fun InternetFavoritesMedium(
                     contentDescription = null,
                     modifier = Modifier.nonRippleClickable {
                         if (isFavorite) {
-                            viewModel.selectItem?.let(onDelete)
+                            viewModel.state.value.getSelectItem()?.let(onDelete)
                         } else {
                             webView.url?.let(setInitAddress)
                         }
@@ -257,11 +250,11 @@ fun InternetFavoritesLow(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        itemsIndexed(viewModel.list) { index, internetFavorite ->
+        itemsIndexed(viewModel.state.value.list) { index, internetFavorite ->
             val topCardColor =
-                if (index == viewModel.selectIndex.value) MyColorBeige else MyColorWhite
+                if (index == viewModel.state.value.selectIndex) MyColorBeige else MyColorWhite
             val bottomCardColor =
-                if (index == viewModel.selectIndex.value) MyColorWhite else MyColorBeige
+                if (index == viewModel.state.value.selectIndex) MyColorWhite else MyColorBeige
 
             Box(
                 modifier = Modifier

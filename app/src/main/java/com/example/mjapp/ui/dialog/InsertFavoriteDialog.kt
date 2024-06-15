@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,7 +20,8 @@ import com.example.network.model.InternetFavorite
 fun InsertFavoriteDialog(
     isShow: Boolean,
     onDismiss: () -> Unit,
-    address: MutableState<String>,
+    address: String,
+    updateAddress: (String) -> Unit,
     onInsert: (InternetFavorite) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
@@ -46,10 +46,8 @@ fun InsertFavoriteDialog(
             Spacer(modifier = Modifier.height(15.dp))
 
             DoubleCardTextField(
-                value = address.value,
-                onTextChange = {
-                    address.value = it
-                },
+                value = address,
+                onTextChange = updateAddress,
                 hint = "주소",
                 bottomCardColor = MyColorBeige,
                 modifier = Modifier
@@ -64,10 +62,11 @@ fun InsertFavoriteDialog(
                     onInsert(
                         InternetFavorite(
                             id = 0,
-                            address = address.value,
+                            address = address,
                             name = name
                         )
                     )
+                    name = ""
                     onDismiss()
                 },
                 text = "등록하기",

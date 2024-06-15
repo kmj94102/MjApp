@@ -1,11 +1,10 @@
 package com.example.mjapp.ui.screen.other.internet
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.structure.BaseViewModel
-import com.example.mjapp.util.clearAndAddAll
+import com.example.mjapp.util.update
 import com.example.network.model.InternetFavorite
 import com.example.network.repository.InternetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,20 +25,10 @@ class InternetFavoritesViewModel @Inject constructor(
     private val homeUrl = "https://m.naver.com/"
     private var initUrl = ""
 
-    private val _list = mutableStateListOf<InternetFavorite>()
-    val list: List<InternetFavorite> = _list
+    private val _state = mutableStateOf(InternetState())
+    val state: State<InternetState> = _state
 
-    private val _selectIndex = mutableIntStateOf(0)
-    val selectIndex: State<Int> = _selectIndex
-
-    val selectItem: InternetFavorite?
-        get() = runCatching { _list[_selectIndex.intValue] }
-            .getOrElse { null }
-
-    private val selectAddress: String
-        get() = selectItem?.address ?: homeUrl
-
-    private val _loadState = MutableStateFlow(selectAddress)
+    private val _loadState = MutableStateFlow(_state.value.getSelectAddress())
     val loadState: StateFlow<String> = _loadState
 
     init {
@@ -47,7 +36,7 @@ class InternetFavoritesViewModel @Inject constructor(
     }
 
     fun insertFavorite(favorite: InternetFavorite) = viewModelScope.launch {
-        if (_list.map { it.address }.contains(favorite.address)) {
+        if (_state.value.list.map { it.address }.contains(favorite.address)) {
             updateMessage("이미 등록 된 주소입니다.")
             return@launch
         }
@@ -67,28 +56,28 @@ class InternetFavoritesViewModel @Inject constructor(
         repository
             .fetchFavorites()
             .onStart { startLoading() }
-            .onEach {
-                _list.clearAndAddAll(it)
+            .onEach { newList ->
+                _state.update { it.copy(list = newList) }
                 updateSelectIndex()
                 endLoading()
             }
             .catch {
-                _list.clear()
+                _state.update { it.copy(list = emptyList()) }
                 endLoading()
             }
             .launchIn(viewModelScope)
     }
 
     private fun updateSelectIndex() {
-        val index = _list.indexOfFirst { it.address == initUrl }
+        val index = _state.value.list.indexOfFirst { it.address == initUrl }
 
-        _selectIndex.intValue = if (index == -1) 0 else index
-        _loadState.value = selectAddress
+        _state.update { it.copy(selectIndex = if (index == -1) 0 else index) }
+        _loadState.value = _state.value.getSelectAddress()
     }
 
     fun updateSelectIndex(index: Int) {
-        _selectIndex.intValue = index
-        _loadState.value = selectAddress
+        _state.update { it.copy(selectIndex = index) }
+        _loadState.value = _state.value.getSelectAddress()
     }
 
     fun goToHome() {
@@ -104,7 +93,7 @@ class InternetFavoritesViewModel @Inject constructor(
     }
 
     fun isFavorite() =
-        _list.map { it.address }
+        _state.value.list.map { it.address }
             .contains(_loadState.value)
 
 }
