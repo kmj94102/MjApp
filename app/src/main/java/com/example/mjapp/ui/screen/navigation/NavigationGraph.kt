@@ -24,6 +24,8 @@ import com.example.mjapp.ui.screen.game.pokemon.change.PokemonImageChangeScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterHistoryScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
+import com.example.mjapp.ui.screen.game.pokemon.generation.GenerationDetailScreen
+import com.example.mjapp.ui.screen.game.pokemon.generation.GenerationDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.other.english_words.EnglishWordsScreen
@@ -68,30 +70,9 @@ fun NavGraphBuilder.gameScreens(
     ) {
         GameScreen(
             goToScreen = {
-                val route = when (it) {
-                    Constants.PokemonDex -> {
-                        NavScreen.PokemonDex.item.routeWithPostFix
-                    }
-                    Constants.PokemonCounter -> {
-                        NavScreen.PokemonCounter.item.routeWithPostFix
-                    }
-                    Constants.PokemonAdd -> {
-                        NavScreen.PokemonAdd.item.routeWithPostFix
-                    }
-                    Constants.PokemonImageChange -> {
-                        NavScreen.PokemonImageChange.item.routeWithPostFix
-                    }
-                    Constants.ElswordIntroduce -> {
-                        NavScreen.ElswordIntroduce.item.routeWithPostFix
-                    }
-                    Constants.ElswordCounter -> {
-                        NavScreen.ElswordCounter.item.routeWithPostFix
-                    }
-                    else -> ""
-                }
-                if (route.isEmpty()) return@GameScreen
+                if (it.isEmpty()) return@GameScreen
 
-                navController.navigate(route)
+                navController.navigate(it)
             }
         )
     }
@@ -135,6 +116,33 @@ fun NavGraphBuilder.gameScreens(
         route = NavScreen.PokemonDex.item.routeWithPostFix
     ) {
         PokemonDexScreen(
+            onBackClick = onBackClick
+        )
+    }
+    /** 타이틀 도감 화면 **/
+    composable(
+        route = NavScreen.GenerationDex.item.routeWithPostFix
+    ) {
+        GenerationDexScreen(
+            onBackClick = onBackClick,
+            goToDetail = {
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.GenerationDexDetail.item.route,
+                        "$it"
+                    )
+                )
+            }
+        )
+    }
+    /** 타이틀 도감 상세 화면 **/
+    composable(
+        route = NavScreen.GenerationDexDetail.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(Constants.INDEX) { type = NavType.StringType }
+        )
+    ) {
+        GenerationDetailScreen(
             onBackClick = onBackClick
         )
     }
@@ -191,7 +199,7 @@ fun NavGraphBuilder.calendarScreens(
     composable(
         route = NavScreen.ScheduleAdd.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(Constants.Date) { type = NavType.StringType }
+            navArgument(Constants.DATE) { type = NavType.StringType }
         )
     ) {
         ScheduleAddScreen(
@@ -212,7 +220,7 @@ fun NavGraphBuilder.calendarScreens(
     composable(
         route = NavScreen.PlanAdd.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(Constants.Date) { type = NavType.StringType }
+            navArgument(Constants.DATE) { type = NavType.StringType }
         )
     ) {
         PlanAddScreen(
@@ -282,7 +290,7 @@ fun NavGraphBuilder.accountBookScreens(
     composable(
         route = NavScreen.RegistrationFixedAccountBookItem.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(Constants.Date) { type = NavType.StringType }
+            navArgument(Constants.DATE) { type = NavType.StringType }
         )
     ) {
         RegistrationFixedAccountBookScreen(
@@ -367,7 +375,7 @@ fun NavGraphBuilder.otherScreens(
     composable(
         route = NavScreen.Memorize.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(Constants.Day) { type = NavType.IntType }
+            navArgument(Constants.DAY) { type = NavType.IntType }
         )
     ) {
         MemorizeScreen(
@@ -378,7 +386,7 @@ fun NavGraphBuilder.otherScreens(
     composable(
         route = NavScreen.Exam.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(Constants.Day) { type = NavType.IntType }
+            navArgument(Constants.DAY) { type = NavType.IntType }
         )
     ) {
         ExamScreen(
@@ -399,7 +407,7 @@ fun NavGraphBuilder.otherScreens(
     composable(
         route = NavScreen.WrongAnswers.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(Constants.Day) { type = NavType.IntType }
+            navArgument(Constants.DAY) { type = NavType.IntType }
         )
     ) {
         WrongAnswerScreen(

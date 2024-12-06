@@ -2,6 +2,7 @@ package com.example.network.repository
 
 import com.example.network.model.BriefPokemonItem
 import com.example.network.model.CharacteristicInfo
+import com.example.network.model.GenerationUpdateParam
 import com.example.network.model.PokemonCounter
 import com.example.network.model.PokemonDetailInfo
 import com.example.network.model.PokemonEvolution
@@ -149,4 +150,26 @@ class PokemonRepositoryImpl @Inject constructor(
             .updatePokemonSpotlight(item)
             .printStackTrace()
             .getOrElse { "업데이트 실패" }
+
+    override fun fetchGenerationCountList() = flow {
+        client
+            .fetchGenerationCountList()
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
+
+
+    override fun fetchGenerationList(index: Int) = flow {
+        client
+            .fetchGenerationList(index)
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
+
+    override fun updateGenerationIsCatch(item: GenerationUpdateParam) = flow {
+        client
+            .updateGenerationIsCatch(item)
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
 }

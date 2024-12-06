@@ -61,4 +61,26 @@ interface PokemonService {
     @POST("/pokemon/update/image")
     suspend fun updatePokemonSpotlight(@Body item: PokemonSpotlightItem): String
 
+    /**
+     * 포케못 타이틀 도감 별 카운트
+     * **/
+    @GET("/dex/select/count")
+    suspend fun fetchGenerationCountList(): List<GenerationCount>
+
+    /**
+     * 선택한 타이틀 도감 포켓몬 리스트
+     * **/
+    @GET("/dex/select/list")
+    suspend fun fetchGenerationList(
+        @Query("generationIdx") index: Int
+    ): List<GenerationDex>
+
+    /**
+     * 잡은 상태 업데이트
+     * **/
+    @POST("/dex/update/isCatch")
+    suspend fun updateGenerationIsCatch(
+        @Body item: GenerationUpdateParam
+    ): Boolean
+
 }

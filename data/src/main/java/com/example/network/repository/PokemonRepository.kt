@@ -59,4 +59,14 @@ interface PokemonRepository {
     suspend fun updatePokemonSpotlight(
         item: PokemonSpotlightItem
     ): String
+
+    /** 포케못 타이틀 도감 별 카운트 **/
+    fun fetchGenerationCountList(): Flow<List<GenerationCount>>
+
+    /** 선택한 타이틀 도감 포켓몬 리스트 **/
+    fun fetchGenerationList(index: Int): Flow<List<GenerationDex>>
+
+    /** 잡은 상태 업데이트 **/
+    fun updateGenerationIsCatch(item: GenerationUpdateParam): Flow<Boolean>
+
 }

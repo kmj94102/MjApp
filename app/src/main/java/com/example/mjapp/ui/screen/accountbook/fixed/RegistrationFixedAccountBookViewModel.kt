@@ -32,7 +32,7 @@ class RegistrationFixedAccountBookViewModel @Inject constructor(
     val list: List<FixedAccountBook> = _list
 
     private val _yearMonth =
-        mutableStateOf(savedStateHandle.get<String>(Constants.Date) ?: "2023.01")
+        mutableStateOf(savedStateHandle.get<String>(Constants.DATE) ?: "2023.01")
     val yearMonth: State<String> = _yearMonth
     val year: String
         get() = runCatching { _yearMonth.value.substring(0, 4) }.getOrElse { "2023" }

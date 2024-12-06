@@ -2,7 +2,6 @@ package com.example.mjapp.ui.screen.game
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -20,8 +19,8 @@ import com.example.mjapp.ui.screen.navigation.BottomNavItems
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle24B
 import com.example.mjapp.R
-import com.example.mjapp.util.Constants
 import com.example.mjapp.ui.custom.OutlineText
+import com.example.mjapp.ui.screen.navigation.NavScreen
 import com.example.mjapp.ui.structure.BaseStatus
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
@@ -80,37 +79,43 @@ fun createGameCardItemList() = listOf(
         text = "포켓몬\n도감",
         imageRes = R.drawable.img_pokemon_dex,
         color = MyColorBeige,
-        pageAddress = Constants.PokemonDex
+        pageAddress = NavScreen.PokemonDex.item.routeWithPostFix
+    ),
+    GameCardItem(
+        text = "타이틀\n도감",
+        imageRes = R.drawable.img_pokemon_dex,
+        color = MyColorBeige,
+        pageAddress = NavScreen.GenerationDex.item.routeWithPostFix
     ),
     GameCardItem(
         text = "포켓몬\n카운터",
         imageRes = R.drawable.img_pokemon_counter,
         color = MyColorTurquoise,
-        pageAddress = Constants.PokemonCounter
+        pageAddress = NavScreen.PokemonCounter.item.routeWithPostFix
     ),
     GameCardItem(
         text = "엘소드\n캐릭터 소개",
         imageRes = R.drawable.img_elsword_introduce,
         color = MyColorRed,
-        pageAddress = Constants.ElswordIntroduce
+        pageAddress = NavScreen.ElswordIntroduce.item.routeWithPostFix
     ),
     GameCardItem(
         text = "엘소드\n카운터",
         imageRes = R.drawable.img_elsword_counter,
         color = MyColorPurple,
-        pageAddress = Constants.ElswordCounter
+        pageAddress = NavScreen.ElswordCounter.item.routeWithPostFix
     ),
     GameCardItem(
         text = "포켓몬\n등록",
         imageRes = R.drawable.img_pokemon_counter,
         color = MyColorTurquoise,
-        pageAddress = Constants.PokemonAdd
+        pageAddress = NavScreen.PokemonAdd.item.routeWithPostFix
     ),
     GameCardItem(
         text = "포켓몬 이미지\n수정",
         imageRes = R.drawable.img_pokemon_dex,
         color = MyColorBeige,
-        pageAddress = Constants.PokemonImageChange
+        pageAddress = NavScreen.PokemonImageChange.item.routeWithPostFix
     ),
 )
 

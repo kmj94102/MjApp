@@ -38,6 +38,19 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
+    object GenerationDex: NavScreen(
+        MainNavItem(
+            route = "GenerationDex"
+        )
+    )
+
+    object GenerationDexDetail: NavScreen(
+        MainNavItem(
+            route = "GenerationDexDetail",
+            routeWithPostFix = "GenerationDexDetail/{${Constants.INDEX}}"
+        )
+    )
+
     object PokemonCounter: NavScreen(
         MainNavItem(
             route = "PokemonCounter"
@@ -59,14 +72,14 @@ sealed class NavScreen(val item: MainNavItem) {
     object ScheduleAdd: NavScreen(
         MainNavItem(
             route = "ScheduleAdd",
-            routeWithPostFix = "ScheduleAdd/{${Constants.Date}}"
+            routeWithPostFix = "ScheduleAdd/{${Constants.DATE}}"
         )
     )
 
     object PlanAdd: NavScreen(
         MainNavItem(
             route = "PlanAdd",
-            routeWithPostFix = "PlanAdd/{${Constants.Date}}"
+            routeWithPostFix = "PlanAdd/{${Constants.DATE}}"
         )
     )
 
@@ -82,7 +95,7 @@ sealed class NavScreen(val item: MainNavItem) {
     object RegistrationFixedAccountBookItem: NavScreen(
         MainNavItem(
             route = "RegistrationFixedAccountBookItem",
-            routeWithPostFix = "RegistrationFixedAccountBookItem/{${Constants.Date}}"
+            routeWithPostFix = "RegistrationFixedAccountBookItem/{${Constants.DATE}}"
         )
     )
 
@@ -116,21 +129,21 @@ sealed class NavScreen(val item: MainNavItem) {
     object Memorize: NavScreen(
         MainNavItem(
             route = "MemorizeScreen",
-            routeWithPostFix = "MemorizeScreen/{${Constants.Day}}"
+            routeWithPostFix = "MemorizeScreen/{${Constants.DAY}}"
         )
     )
 
     object Exam: NavScreen(
         MainNavItem(
             route = "ExamScreen",
-            routeWithPostFix = "ExamScreen/{${Constants.Day}}"
+            routeWithPostFix = "ExamScreen/{${Constants.DAY}}"
         )
     )
 
     object WrongAnswers: NavScreen(
         MainNavItem(
             route = "WrongAnswer",
-            routeWithPostFix = "WrongAnswer/{${Constants.Day}}"
+            routeWithPostFix = "WrongAnswer/{${Constants.DAY}}"
         )
     )
 }

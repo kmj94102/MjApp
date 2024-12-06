@@ -20,7 +20,7 @@ class ScheduleAddViewModel @Inject constructor(
     private val repository: CalendarRepository
 ) : BaseViewModel() {
 
-    val initDate = savedStateHandle.get<String>(Constants.Date) ?: "2023.01.01"
+    val initDate = savedStateHandle.get<String>(Constants.DATE) ?: "2023.01.01"
     private var selectItem = SCHEDULE_DATE
 
     private val _scheduleModifier = mutableStateOf(ScheduleModifier())

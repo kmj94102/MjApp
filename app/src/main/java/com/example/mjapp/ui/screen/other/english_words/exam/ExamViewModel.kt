@@ -27,7 +27,7 @@ class ExamViewModel @Inject constructor(
     val state: State<ExamState> = _state
 
     init {
-        savedStateHandle.get<Int>(Constants.Day)?.let { day ->
+        savedStateHandle.get<Int>(Constants.DAY)?.let { day ->
             _state.update { it.copy(day = day) }
         }
         fetchExamination()

@@ -27,7 +27,7 @@ class WrongAnswerViewModel @Inject constructor(
     val state: State<WrongAnswerState> = _state
 
     init {
-        savedStateHandle.get<Int>(Constants.Day)?.let { day ->
+        savedStateHandle.get<Int>(Constants.DAY)?.let { day ->
             _state.update { it.copy(day = day) }
         }
         fetchWrongAnswer()

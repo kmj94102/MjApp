@@ -32,7 +32,7 @@ class MemorizeViewModel @Inject constructor(
     val address: StateFlow<String> = _address
 
     init {
-        savedStateHandle.get<Int>(Constants.Day)?.let { day ->
+        savedStateHandle.get<Int>(Constants.DAY)?.let { day ->
             _state.update { it.copy(day = day) }
             _address.value = getAudioAddress(day)
         }
