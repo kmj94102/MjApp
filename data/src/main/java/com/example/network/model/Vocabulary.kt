@@ -62,3 +62,20 @@ data class WrongAnswer(
     val hint: String,
     val count: Int
 )
+
+
+data class Note(
+    val noteId: Int,
+    val timestamp: String,
+    val title: String,
+    val language: String
+) {
+    fun getLanguageKr() =
+        if (language == "us") "영어" else "일어"
+}
+
+data class NoteParam(
+    val year: Int,
+    val month: Int,
+    val language: String
+)

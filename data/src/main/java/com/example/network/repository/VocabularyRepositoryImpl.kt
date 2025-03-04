@@ -2,8 +2,11 @@ package com.example.network.repository
 
 import com.example.network.model.DayParam
 import com.example.network.model.Examination
+import com.example.network.model.Note
+import com.example.network.model.NoteParam
 import com.example.network.model.getFailureThrow
 import com.example.network.service.VocabularyClient
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -41,6 +44,15 @@ class VocabularyRepositoryImpl @Inject constructor(
     override fun fetchWrongAnswer(day: Int) = flow {
         client
             .fetchWrongAnswer(DayParam(day))
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
+
+
+    /** 노트 조회 **/
+    override fun fetchNotes(param: NoteParam): Flow<List<Note>> = flow {
+        client
+            .fetchNotes(param)
             .onSuccess { emit(it) }
             .getFailureThrow()
     }

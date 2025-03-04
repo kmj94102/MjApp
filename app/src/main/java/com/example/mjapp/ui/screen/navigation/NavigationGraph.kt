@@ -33,6 +33,7 @@ import com.example.mjapp.ui.screen.other.english_words.exam.ExamScreen
 import com.example.mjapp.ui.screen.other.english_words.memorize.MemorizeScreen
 import com.example.mjapp.ui.screen.other.english_words.wrong_answer.WrongAnswerScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
+import com.example.mjapp.ui.screen.other.word.note.NoteScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
 
@@ -355,6 +356,13 @@ fun NavGraphBuilder.otherScreens(
             onBackClick = onBackClick
         )
     }
+    /** 단어 암기 리스트 화면 **/
+    composable(
+        route = NavScreen.Note.item.routeWithPostFix
+    ) {
+        NoteScreen(onBackClick = onBackClick)
+    }
+
     /** 영단어 암기 화면 **/
     composable(
         route = NavScreen.EnglishWords.item.routeWithPostFix

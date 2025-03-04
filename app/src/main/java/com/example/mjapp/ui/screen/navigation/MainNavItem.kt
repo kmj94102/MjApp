@@ -120,6 +120,12 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
+    object Note: NavScreen(
+        MainNavItem(
+            route = "NoteScreen"
+        )
+    )
+
     object EnglishWords: NavScreen(
         MainNavItem(
             route = "EnglishWordsScreen"

@@ -2,6 +2,7 @@ package com.example.network.service
 
 import com.example.network.model.DayParam
 import com.example.network.model.Examination
+import com.example.network.model.NoteParam
 import javax.inject.Inject
 
 class VocabularyClient @Inject constructor(
@@ -21,5 +22,9 @@ class VocabularyClient @Inject constructor(
 
     suspend fun fetchWrongAnswer(item: DayParam) = runCatching {
         service.fetchWrongAnswer(item)
+    }
+
+    suspend fun fetchNotes(param: NoteParam) = runCatching {
+        service.fetchNotes(param)
     }
 }
