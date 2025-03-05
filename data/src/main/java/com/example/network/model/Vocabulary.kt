@@ -13,13 +13,13 @@ data class VocabularyListResult(
     val list: List<Vocabulary>
 )
 
-data class Word(
-    val modify: String,
-    val day: Int,
-    val name: String,
-    val meaning: String,
-    val id: Int
-)
+//data class Word(
+//    val modify: String,
+//    val day: Int,
+//    val name: String,
+//    val meaning: String,
+//    val id: Int
+//)
 
 data class Vocabulary(
     val meaning: String,
@@ -78,4 +78,26 @@ data class NoteParam(
     val year: Int,
     val month: Int,
     val language: String
+)
+
+data class NoteIdParam(
+    val noteId: Int
+)
+
+data class Word(
+    val noteId: Int,
+    val word: String,
+    val meaning: String,
+    val note1: String,
+    val note2: String,
+    val examples: List<WordExample>
+)
+
+data class WordExample(
+    val wordId: Int,
+    val wordExampleId: Int,
+    val example: String,
+    val meaning: String,
+    val hint: String,
+    val isCheck: Boolean
 )

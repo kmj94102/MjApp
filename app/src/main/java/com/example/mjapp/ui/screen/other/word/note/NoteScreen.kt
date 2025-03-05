@@ -38,6 +38,7 @@ import com.example.mjapp.ui.theme.MyColorPurpleDark
 import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.ui.theme.MyColorTurquoiseDark
 import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12
 import com.example.mjapp.util.textStyle16B
 import com.example.mjapp.util.textStyle18
@@ -47,6 +48,7 @@ import com.example.network.model.Note
 @Composable
 fun NoteScreen(
     onBackClick: () -> Unit,
+    goToWordDetail: (Int, String) -> Unit,
     viewModel: NoteViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
@@ -57,7 +59,10 @@ fun NoteScreen(
             NoteHeader(onBackClick)
         },
         bodyContent = {
-            NoteContent(viewModel = viewModel)
+            NoteContent(
+                viewModel = viewModel,
+                goToWordDetail = goToWordDetail
+            )
         }
     )
 }
@@ -75,7 +80,10 @@ fun NoteHeader(onBackClick: () -> Unit) {
 }
 
 @Composable
-fun NoteContent(viewModel: NoteViewModel) {
+fun NoteContent(
+    viewModel: NoteViewModel,
+    goToWordDetail: (Int, String) -> Unit
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -141,14 +149,17 @@ fun NoteContent(viewModel: NoteViewModel) {
             modifier = Modifier.fillMaxWidth()
         ) {
             viewModel.state.value.noteList.forEach {
-                item { NoteItem(it) }
+                item { NoteItem(it, goToWordDetail) }
             }
         }
     }
 }
 
 @Composable
-fun NoteItem(item: Note) {
+fun NoteItem(
+    item: Note,
+    goToWordDetail: (Int, String) -> Unit
+) {
     DoubleCard(
         bottomCardColor = if (item.language == "us") {
             MyColorPurple
@@ -157,6 +168,7 @@ fun NoteItem(item: Note) {
         },
         modifier = Modifier
             .fillMaxWidth()
+            .nonRippleClickable { goToWordDetail(item.noteId, item.title) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

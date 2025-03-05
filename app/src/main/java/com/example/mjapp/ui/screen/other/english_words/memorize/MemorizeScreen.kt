@@ -1,7 +1,5 @@
 package com.example.mjapp.ui.screen.other.english_words.memorize
 
-import android.media.MediaPlayer
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -124,9 +121,9 @@ fun MemorizeItem(
                 Text(
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(item.wordGroup.name)
+                            append("")
                         }
-                        append(", ${item.wordGroup.modify}")
+                        append(", ${item.wordGroup}")
                     },
                     style = textStyle18(),
                     modifier = Modifier.fillMaxWidth()

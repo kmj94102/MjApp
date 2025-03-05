@@ -33,6 +33,7 @@ import com.example.mjapp.ui.screen.other.english_words.exam.ExamScreen
 import com.example.mjapp.ui.screen.other.english_words.memorize.MemorizeScreen
 import com.example.mjapp.ui.screen.other.english_words.wrong_answer.WrongAnswerScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
+import com.example.mjapp.ui.screen.other.word.detail.WordDetailScreen
 import com.example.mjapp.ui.screen.other.word.note.NoteScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
@@ -360,7 +361,29 @@ fun NavGraphBuilder.otherScreens(
     composable(
         route = NavScreen.Note.item.routeWithPostFix
     ) {
-        NoteScreen(onBackClick = onBackClick)
+        NoteScreen(
+            onBackClick = onBackClick,
+            goToWordDetail = { idx, title ->
+                navController.navigate(
+                    makeRouteWithArgs(
+                        NavScreen.WordDetail.item.route,
+                        idx.toString(),
+                        title
+                    )
+                )
+            }
+        )
+    }
+
+    /** 단어 상세 화면 **/
+    composable(
+        route = NavScreen.WordDetail.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(Constants.INDEX) { type = NavType.IntType },
+            navArgument(Constants.TITLE) { type = NavType.StringType }
+        )
+    ) {
+        WordDetailScreen(onBackClick = onBackClick)
     }
 
     /** 영단어 암기 화면 **/

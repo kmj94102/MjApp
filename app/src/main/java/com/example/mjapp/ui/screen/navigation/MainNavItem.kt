@@ -126,6 +126,13 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
+    object WordDetail: NavScreen(
+        MainNavItem(
+            route = "WordDetail",
+            routeWithPostFix = "WordDetail/{${Constants.INDEX}}/{${Constants.TITLE}}"
+        )
+    )
+
     object EnglishWords: NavScreen(
         MainNavItem(
             route = "EnglishWordsScreen"
