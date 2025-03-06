@@ -34,4 +34,6 @@ data class NoteState(
     )
 
     fun isLanguageSelect(value: String) = value == language
+
+    fun getMonthString() = month.toString().padStart(2, '0')
 }

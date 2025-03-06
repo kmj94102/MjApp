@@ -18,6 +18,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +34,7 @@ import com.example.mjapp.ui.custom.CommonButton
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.UnderLineText
+import com.example.mjapp.ui.dialog.YearMonthSelectDialog
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorPurple
@@ -52,6 +56,7 @@ fun NoteScreen(
     viewModel: NoteViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
+    var isYearMonthDialogShow by remember { mutableStateOf(false) }
 
     HeaderBodyContainer(
         status = status,
@@ -61,9 +66,18 @@ fun NoteScreen(
         bodyContent = {
             NoteContent(
                 viewModel = viewModel,
-                goToWordDetail = goToWordDetail
+                goToWordDetail = goToWordDetail,
+                showDialog = { isYearMonthDialogShow = true }
             )
         }
+    )
+
+    YearMonthSelectDialog(
+        year = viewModel.state.value.year.toString(),
+        month = viewModel.state.value.getMonthString(),
+        isShow = isYearMonthDialogShow,
+        onDismiss = { isYearMonthDialogShow = false },
+        onSelect = viewModel::updateSelectMonth
     )
 }
 
@@ -82,6 +96,7 @@ fun NoteHeader(onBackClick: () -> Unit) {
 @Composable
 fun NoteContent(
     viewModel: NoteViewModel,
+    showDialog: () -> Unit,
     goToWordDetail: (Int, String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -94,7 +109,9 @@ fun NoteContent(
             UnderLineText(
                 textValue = viewModel.state.value.getDate(),
                 textStyle = textStyle18(),
-                underLineColor = MyColorBeige
+                underLineColor = MyColorBeige,
+                modifier = Modifier
+                    .nonRippleClickable { showDialog() }
             )
             Spacer(modifier = Modifier.weight(1f))
 

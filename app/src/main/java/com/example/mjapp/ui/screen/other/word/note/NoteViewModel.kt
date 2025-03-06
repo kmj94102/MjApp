@@ -48,4 +48,11 @@ class NoteViewModel @Inject constructor(
         fetchNotes()
     }
 
+    fun updateSelectMonth(year: String, month: String) {
+        _state.update {
+            it.copy(year = year.toInt(), month = month.toInt())
+        }
+        fetchNotes()
+    }
+
 }
