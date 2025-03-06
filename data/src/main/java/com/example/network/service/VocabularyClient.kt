@@ -1,7 +1,5 @@
 package com.example.network.service
 
-import com.example.network.model.DayParam
-import com.example.network.model.Examination
 import com.example.network.model.NoteIdParam
 import com.example.network.model.NoteParam
 import javax.inject.Inject
@@ -9,26 +7,12 @@ import javax.inject.Inject
 class VocabularyClient @Inject constructor(
     private val service: VocabularyService
 ) {
-    suspend fun fetchVocabularyList(item: DayParam) = runCatching {
-        service.fetchVocabularyList(item)
-    }
-
-    suspend fun fetchExamination(item: DayParam) = runCatching {
-        service.fetchExamination(item)
-    }
-
-    suspend fun fetchExaminationScoring(items: List<Examination>) = runCatching {
-        service.fetchExaminationScoring(items)
-    }
-
-    suspend fun fetchWrongAnswer(item: DayParam) = runCatching {
-        service.fetchWrongAnswer(item)
-    }
-
+    /** 노트 조회 **/
     suspend fun fetchNotes(param: NoteParam) = runCatching {
         service.fetchNotes(param)
     }
 
+    /** 단어 조회 **/
     suspend fun fetchWords(param: NoteIdParam) = runCatching {
         service.fetchWords(param)
     }

@@ -8,10 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.mjapp.ui.screen.accountbook.AccountBookScreen
-import com.example.mjapp.ui.screen.accountbook.fixed.RegistrationFixedAccountBookScreen
 import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
 import com.example.mjapp.ui.screen.accountbook.detail.AccountBookDetailScreen
 import com.example.mjapp.ui.screen.accountbook.fixed.AddFixedAccountBookScreen
+import com.example.mjapp.ui.screen.accountbook.fixed.RegistrationFixedAccountBookScreen
 import com.example.mjapp.ui.screen.calendar.CalendarScreen
 import com.example.mjapp.ui.screen.calendar.add.PlanAddScreen
 import com.example.mjapp.ui.screen.calendar.add.ScheduleAddScreen
@@ -28,10 +28,6 @@ import com.example.mjapp.ui.screen.game.pokemon.generation.GenerationDetailScree
 import com.example.mjapp.ui.screen.game.pokemon.generation.GenerationDexScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
-import com.example.mjapp.ui.screen.other.english_words.EnglishWordsScreen
-import com.example.mjapp.ui.screen.other.english_words.exam.ExamScreen
-import com.example.mjapp.ui.screen.other.english_words.memorize.MemorizeScreen
-import com.example.mjapp.ui.screen.other.english_words.wrong_answer.WrongAnswerScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
 import com.example.mjapp.ui.screen.other.word.detail.WordDetailScreen
 import com.example.mjapp.ui.screen.other.word.note.NoteScreen
@@ -282,7 +278,7 @@ fun NavGraphBuilder.accountBookScreens(
     composable(
         route = NavScreen.AddNewAccountBookItem.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(NavScreen.AddNewAccountBookItem.Date) { type = NavType.StringType }
+            navArgument(NavScreen.AddNewAccountBookItem.DATE) { type = NavType.StringType }
         )
     ) {
         AddNewAccountBookItemScreen(onBackClick)
@@ -316,7 +312,7 @@ fun NavGraphBuilder.accountBookScreens(
     composable(
         route = NavScreen.AccountBookDetail.item.routeWithPostFix,
         arguments = listOf(
-            navArgument(NavScreen.AccountBookDetail.Date) { type = NavType.StringType }
+            navArgument(NavScreen.AccountBookDetail.DATE) { type = NavType.StringType }
         )
     ) {
         AccountBookDetailScreen(
@@ -386,63 +382,4 @@ fun NavGraphBuilder.otherScreens(
         WordDetailScreen(onBackClick = onBackClick)
     }
 
-    /** 영단어 암기 화면 **/
-    composable(
-        route = NavScreen.EnglishWords.item.routeWithPostFix
-    ) {
-        EnglishWordsScreen(
-            onBackClick = onBackClick,
-            goToScreen = { route, args ->
-                navController.navigate(
-                    makeRouteWithArgs(
-                        route,
-                        args
-                    )
-                )
-            }
-        )
-    }
-    /** 영단어 암기하기 화면 **/
-    composable(
-        route = NavScreen.Memorize.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(Constants.DAY) { type = NavType.IntType }
-        )
-    ) {
-        MemorizeScreen(
-            onBackClick = onBackClick
-        )
-    }
-    /** 영단어 테스트 화면 **/
-    composable(
-        route = NavScreen.Exam.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(Constants.DAY) { type = NavType.IntType }
-        )
-    ) {
-        ExamScreen(
-            onBackClick = onBackClick,
-            goToWrongAnswer = { day ->
-                navController.navigate(
-                    makeRouteWithArgs(
-                        NavScreen.WrongAnswers.item.route,
-                        day.toString()
-                    )
-                ) {
-                    navController.popBackStack()
-                }
-            }
-        )
-    }
-    /** 오답노트 화면 **/
-    composable(
-        route = NavScreen.WrongAnswers.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(Constants.DAY) { type = NavType.IntType }
-        )
-    ) {
-        WrongAnswerScreen(
-            onBackClick = onBackClick
-        )
-    }
 }

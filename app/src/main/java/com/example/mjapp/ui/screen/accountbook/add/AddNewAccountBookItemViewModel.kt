@@ -28,7 +28,7 @@ class AddNewAccountBookItemViewModel @Inject constructor(
     val isIncome: State<Boolean> = _isIncome
 
     init {
-        savedStateHandle.get<String>(NavScreen.AddNewAccountBookItem.Date)?.let {
+        savedStateHandle.get<String>(NavScreen.AddNewAccountBookItem.DATE)?.let {
             updateDateInfo(it)
         }
     }

@@ -89,7 +89,7 @@ sealed class NavScreen(val item: MainNavItem) {
             routeWithPostFix = "AddNewAccountBookItem/{date}"
         )
     ) {
-        const val Date = "date"
+        const val DATE = "date"
     }
 
     object RegistrationFixedAccountBookItem: NavScreen(
@@ -111,7 +111,7 @@ sealed class NavScreen(val item: MainNavItem) {
             routeWithPostFix = "AccountBookDetail/{date}"
         )
     ) {
-        const val Date = "date"
+        const val DATE = "date"
     }
 
     object InternetFavorites: NavScreen(
@@ -133,30 +133,4 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
-    object EnglishWords: NavScreen(
-        MainNavItem(
-            route = "EnglishWordsScreen"
-        )
-    )
-
-    object Memorize: NavScreen(
-        MainNavItem(
-            route = "MemorizeScreen",
-            routeWithPostFix = "MemorizeScreen/{${Constants.DAY}}"
-        )
-    )
-
-    object Exam: NavScreen(
-        MainNavItem(
-            route = "ExamScreen",
-            routeWithPostFix = "ExamScreen/{${Constants.DAY}}"
-        )
-    )
-
-    object WrongAnswers: NavScreen(
-        MainNavItem(
-            route = "WrongAnswer",
-            routeWithPostFix = "WrongAnswer/{${Constants.DAY}}"
-        )
-    )
 }

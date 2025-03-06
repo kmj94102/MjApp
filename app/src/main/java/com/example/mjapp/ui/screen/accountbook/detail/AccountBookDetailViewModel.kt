@@ -25,7 +25,7 @@ class AccountBookDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    val date = savedStateHandle.get<String>(NavScreen.AccountBookDetail.Date) ?: "2023.01.01"
+    val date = savedStateHandle.get<String>(NavScreen.AccountBookDetail.DATE) ?: "2023.01.01"
 
     private val _info = mutableStateOf(AccountBookDetailInfo.init())
     val info: State<AccountBookDetailInfo> = _info
