@@ -22,6 +22,7 @@ import com.example.mjapp.ui.custom.PageMoveCardItem
 import com.example.mjapp.ui.screen.navigation.NavScreen
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.util.makeRouteWithArgs
 import com.example.mjapp.util.textStyle16B
 
 @Composable
@@ -37,7 +38,26 @@ fun OtherScreen(
         PageMoveCardItem(
             text = "영단어 암기",
             imageRes = R.drawable.ic_english_study,
-            onClick = { goToScreen(NavScreen.Note.item.routeWithPostFix) }
+            onClick = {
+                goToScreen(
+                    makeRouteWithArgs(
+                        NavScreen.Note.item.route,
+                        false.toString()
+                    )
+                )
+            }
+        ),
+        PageMoveCardItem(
+            text = "단어 테스트하기",
+            imageRes = R.drawable.ic_exam,
+            onClick = {
+                goToScreen(
+                    makeRouteWithArgs(
+                        NavScreen.Note.item.route,
+                        true.toString()
+                    )
+                )
+            }
         ),
     )
 

@@ -30,6 +30,7 @@ import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
 import com.example.mjapp.ui.screen.other.word.detail.WordDetailScreen
+import com.example.mjapp.ui.screen.other.word.exam.ExamScreen
 import com.example.mjapp.ui.screen.other.word.note.NoteScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
@@ -355,18 +356,33 @@ fun NavGraphBuilder.otherScreens(
     }
     /** 단어 암기 리스트 화면 **/
     composable(
-        route = NavScreen.Note.item.routeWithPostFix
+        route = NavScreen.Note.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(NavScreen.Note.IS_EXAM) { type = NavType.BoolType }
+        )
     ) {
         NoteScreen(
             onBackClick = onBackClick,
             goToWordDetail = { idx, title ->
-                navController.navigate(
-                    makeRouteWithArgs(
-                        NavScreen.WordDetail.item.route,
-                        idx.toString(),
-                        title
+                val isExam = it.arguments?.getBoolean(NavScreen.Note.IS_EXAM) ?: false
+
+                if (isExam) {
+                    navController.navigate(
+                        makeRouteWithArgs(
+                            NavScreen.WordExam.item.route,
+                            idx.toString(),
+                            title
+                        )
                     )
-                )
+                } else {
+                    navController.navigate(
+                        makeRouteWithArgs(
+                            NavScreen.WordDetail.item.route,
+                            idx.toString(),
+                            title
+                        )
+                    )
+                }
             }
         )
     }
@@ -380,6 +396,17 @@ fun NavGraphBuilder.otherScreens(
         )
     ) {
         WordDetailScreen(onBackClick = onBackClick)
+    }
+
+    /** 단어 테스트 화면 **/
+    composable(
+        route = NavScreen.WordExam.item.routeWithPostFix,
+        arguments = listOf(
+            navArgument(Constants.INDEX) { type = NavType.IntType },
+            navArgument(Constants.TITLE) { type = NavType.StringType }
+        )
+    ) {
+        ExamScreen(onBackClick = onBackClick)
     }
 
 }

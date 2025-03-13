@@ -122,14 +122,24 @@ sealed class NavScreen(val item: MainNavItem) {
 
     object Note: NavScreen(
         MainNavItem(
-            route = "NoteScreen"
+            route = "NoteScreen",
+            routeWithPostFix = "NoteScreen/{is_exam}"
         )
-    )
+    ) {
+        const val IS_EXAM = "is_exam"
+    }
 
     object WordDetail: NavScreen(
         MainNavItem(
             route = "WordDetail",
             routeWithPostFix = "WordDetail/{${Constants.INDEX}}/{${Constants.TITLE}}"
+        )
+    )
+
+    object WordExam: NavScreen(
+        MainNavItem(
+            route = "WordExample",
+            routeWithPostFix = "WordExample/{${Constants.INDEX}}/{${Constants.TITLE}}"
         )
     )
 

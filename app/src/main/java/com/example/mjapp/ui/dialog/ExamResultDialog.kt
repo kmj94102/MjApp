@@ -17,12 +17,12 @@ import com.example.mjapp.ui.custom.CommonLottieAnimation
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlue
 import com.example.mjapp.util.textStyle16
-import com.example.network.model.ExaminationScoringResult
+import com.example.network.model.WordTestResult
 
 @Composable
 fun ExamResultDialog(
     isShow: Boolean,
-    data: ExaminationScoringResult,
+    data: WordTestResult,
     onDismiss: () -> Unit,
     goToWrongAnswer: () -> Unit,
 ) {
@@ -55,7 +55,7 @@ fun ExamResultDialog(
                             color = MyColorBlue
                         )
                     ) {
-                        append(data.getScore())
+                        append(data.score)
                     }
                     append(data.getCount())
                 },

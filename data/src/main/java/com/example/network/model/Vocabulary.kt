@@ -1,68 +1,6 @@
 package com.example.network.model
 
-data class DayParam(
-    val day: Int
-)
-
-data class VocabularyList(
-    val result: List<VocabularyListResult>
-)
-
-data class VocabularyListResult(
-    val wordGroup: Word,
-    val list: List<Vocabulary>
-)
-
-//data class Word(
-//    val modify: String,
-//    val day: Int,
-//    val name: String,
-//    val meaning: String,
-//    val id: Int
-//)
-
-data class Vocabulary(
-    val meaning: String,
-    val day: Int,
-    val group: String,
-    val hint: String,
-    val id: Int,
-    val word: String
-)
-
-data class Examination(
-    val id: Int,
-    val word: String,
-    val meaning: String = ""
-)
-
-data class ExaminationScoringResult(
-    val totalSize: Int = 0,
-    val correctCount: Int = 0,
-    val wrongItems: List<Vocabulary> = listOf()
-) {
-    fun getScore(): String {
-        val score = 100f / totalSize * correctCount
-
-        return if(score % 1 == 0.0f) {
-            String.format("%.0f점", score)
-        } else {
-            String.format("%.2f점", score)
-        }
-    }
-
-    fun getCount() = " ($correctCount/${totalSize})"
-}
-
-data class WrongAnswer(
-    val id: Int,
-    val day: Int,
-    val word: String,
-    val meaning: String,
-    val hint: String,
-    val count: Int
-)
-
+import java.util.Locale
 
 data class Note(
     val noteId: Int,
@@ -81,17 +19,28 @@ data class NoteParam(
 )
 
 data class NoteIdParam(
-    val noteId: Int
+    val idx: Int
 )
 
 data class Word(
     val noteId: Int,
+    val wordId: Int,
     val word: String,
     val meaning: String,
     val note1: String,
     val note2: String,
     val examples: List<WordExample>
-)
+) {
+    fun toWordTest() = WordTest(
+        noteId = noteId,
+        wordId = wordId,
+        word = word,
+        meaning = meaning,
+        examples = examples,
+        myAnswer = "",
+        hint = examples.randomOrNull()?.hint ?: ""
+    )
+}
 
 data class WordExample(
     val wordId: Int,
@@ -101,3 +50,53 @@ data class WordExample(
     val hint: String,
     val isCheck: Boolean
 )
+
+data class WordTest(
+    val noteId: Int,
+    val wordId: Int,
+    val word: String,
+    val meaning: String,
+    val examples: List<WordExample>,
+    val myAnswer: String,
+    val hint: String
+) {
+    fun getNewHint() = this.copy(
+        hint = examples.randomOrNull()?.hint ?: ""
+    )
+
+    fun updateMyAnswer(value: String) = this.copy(
+        myAnswer = value
+    )
+}
+
+fun List<WordTest>.toWordTestResult(): WordTestResult {
+    val correctCount = this.count { it.word == it.myAnswer }
+    val score = 100f / size * correctCount
+
+    return WordTestResult(
+        totalSize = size,
+        correctCount = correctCount,
+        score = if(score % 1 == 0.0f) {
+            String.format(locale = Locale.ROOT, format = "%.0f점", score)
+        } else {
+            String.format(locale = Locale.ROOT, format = "%.2f점", score)
+        },
+        wrongAnswerParams = this.filter { it.word != it.myAnswer }.map {
+            WrongAnswerInsertParam(noteIdx = it.noteId, wordIdx = it.wordId)
+        }
+    )
+}
+
+data class WrongAnswerInsertParam(
+    val wordIdx: Int,
+    val noteIdx: Int
+)
+
+data class WordTestResult(
+    val totalSize: Int = 0,
+    val correctCount: Int = 0,
+    val score: String = "",
+    val wrongAnswerParams: List<WrongAnswerInsertParam> = listOf()
+) {
+    fun getCount() = " ($correctCount/${totalSize})"
+}
