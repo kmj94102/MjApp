@@ -48,6 +48,8 @@ class PokemonDexViewModel @Inject constructor(
     }
 
     fun fetchMoreData(index: Int) {
+        if (_state.value.isMoreDate.not()) return
+
         if (index >= 20 + (page * limit)) {
             page += 1
             fetchPokemonDex()

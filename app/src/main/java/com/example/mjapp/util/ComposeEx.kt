@@ -7,11 +7,13 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -19,49 +21,23 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.myFont
 
-fun textStyle12(
+fun textStyle14(
     color: Color = MyColorBlack,
     textAlign: TextAlign = TextAlign.Start
 ): TextStyle = TextStyle(
     color = color,
     fontFamily = myFont,
     fontWeight = FontWeight.Normal,
-    fontSize = 12.sp,
-    textAlign = textAlign
+    fontSize = 14.sp,
+    textAlign = textAlign,
+    lineHeight = 20.sp,
+    letterSpacing = -(0.025).em
 )
 
-fun textStyle12B(
+fun textStyle14B(
     color: Color = MyColorBlack,
     textAlign: TextAlign = TextAlign.Start
-): TextStyle = TextStyle(
-    color = color,
-    fontFamily = myFont,
-    fontWeight = FontWeight.Bold,
-    fontSize = 12.sp,
-    textAlign = textAlign
-)
-
-fun textStyle18(
-    color: Color = MyColorBlack,
-    textAlign: TextAlign = TextAlign.Start
-): TextStyle = TextStyle(
-    color = color,
-    fontFamily = myFont,
-    fontWeight = FontWeight.Normal,
-    fontSize = 18.sp,
-    textAlign = textAlign
-)
-
-fun textStyle18B(
-    color: Color = MyColorBlack,
-    textAlign: TextAlign = TextAlign.Start
-): TextStyle = TextStyle(
-    color = color,
-    fontFamily = myFont,
-    fontWeight = FontWeight.Bold,
-    fontSize = 18.sp,
-    textAlign = textAlign
-)
+): TextStyle = textStyle14(color, textAlign).copy(fontWeight = FontWeight.Bold)
 
 fun textStyle16(
     color: Color = MyColorBlack,
@@ -71,19 +47,49 @@ fun textStyle16(
     fontFamily = myFont,
     fontWeight = FontWeight.Normal,
     fontSize = 16.sp,
-    textAlign = textAlign
+    textAlign = textAlign,
+    letterSpacing = -(0.025).em
 )
 
 fun textStyle16B(
     color: Color = MyColorBlack,
     textAlign: TextAlign = TextAlign.Start
+): TextStyle = textStyle16(color, textAlign).copy(fontWeight = FontWeight.Bold)
+
+fun textStyle18(
+    color: Color = MyColorBlack,
+    textAlign: TextAlign = TextAlign.Start
 ): TextStyle = TextStyle(
     color = color,
     fontFamily = myFont,
-    fontWeight = FontWeight.Bold,
-    fontSize = 16.sp,
-    textAlign = textAlign
+    fontWeight = FontWeight.Normal,
+    fontSize = 18.sp,
+    textAlign = textAlign,
+    letterSpacing = -(0.025).em
 )
+
+fun textStyle18B(
+    color: Color = MyColorBlack,
+    textAlign: TextAlign = TextAlign.Start
+): TextStyle = textStyle18(color, textAlign).copy(fontWeight = FontWeight.Bold)
+
+fun textStyle20(
+    color: Color = MyColorBlack,
+    textAlign: TextAlign = TextAlign.Start
+): TextStyle = TextStyle(
+    color = color,
+    fontFamily = myFont,
+    fontWeight = FontWeight.Normal,
+    fontSize = 20.sp,
+    textAlign = textAlign,
+    letterSpacing = -(0.025).em,
+    lineHeight = 34.sp
+)
+
+fun textStyle20B(
+    color: Color = MyColorBlack,
+    textAlign: TextAlign = TextAlign.Start
+): TextStyle = textStyle20(color, textAlign).copy(fontWeight = FontWeight.Bold)
 
 fun textStyle24(
     color: Color = MyColorBlack,
@@ -93,18 +99,27 @@ fun textStyle24(
     fontFamily = myFont,
     fontWeight = FontWeight.Normal,
     fontSize = 24.sp,
-    textAlign = textAlign
+    textAlign = textAlign,
+    lineHeight = 24.sp,
+    letterSpacing = -(0.025).em
 )
 
 fun textStyle24B(
     color: Color = MyColorBlack,
     textAlign: TextAlign = TextAlign.Start
+): TextStyle = textStyle24(color, textAlign).copy(fontWeight = FontWeight.Bold)
+
+fun textStyle30B(
+    color: Color = MyColorBlack,
+    textAlign: TextAlign = TextAlign.Start
 ): TextStyle = TextStyle(
     color = color,
     fontFamily = myFont,
-    fontWeight = FontWeight.Bold,
-    fontSize = 24.sp,
-    textAlign = textAlign
+    fontWeight = FontWeight.Normal,
+    fontSize = 30.sp,
+    textAlign = textAlign,
+    lineHeight = 34.sp,
+    letterSpacing = -(0.025).em
 )
 
 fun Modifier.nonRippleClickable(
@@ -154,3 +169,10 @@ inline fun <T> LazyListScope.items(
         }
     }
 }
+
+fun pokemonBackground() = Brush.verticalGradient(
+    colors = listOf(
+        Color(0xFF5DBEE1),
+        Color(0xFF226496)
+    )
+)

@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.ui.theme.MyColorRed
-import com.example.mjapp.util.textStyle12B
+import com.example.mjapp.util.textStyle14B
 
 @Composable
 fun CommonAnimatedProgressBar(
@@ -55,7 +55,7 @@ fun CommonAnimatedProgressBar(
         if (isTextVisible) {
             Text(
                 text = "$percent %",
-                style = textStyle12B(),
+                style = textStyle14B(),
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .align(Alignment.CenterStart)

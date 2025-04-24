@@ -50,7 +50,7 @@ import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.formatAmount
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.rememberLifecycleEvent
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle16B
 import com.example.mjapp.util.textStyle24B
@@ -189,7 +189,7 @@ fun FixedAccountBookEmpty() {
     ) {
         Text(
             text = "등록된 고정 목록이 없습니다.\n고정 내역을 추가해 주세요.",
-            style = textStyle12().copy(
+            style = textStyle14().copy(
                 color = MyColorGray,
                 textAlign = TextAlign.Center
             )

@@ -1,6 +1,5 @@
 package com.example.mjapp.ui.structure
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +24,6 @@ import com.example.mjapp.ui.custom.CommonLottieAnimation
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.theme.MyColorRed
-import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle16B
@@ -34,25 +33,28 @@ import kotlinx.coroutines.delay
 @Composable
 fun BaseStructureScreen(
     status: BaseStatus,
+    modifier: Modifier = Modifier,
     onBackClick: (() -> Unit)? = null,
     errorScreen: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MyColorWhite)
-    ) {
-        if (status.isNetworkError) {
-            errorScreen()
-        } else {
-            content()
-        }
+    Scaffold {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            if (status.isNetworkError) {
+                errorScreen()
+            } else {
+                content()
+            }
 
-        if (status.isLoading) {
-            LoadingScreen()
+            if (status.isLoading) {
+                LoadingScreen()
+            }
         }
     }
 
@@ -71,15 +73,17 @@ fun BaseStructureScreen(
 @Composable
 fun BaseContainer(
     status: BaseStatus,
+    modifier: Modifier = Modifier,
     paddingValues: PaddingValues = PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp),
     reload: (() -> Unit)? = null,
     onBackClick: (() -> Unit)? = null,
     color: Color = MyColorRed,
     errorScreen: (@Composable () -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     BaseStructureScreen(
         status = status,
+        modifier = modifier,
         onBackClick = onBackClick,
         content = {
             Column(
@@ -109,6 +113,7 @@ fun BaseContainer(
 @Composable
 fun HeaderBodyContainer(
     status: BaseStatus,
+    modifier: Modifier = Modifier,
     paddingValues: PaddingValues =
         PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 0.dp),
     reload: (() -> Unit)? = null,
@@ -116,10 +121,11 @@ fun HeaderBodyContainer(
     color: Color = MyColorRed,
     errorScreen: (@Composable () -> Unit)? = null,
     headerContent: @Composable ColumnScope.() -> Unit,
-    bodyContent: @Composable ColumnScope.() -> Unit
+    bodyContent: @Composable ColumnScope.() -> Unit,
 ) {
     BaseContainer(
         status = status,
+        modifier = modifier,
         paddingValues = paddingValues,
         reload = reload,
         onBackClick = onBackClick,
@@ -136,6 +142,7 @@ fun HeaderBodyContainer(
 @Composable
 fun HighMediumLowContainer(
     status: BaseStatus,
+    modifier: Modifier = Modifier,
     paddingValues: PaddingValues =
         PaddingValues(top = 22.dp, start = 20.dp, end = 17.dp, bottom = 10.dp),
     reload: (() -> Unit)? = null,
@@ -152,7 +159,8 @@ fun HighMediumLowContainer(
         reload = reload,
         onBackClick = onBackClick,
         color = color,
-        errorScreen = errorScreen
+        errorScreen = errorScreen,
+        modifier = modifier
     ) {
         heightContent()
         Column(modifier = Modifier.weight(1f)) {

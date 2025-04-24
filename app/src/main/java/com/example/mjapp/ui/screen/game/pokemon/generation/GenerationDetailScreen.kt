@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,13 +24,13 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.AsyncImageDoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.dialog.GenerationDetailDialog
-import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonListEmptyItem
+//import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonListEmptyItem
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle12B
+import com.example.mjapp.util.textStyle14B
 import com.example.mjapp.util.textStyle16B
 import com.example.network.model.GenerationDex
 import com.example.network.model.getCatchStatus
@@ -89,7 +89,7 @@ fun GenerationDetailBody(
 ) {
     val state = rememberLazyGridState()
     if (list.isEmpty()) {
-        PokemonListEmptyItem()
+//        PokemonListEmptyItem()
     } else {
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
@@ -135,7 +135,7 @@ fun GenerationItem(
 
         Text(
             text = info.name,
-            style = textStyle12B().copy(fontSize = 10.sp)
+            style = textStyle14B().copy(fontSize = 10.sp)
         )
     }
 }

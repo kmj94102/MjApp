@@ -7,3 +7,10 @@ data class PokemonCounterUiState(
     val isSearchDialogShow: Boolean = false,
     val selectValue: PokemonCounter = PokemonCounter.init()
 )
+
+data class PokemonCounterState(
+    val list: List<PokemonCounter> = listOf(),
+    val selectIndex: Int = 0
+) {
+    fun getSelectPokemon() = list.getOrNull(selectIndex)
+}

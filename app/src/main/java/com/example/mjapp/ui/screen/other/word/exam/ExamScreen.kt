@@ -32,7 +32,7 @@ import com.example.mjapp.ui.structure.HighMediumLowContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle18
 import com.example.network.model.WordTest
@@ -149,7 +149,7 @@ fun ExamItem(
         Column(modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp)) {
             Text(
                 text = item.hint,
-                style = textStyle12()
+                style = textStyle14()
             )
             Spacer(modifier = Modifier.height(15.dp))
 

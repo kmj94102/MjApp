@@ -54,7 +54,7 @@ import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.getToday
 import com.example.mjapp.util.items
 import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.mjapp.util.textStyle16B
 import com.example.mjapp.util.textStyle18B
 import com.example.mjapp.util.textStyle24B
@@ -172,7 +172,7 @@ fun EmptySchedule() {
     ) {
         Text(
             text = "등록 된 일정이 없습니다.",
-            style = textStyle12().copy(
+            style = textStyle14().copy(
                 color = MyColorGray,
                 textAlign = TextAlign.Center
             ),
@@ -285,7 +285,7 @@ fun PokemonHomeContainer(
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = itemSelectInfo,
-                    style = textStyle12(color = MyColorWhite).copy(fontSize = 14.sp)
+                    style = textStyle14(color = MyColorWhite).copy(fontSize = 14.sp)
                 )
             }
             Box(

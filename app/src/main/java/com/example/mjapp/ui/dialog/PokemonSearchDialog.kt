@@ -31,7 +31,7 @@ import com.example.mjapp.ui.dialog.viewmodel.PokemonSearchViewModel
 import com.example.mjapp.ui.screen.game.pokemon.PokemonCardImage
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 
 @Composable
 fun PokemonSearchDialog(
@@ -124,7 +124,7 @@ fun ColumnScope.PokemonSearchEmpty(
             )
             Text(
                 text = message,
-                style = textStyle12().copy(
+                style = textStyle14().copy(
                     fontSize = 14.sp,
                     color = MyColorGray
                 )

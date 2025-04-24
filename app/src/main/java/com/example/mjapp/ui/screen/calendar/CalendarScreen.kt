@@ -229,7 +229,7 @@ fun CalendarEmptyContainer() {
     ) {
         Text(
             text = "등록 된 일정이 없습니다.",
-            style = textStyle12().copy(
+            style = textStyle14().copy(
                 color = MyColorGray,
                 textAlign = TextAlign.Center
             ),
@@ -293,7 +293,7 @@ fun CalendarScheduleContainer(
 
             Text(
                 text = info.getTime(),
-                style = textStyle12().copy(MyColorGray),
+                style = textStyle14().copy(MyColorGray),
                 modifier = Modifier.padding(top = 5.dp, start = 10.dp)
             )
             Text(
@@ -488,7 +488,7 @@ fun ListScheduleContainer(
     ) {
         Text(
             text = info.getTime(),
-            style = textStyle12().copy(MyColorGray),
+            style = textStyle14().copy(MyColorGray),
         )
         Text(
             text = info.scheduleTitle,

@@ -25,7 +25,7 @@ import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorGray
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle18
 import com.example.mjapp.util.textStyle18B
@@ -112,7 +112,7 @@ fun WordItem(item: Word) {
             if(item.note1.trim().isNotEmpty()) {
                 Text(
                     text = item.note1,
-                    style = textStyle12(color = MyColorGray),
+                    style = textStyle14(color = MyColorGray),
                     modifier = Modifier.padding(top = 14.dp, start = 15.dp, end = 15.dp)
                 )
             }
@@ -120,7 +120,7 @@ fun WordItem(item: Word) {
             if(item.note2.trim().isNotEmpty()) {
                 Text(
                     text = item.note2,
-                    style = textStyle12(color = MyColorGray),
+                    style = textStyle14(color = MyColorGray),
                     modifier = Modifier.padding(top = 14.dp, start = 15.dp, end = 15.dp)
                 )
             }
@@ -135,12 +135,12 @@ fun WordItem(item: Word) {
             item.examples.forEach {
                 Text(
                     text = it.example,
-                    style = textStyle12(color = MyColorGray),
+                    style = textStyle14(color = MyColorGray),
                     modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 5.dp)
                 )
                 Text(
                     text = it.meaning,
-                    style = textStyle12(color = MyColorGray),
+                    style = textStyle14(color = MyColorGray),
                     modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 10.dp)
                 )
             }

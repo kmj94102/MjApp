@@ -43,7 +43,7 @@ import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.ui.theme.MyColorTurquoiseDark
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.mjapp.util.textStyle16B
 import com.example.mjapp.util.textStyle18
 import com.example.mjapp.util.textStyle18B
@@ -210,7 +210,7 @@ fun NoteItem(
                     ) {
                         Text(
                             text = item.getLanguageKr(),
-                            style = textStyle12(
+                            style = textStyle14(
                                 color = if (item.language == "us") {
                                     MyColorPurpleDark
                                 } else {
@@ -221,7 +221,7 @@ fun NoteItem(
                     }
                     Spacer(modifier = Modifier.width(5.dp))
 
-                    Text(text = item.timestamp, style = textStyle12())
+                    Text(text = item.timestamp, style = textStyle14())
                 }
             }
             Spacer(modifier = Modifier.height(2.dp))

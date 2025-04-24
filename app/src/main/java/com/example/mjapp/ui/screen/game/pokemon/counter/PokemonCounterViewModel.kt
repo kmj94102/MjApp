@@ -1,10 +1,10 @@
 package com.example.mjapp.ui.screen.game.pokemon.counter
 
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.structure.BaseViewModel
-import com.example.mjapp.util.clearAndAddAll
-import com.example.network.model.PokemonCounter
+import com.example.mjapp.util.update
 import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -12,14 +12,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.max
 
 @HiltViewModel
 class PokemonCounterViewModel @Inject constructor(
     private val repository: PokemonRepository
 ) : BaseViewModel() {
 
-    private val _list = mutableStateListOf<PokemonCounter>()
-    val list: List<PokemonCounter> = _list
+    private val _state = mutableStateOf(PokemonCounterState())
+    val state: State<PokemonCounterState> = _state
 
     init {
         fetchPokemonCounter()
@@ -28,28 +29,31 @@ class PokemonCounterViewModel @Inject constructor(
     private fun fetchPokemonCounter() {
         repository
             .fetchPokemonCounter()
-            .onEach { _list.clearAndAddAll(it) }
-            .catch { _list.clear() }
+            .onEach { list ->
+                _state.update { it.copy(list = list) }
+            }
+            .catch { _state.update { it.copy(list = emptyList()) } }
             .launchIn(viewModelScope)
     }
 
-    fun insertPokemonCounter(number: String) = viewModelScope.launch {
-        repository.insertPokemonCounter(number)
+    fun updateSelectIndex(index: Int) {
+        _state.value = _state.value.copy(selectIndex = index)
     }
 
-    fun updateCounter(value: Int, number: String) = viewModelScope.launch {
-        repository.updateCounter(value, number)
+    fun updateCounter(value: Int) = viewModelScope.launch {
+        val pokemon = _state.value.getSelectPokemon() ?: return@launch
+        val count = max(pokemon.count + value, 0)
+
+        repository.updateCounter(count, pokemon.number)
     }
 
-    fun updateCustomIncrease(customIncrease: Int, number: String) = viewModelScope.launch {
-        repository.updateCustomIncrease(customIncrease, number)
+    fun deleteCounter() = viewModelScope.launch {
+        val pokemon = _state.value.getSelectPokemon() ?: return@launch
+        repository.deletePokemonCounter(pokemon.index)
     }
 
-    fun deleteCounter(index: Int) = viewModelScope.launch {
-        repository.deletePokemonCounter(index)
-    }
-
-    fun updateCatch(number: String) = viewModelScope.launch {
-        repository.updateCatch(number)
+    fun updateCatch() = viewModelScope.launch {
+        val pokemon = _state.value.getSelectPokemon() ?: return@launch
+        repository.updateCatch(pokemon.number)
     }
 }

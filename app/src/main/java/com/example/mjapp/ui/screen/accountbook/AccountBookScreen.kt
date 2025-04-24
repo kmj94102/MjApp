@@ -98,7 +98,7 @@ fun BaseDateAndAddButtonsRow(
                 Column(modifier = Modifier.width(IntrinsicSize.Max)) {
                     Text(
                         text = "기준일",
-                        style = textStyle12().copy(
+                        style = textStyle14().copy(
                             color = MyColorWhite,
                             textAlign = TextAlign.End
                         ),
@@ -236,7 +236,7 @@ fun SummaryThisMonthContainer(
 
         Text(
             text = "${info.startDate} ~ ${info.endDate}",
-            style = textStyle12().copy(color = MyColorGray, textAlign = TextAlign.End),
+            style = textStyle14().copy(color = MyColorGray, textAlign = TextAlign.End),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 5.dp, bottom = 5.dp, end = 15.dp)
@@ -311,7 +311,7 @@ fun AnalyzeLastMonthContainer(
 
         Text(
             text = "${info.start} ~ ${info.end}",
-            style = textStyle12(color = MyColorGray, textAlign = TextAlign.End),
+            style = textStyle14(color = MyColorGray, textAlign = TextAlign.End),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 5.dp, bottom = 5.dp, end = 15.dp)
@@ -328,7 +328,7 @@ fun AnalyzeLastMonthContainer(
         if (info.result.isEmpty()) {
             Text(
                 text = "사용 내역이 없습니다.",
-                style = textStyle12(color = MyColorGray, textAlign = TextAlign.Center),
+                style = textStyle14(color = MyColorGray, textAlign = TextAlign.Center),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 15.dp)
@@ -371,7 +371,7 @@ fun AnalyzeLastMonthItem(
             )
             Text(
                 text = "${item.percentage}%",
-                style = textStyle12().copy(color = MyColorGray, fontSize = 10.sp),
+                style = textStyle14().copy(color = MyColorGray, fontSize = 10.sp),
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -425,7 +425,7 @@ fun SummaryThisYearContainer(
 
         Text(
             text = "${getToday("yyyy")}년",
-            style = textStyle12().copy(color = MyColorGray, textAlign = TextAlign.End),
+            style = textStyle14().copy(color = MyColorGray, textAlign = TextAlign.End),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 5.dp, bottom = 5.dp, end = 15.dp)
@@ -484,7 +484,7 @@ fun SummaryThisYearItem(
 
         Text(
             text = item.info.formatAmountInTenThousand(),
-            style = textStyle12().copy(color = MyColorGray),
+            style = textStyle14().copy(color = MyColorGray),
             modifier = Modifier.padding(top = 5.dp)
         )
     }

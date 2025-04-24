@@ -30,7 +30,7 @@ import com.example.mjapp.ui.screen.accountbook.TitleAmountRow
 import com.example.mjapp.ui.screen.accountbook.detail.UsageHistoryItem
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorWhite
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.network.model.AccountBookDetailInfo
 import com.example.network.model.AccountBookHistoryDate
 import com.example.network.model.AccountBookItem
@@ -64,10 +64,10 @@ fun UsageHistoryDialog(
                         .fillMaxWidth()
                         .padding(vertical = 5.dp)
                 ) {
-                    Text(text = "기간 :", style = textStyle12())
+                    Text(text = "기간 :", style = textStyle14())
                     Text(
                         text = "${info.startDate} ~ ${info.endDate}",
-                        style = textStyle12(),
+                        style = textStyle14(),
                         textAlign = TextAlign.End,
                         modifier = Modifier.weight(1f)
                     )
@@ -117,7 +117,7 @@ fun UsageHistoryBody(
                         is AccountBookHistoryDate -> {
                             Text(
                                 text = it.date,
-                                style = textStyle12().copy(MyColorGray),
+                                style = textStyle14().copy(MyColorGray),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(MyColorWhite)

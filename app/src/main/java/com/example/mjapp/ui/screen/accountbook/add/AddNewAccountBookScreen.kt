@@ -272,7 +272,7 @@ fun ChooseWhereToUseCard(
                     )
                     Text(
                         text = it.typeName,
-                        style = textStyle12().copy(textAlign = TextAlign.Center),
+                        style = textStyle14().copy(textAlign = TextAlign.Center),
                         modifier = Modifier
                             .width(50.dp)
                             .padding(top = 5.dp)

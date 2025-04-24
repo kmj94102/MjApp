@@ -69,27 +69,27 @@ fun ComposeTest(
                 .clip(RoundedCornerShape(10.dp))
                 .background(MyColorLightGray)
         ) {
-            CommonProgressBar(
-                percent = 90,
-                progressColor = MyColorBeige,
-                backgroundColor = Color.Transparent,
-                isTextVisible = false,
-                modifier = Modifier.fillMaxWidth()
-            )
-            CommonProgressBar(
-                percent = 85,
-                progressColor = MyColorSkyBlue,
-                backgroundColor = Color.Transparent,
-                isTextVisible = false,
-                modifier = Modifier.fillMaxWidth()
-            )
-            CommonProgressBar(
-                percent = 70,
-                progressColor = MyColorRed,
-                backgroundColor = Color.Transparent,
-                isTextVisible = false,
-                modifier = Modifier.fillMaxWidth()
-            )
+//            CommonProgressBar(
+//                percent = 90,
+//                progressColor = MyColorBeige,
+//                backgroundColor = Color.Transparent,
+//                isTextVisible = false,
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//            CommonProgressBar(
+//                percent = 85,
+//                progressColor = MyColorSkyBlue,
+//                backgroundColor = Color.Transparent,
+//                isTextVisible = false,
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//            CommonProgressBar(
+//                percent = 70,
+//                progressColor = MyColorRed,
+//                backgroundColor = Color.Transparent,
+//                isTextVisible = false,
+//                modifier = Modifier.fillMaxWidth()
+//            )
         }
     }
 }

@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +52,7 @@ import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.mjapp.util.textStyle24B
 import com.example.network.model.ElswordCharacter
 import com.example.network.model.ElswordQuestDetail
@@ -171,7 +171,7 @@ fun ElswordCounterEmpty(
             )
             Text(
                 text = "퀘스트를 등록해주세요",
-                style = textStyle12().copy(fontSize = 14.sp, color = MyColorGray),
+                style = textStyle14().copy(fontSize = 14.sp, color = MyColorGray),
                 modifier = Modifier
                     .padding(top = 30.dp)
                     .align(Alignment.CenterHorizontally)
@@ -199,7 +199,7 @@ fun ElswordCounterContents(
 
         Text(
             text = "진행도 : ${detailInfo.getProgress()}%",
-            style = textStyle12().copy(fontSize = 14.sp)
+            style = textStyle14().copy(fontSize = 14.sp)
         )
 
         LazyColumn(

@@ -30,8 +30,8 @@ import com.example.mjapp.ui.custom.CommonSlider
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
-import com.example.mjapp.util.textStyle12
-import com.example.mjapp.util.textStyle12B
+import com.example.mjapp.util.textStyle14
+import com.example.mjapp.util.textStyle14B
 import com.example.network.model.ElswordQuestUpdate
 import com.example.network.model.ElswordQuestUpdateInfo
 
@@ -81,7 +81,7 @@ fun QuestStatusChangeDialog(
                     ) {
                         CommonRadio(
                             text = "진행 안 함",
-                            textStyle = textStyle12B().copy(fontSize = 14.sp),
+                            textStyle = textStyle14B().copy(fontSize = 14.sp),
                             color = MyColorRed,
                             check = item.isDoNotProceed(),
                             onCheckedChange = { item.updateStatus(ElswordQuestUpdate.Remove) }
@@ -90,7 +90,7 @@ fun QuestStatusChangeDialog(
 
                         CommonRadio(
                             text = "진행 중",
-                            textStyle = textStyle12B().copy(fontSize = 14.sp),
+                            textStyle = textStyle14B().copy(fontSize = 14.sp),
                             color = MyColorRed,
                             check = item.isProceed(),
                             onCheckedChange = { item.updateStatus(ElswordQuestUpdate.Ongoing) }
@@ -101,12 +101,12 @@ fun QuestStatusChangeDialog(
                             Row(modifier = Modifier.fillMaxWidth()) {
                                 Text(
                                     text = item.questName,
-                                    style = textStyle12().copy(fontSize = 14.sp)
+                                    style = textStyle14().copy(fontSize = 14.sp)
                                 )
                                 Spacer(modifier = Modifier.weight(1f))
                                 Text(
                                     text = "${item.progress}/${item.max}",
-                                    style = textStyle12B().copy(fontSize = 14.sp)
+                                    style = textStyle14B().copy(fontSize = 14.sp)
                                 )
                             }
                             CommonSlider(
@@ -122,7 +122,7 @@ fun QuestStatusChangeDialog(
 
                         CommonRadio(
                             text = "완료",
-                            textStyle = textStyle12B().copy(fontSize = 14.sp),
+                            textStyle = textStyle14B().copy(fontSize = 14.sp),
                             color = MyColorRed,
                             check = item.isComplete(),
                             onCheckedChange = { item.updateStatus(ElswordQuestUpdate.Complete) }

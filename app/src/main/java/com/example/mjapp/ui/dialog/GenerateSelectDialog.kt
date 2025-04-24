@@ -23,7 +23,7 @@ import com.example.mjapp.ui.custom.SelectSpinner
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -51,7 +51,7 @@ fun GenerateSelectDialog(
                 Box(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "포켓몬 세대 선택",
-                        style = textStyle12().copy(fontSize = 22.sp),
+                        style = textStyle14().copy(fontSize = 22.sp),
                         modifier = Modifier
                             .padding(top = 11.dp)
                             .align(Alignment.Center)

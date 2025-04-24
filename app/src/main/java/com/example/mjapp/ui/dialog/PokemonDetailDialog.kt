@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
@@ -56,7 +56,7 @@ import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
-import com.example.mjapp.util.textStyle12
+import com.example.mjapp.util.textStyle14
 import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle16B
 import com.example.mjapp.util.textStyle24B
@@ -170,7 +170,7 @@ fun ColumnScope.PokemonDetailEmpty() {
             )
             androidx.compose.material3.Text(
                 text = "정보를 가져오지 못했어요.",
-                style = textStyle12().copy(
+                style = textStyle14().copy(
                     fontSize = 14.sp,
                     color = MyColorGray
                 )
@@ -222,7 +222,7 @@ fun PokemonDescription(
                 style = textStyle16().copy(fontSize = 18.sp, color = MyColorWhite)
             )
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = "약점", style = textStyle12().copy(color = MyColorWhite))
+            Text(text = "약점", style = textStyle14().copy(color = MyColorWhite))
             info.getWeekImageList().forEach {
                 Image(
                     painter = painterResource(id = it),
@@ -241,7 +241,7 @@ fun PokemonDescription(
         )
         Text(
             text = info.getClassAndCharacter(),
-            style = textStyle12().copy(color = MyColorWhite),
+            style = textStyle14().copy(color = MyColorWhite),
             modifier = Modifier.padding(start = 20.dp, top = 5.dp)
         )
         Row(modifier = Modifier.padding(top = 5.dp, start = 20.dp)) {
@@ -251,7 +251,7 @@ fun PokemonDescription(
         }
         Text(
             text = info.pokemonInfo.description,
-            style = textStyle12().copy(fontSize = 18.sp, color = MyColorWhite),
+            style = textStyle14().copy(fontSize = 18.sp, color = MyColorWhite),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, top = 10.dp)
@@ -386,7 +386,7 @@ fun PokemonTypeClip(typeInfo: TypeInfo) {
         )
         Text(
             text = typeInfo.koreanName,
-            style = textStyle12().copy(textAlign = TextAlign.Center),
+            style = textStyle14().copy(textAlign = TextAlign.Center),
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(start = 20.dp)
@@ -531,7 +531,7 @@ private fun DividingLine() {
 private fun RowScope.PokemonStatusText(text: String) {
     Text(
         text = text,
-        style = textStyle12().copy(
+        style = textStyle14().copy(
             color = MyColorWhite,
             textAlign = TextAlign.Center
         ),

@@ -15,7 +15,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,7 +42,7 @@ import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.util.formatAmountWithSign
 import com.example.mjapp.util.rememberLifecycleEvent
-import com.example.mjapp.util.textStyle12B
+import com.example.mjapp.util.textStyle14B
 import com.example.mjapp.util.textStyle16B
 import com.example.network.model.FixedItem
 import kotlin.math.absoluteValue
@@ -166,7 +166,7 @@ fun FrequentlySpinner(
                 if (isSetting) {
                     Text(
                         text = item.amount.formatAmountWithSign(),
-                        style = textStyle12B().copy(color = color),
+                        style = textStyle14B().copy(color = color),
                         modifier = Modifier
                             .padding(end = 10.dp)
                             .graphicsLayer {
