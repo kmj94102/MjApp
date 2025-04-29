@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -18,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.myFont
 
@@ -125,14 +125,12 @@ fun textStyle30B(
 fun Modifier.nonRippleClickable(
     onClick: () -> Unit
 ) = composed {
-    this.then(
-        clickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ) {
-            onClick()
-        }
-    )
+    this.clickable(
+        indication = null,
+        interactionSource = remember { MutableInteractionSource() }
+    ) {
+        onClick()
+    }
 }
 
 @Composable
@@ -174,5 +172,12 @@ fun pokemonBackground() = Brush.verticalGradient(
     colors = listOf(
         Color(0xFF5DBEE1),
         Color(0xFF226496)
+    )
+)
+
+fun pokemonGrayBackground() = Brush.verticalGradient(
+    colors = listOf(
+        Color(0xFFA2A2A2),
+        Color(0xFF767676)
     )
 )

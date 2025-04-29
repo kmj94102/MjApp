@@ -27,7 +27,7 @@ import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.dialog.DaySelectDialog
 import com.example.mjapp.ui.screen.accountbook.add.ChooseWhereToUseCard
-import com.example.mjapp.ui.structure.HighMediumLowContainer
+import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -44,7 +44,7 @@ fun AddFixedAccountBookScreen(
     var isShow by remember { mutableStateOf(false) }
     val color = if (viewModel.item.value.isIncome) MyColorTurquoise else MyColorRed
 
-    HighMediumLowContainer(
+    HeaderBodyBottomContainer(
         status = status,
         heightContent = {
             AddFixedAccountBookHigh(
@@ -54,14 +54,14 @@ fun AddFixedAccountBookScreen(
                 color = color
             )
         },
-        mediumContent = {
+        bodyContent = {
             AddFixedAccountBookMedium(
                 viewModel = viewModel,
                 color = color,
                 onDateSelect = { isShow = true }
             )
         },
-        lowContent = {
+        bottomContent = {
             AddFixedAccountBookLow(
                 color = color,
                 onAddClick = viewModel::insertFixedAccountBookItem

@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.screen.navigation.BottomNavItems
 import com.example.mjapp.util.nonRippleClickable
@@ -21,13 +22,14 @@ import com.example.mjapp.util.textStyle24B
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.OutlineText
 import com.example.mjapp.ui.screen.navigation.NavScreen
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.BaseStatus
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
 
 @Composable
 fun GameScreen(
-    goToScreen: (String) -> Unit
+    navHostController: NavHostController? = null
 ) {
     HeaderBodyContainer(
         status = BaseStatus(),
@@ -39,14 +41,14 @@ fun GameScreen(
             )
         },
         bodyContent = {
-            GameBody(goToScreen = goToScreen)
+            GameBody(navHostController = navHostController)
         }
     )
 }
 
 @Composable
 fun GameBody(
-    goToScreen: (String) -> Unit
+    navHostController: NavHostController?
 ) {
     val list = createGameCardItemList()
 
@@ -59,7 +61,7 @@ fun GameBody(
             item {
                 GameCard(
                     gameCardItem = it,
-                    onClick = goToScreen
+                    navHostController = navHostController
                 )
             }
         }
@@ -71,7 +73,8 @@ data class GameCardItem(
     @DrawableRes
     val imageRes: Int,
     val color: Color,
-    val pageAddress: String
+    val pageAddress: String,
+    val page: NavScreen2? = null
 )
 
 fun createGameCardItemList() = listOf(
@@ -79,7 +82,8 @@ fun createGameCardItemList() = listOf(
         text = "포켓몬\n도감",
         imageRes = R.drawable.img_pokemon_dex,
         color = MyColorBeige,
-        pageAddress = NavScreen.PokemonDex.item.routeWithPostFix
+        pageAddress = "",
+        page = NavScreen2.PokemonDex
     ),
     GameCardItem(
         text = "타이틀\n도감",
@@ -91,7 +95,8 @@ fun createGameCardItemList() = listOf(
         text = "포켓몬\n카운터",
         imageRes = R.drawable.img_pokemon_counter,
         color = MyColorTurquoise,
-        pageAddress = NavScreen.PokemonCounter.item.routeWithPostFix
+        pageAddress = NavScreen.PokemonCounter.item.routeWithPostFix,
+        page = NavScreen2.PokemonCounter
     ),
     GameCardItem(
         text = "엘소드\n캐릭터 소개",
@@ -122,14 +127,18 @@ fun createGameCardItemList() = listOf(
 @Composable
 fun GameCard(
     gameCardItem: GameCardItem,
-    onClick: (String) -> Unit
+    navHostController: NavHostController?
 ) {
     DoubleCard(
         bottomCardColor = gameCardItem.color,
         modifier = Modifier
             .fillMaxWidth()
             .height(125.dp)
-            .nonRippleClickable { onClick(gameCardItem.pageAddress) }
+            .nonRippleClickable {
+                if (gameCardItem.page != null) {
+                    navHostController?.navigate(gameCardItem.page)
+                }
+            }
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Image(

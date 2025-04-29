@@ -1,6 +1,7 @@
 package com.example.mjapp.ui.screen.navigation
 
 import com.example.mjapp.util.Constants
+import kotlinx.serialization.Serializable
 
 data class MainNavItem(
     val route: String,
@@ -143,4 +144,15 @@ sealed class NavScreen(val item: MainNavItem) {
         )
     )
 
+}
+
+sealed interface NavScreen2 {
+    @Serializable
+    data object PokemonDex: NavScreen2
+
+    @Serializable
+    data object PokemonCounter: NavScreen2
+
+    @Serializable
+    data class PokemonDetail(val number: String): NavScreen2
 }

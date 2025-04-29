@@ -30,11 +30,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonGnb
 import com.example.mjapp.ui.custom.CommonGnbBackButton
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
@@ -44,14 +46,13 @@ import com.example.network.model.PokemonSummary
 
 @Composable
 fun PokemonDexScreen(
-    onBackClick: () -> Unit,
+    navHostController: NavHostController? = null,
     viewModel: PokemonDexViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
 
     HeaderBodyContainer(
         status = status,
-        onBackClick = onBackClick,
         modifier = Modifier.background(
             brush = pokemonBackground()
         ),
@@ -59,7 +60,9 @@ fun PokemonDexScreen(
         headerContent = {
             CommonGnb(
                 startButton = {
-                    CommonGnbBackButton(onBackClick)
+                    CommonGnbBackButton {
+                        navHostController?.popBackStack()
+                    }
                 },
                 endButton = {
                     Image(
@@ -76,7 +79,9 @@ fun PokemonDexScreen(
             PokemonDexBody(
                 list = viewModel.state.value.list,
                 fetchMoreData = viewModel::fetchMoreData,
-                onClick = {}
+                onClick = {
+                    navHostController?.navigate(NavScreen2.PokemonDetail(it.number))
+                }
             )
         }
     )

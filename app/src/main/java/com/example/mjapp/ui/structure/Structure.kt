@@ -140,7 +140,7 @@ fun HeaderBodyContainer(
 }
 
 @Composable
-fun HighMediumLowContainer(
+fun HeaderBodyBottomContainer(
     status: BaseStatus,
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues =
@@ -150,8 +150,8 @@ fun HighMediumLowContainer(
     color: Color = MyColorRed,
     errorScreen: (@Composable () -> Unit)? = null,
     heightContent: @Composable ColumnScope.() -> Unit,
-    mediumContent: @Composable ColumnScope.() -> Unit,
-    lowContent: @Composable ColumnScope.() -> Unit
+    bodyContent: @Composable ColumnScope.() -> Unit,
+    bottomContent: @Composable ColumnScope.() -> Unit
 ) {
     BaseContainer(
         status = status,
@@ -164,9 +164,9 @@ fun HighMediumLowContainer(
     ) {
         heightContent()
         Column(modifier = Modifier.weight(1f)) {
-            mediumContent()
+            bodyContent()
         }
-        lowContent()
+        bottomContent()
     }
 }
 

@@ -34,7 +34,7 @@ import com.example.mjapp.ui.custom.ImageDoubleCard
 import com.example.mjapp.ui.custom.UnderLineText
 import com.example.mjapp.ui.screen.accountbook.TitleAmountRow
 import com.example.mjapp.ui.screen.accountbook.add.IncomeExpenditureType
-import com.example.mjapp.ui.structure.HighMediumLowContainer
+import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
@@ -56,15 +56,15 @@ fun AccountBookDetailScreen(
     val info = viewModel.info.value
     val status by viewModel.status.collectAsStateWithLifecycle()
 
-    HighMediumLowContainer(
+    HeaderBodyBottomContainer(
         status = status,
         heightContent = {
             AccountBookDetailHigh(onBackClick = onBackClick, info = info)
         },
-        mediumContent = {
+        bodyContent = {
             AccountBookDetailMedium(viewModel = viewModel)
         },
-        lowContent = {
+        bottomContent = {
             AccountBookDetailLow(
                 goToNewAccountBookItem = goToNewAccountBookItem,
                 goToFixedAccountBookItem = goToFixedAccountBookItem,

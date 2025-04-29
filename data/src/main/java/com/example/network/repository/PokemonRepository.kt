@@ -18,12 +18,12 @@ interface PokemonRepository {
     fun fetchPokemonDetailInfo(number: String): Flow<PokemonDetailInfo>
 
     /** 포켓몬 잡은 상태 업데이트 **/
-    suspend fun updatePokemonCatch(pokemonCatch: UpdatePokemonCatch): Result<String>
+    fun updatePokemonCatch(pokemonCatch: UpdatePokemonCatch): Flow<String>
 
     /** 포켓몬 카운터 추가 **/
-    suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo): Result<Unit>
+    fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo): Flow<Unit>
 
-    suspend fun insertPokemonCounter(number: String)
+    fun insertPokemonCounter(number: String): Flow<Unit>
 
     /** 포켓몬 카운터 조회 **/
     fun fetchPokemonCounter(): Flow<List<PokemonCounter>>

@@ -40,7 +40,7 @@ import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.rememberWebView
 import com.example.mjapp.ui.dialog.InsertFavoriteDeleteDialog
 import com.example.mjapp.ui.dialog.InsertFavoriteDialog
-import com.example.mjapp.ui.structure.HighMediumLowContainer
+import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorPurple
@@ -58,7 +58,7 @@ fun InternetFavoritesScreen(
     val status by viewModel.status.collectAsStateWithLifecycle()
     var uiState by remember { mutableStateOf(InternetUiState()) }
 
-    HighMediumLowContainer(
+    HeaderBodyBottomContainer(
         status = status,
         heightContent = {
             InternetFavoritesHeight(
@@ -68,7 +68,7 @@ fun InternetFavoritesScreen(
                 }
             )
         },
-        mediumContent = {
+        bodyContent = {
             InternetFavoritesMedium(
                 viewModel = viewModel,
                 setInitAddress = {
@@ -79,7 +79,7 @@ fun InternetFavoritesScreen(
                 }
             )
         },
-        lowContent = {
+        bottomContent = {
             InternetFavoritesLow(
                 viewModel = viewModel,
                 onDelete = {

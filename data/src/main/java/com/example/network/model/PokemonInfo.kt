@@ -25,6 +25,33 @@ data class PokemonInfo(
         count = 0,
         timestamp = Calendar.getInstance().timeInMillis
     )
+
+    fun getTyeInfoList() = attribute
+        .split(",")
+        .map { getTypeInfo(it) }
+
+    fun getStatusInfo() =
+        listOf("HP", "공격", "방어", "특공", "특방", "스피드")
+            .zip(status.split(","))
+
+    fun getWeakList(): List<Pair<Float, Int>> {
+        val attributeList = attribute
+            .split(",")
+            .map { getWeaknessInfo(it) }
+
+        val weekList = when (attributeList.size) {
+            1 -> {
+                attributeList[0]
+            }
+            2 -> {
+                attributeList[0].zip(attributeList[1]).map { it.first * it.second }
+            }
+            else -> emptyList()
+        }
+
+        return weekList
+            .zip(TypeInfo.entries.map { it.imageRes })
+    }
 }
 
 data class EvolutionInfo(
@@ -66,7 +93,7 @@ data class PokemonDetailInfo(
         }
 
         return weekList
-            .zip(TypeInfo.values().map { it.imageRes })
+            .zip(TypeInfo.entries.map { it.imageRes })
             .filter { it.first >= 2f }
             .map { it.second }
     }
@@ -86,4 +113,13 @@ data class PokemonDetailInfo(
         count = 0,
         timestamp = Calendar.getInstance().timeInMillis
     )
+
+    companion object {
+        fun init() = PokemonDetailInfo(
+            pokemonInfo = PokemonInfo(number = "0000", name = "미싱노"),
+            beforeInfo = null,
+            nextInfo = null,
+            evolutionInfo = emptyList()
+        )
+    }
 }

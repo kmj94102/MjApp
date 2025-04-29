@@ -22,7 +22,7 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.OutlineText
-import com.example.mjapp.ui.structure.HighMediumLowContainer
+import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -36,7 +36,7 @@ fun ElswordIntroduceScreen(
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
 
-    HighMediumLowContainer(
+    HeaderBodyBottomContainer(
         status = status,
         heightContent = {
             IconBox(
@@ -45,10 +45,10 @@ fun ElswordIntroduceScreen(
                 modifier = Modifier.padding(bottom = 15.dp)
             )
         },
-        mediumContent = {
+        bodyContent = {
             ElswordIntroduceMedium(viewModel = viewModel)
         },
-        lowContent = {
+        bottomContent = {
             ElswordIntroduceLow(viewModel = viewModel)
         }
     )

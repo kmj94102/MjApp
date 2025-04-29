@@ -39,15 +39,15 @@ class PokemonDetailViewModel @Inject constructor(
     fun insertCounter() = viewModelScope.launch {
         val detailInfo = _info.value ?: return@launch
 
-        repository
-            .insertPokemonCounter(detailInfo)
-            .onSuccess {
-                updateMessage("${detailInfo.pokemonInfo.name} 등록이 완료되었습니다.")
-            }
-            .onFailure {
-                it.printStackTrace()
-                updateMessage("카운터 등록을 실패하였습니다.")
-            }
+//        repository
+//            .insertPokemonCounter(detailInfo)
+//            .onSuccess {
+//                updateMessage("${detailInfo.pokemonInfo.name} 등록이 완료되었습니다.")
+//            }
+//            .onFailure {
+//                it.printStackTrace()
+//                updateMessage("카운터 등록을 실패하였습니다.")
+//            }
     }
 
     fun updateCatch() = viewModelScope.launch {
@@ -57,17 +57,17 @@ class PokemonDetailViewModel @Inject constructor(
             isCatch = info.isCatch.not()
         )
 
-        repository
-            .updatePokemonCatch(item)
-            .onSuccess {
-                _info.value =
-                    _info.value?.copy(pokemonInfo = info.copy(isCatch = info.isCatch.not()))
-                updateFinish()
-            }
-            .onFailure {
-                it.printStackTrace()
-                updateMessage("업데이트 실패")
-            }
+//        repository
+//            .updatePokemonCatch(item)
+//            .onSuccess {
+//                _info.value =
+//                    _info.value?.copy(pokemonInfo = info.copy(isCatch = info.isCatch.not()))
+//                updateFinish()
+//            }
+//            .onFailure {
+//                it.printStackTrace()
+//                updateMessage("업데이트 실패")
+//            }
     }
 
     fun toggleIsShiny() {

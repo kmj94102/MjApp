@@ -17,9 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,7 +30,7 @@ import com.example.mjapp.ui.custom.CommonGnb
 import com.example.mjapp.ui.custom.CommonGnbBackButton
 import com.example.mjapp.ui.custom.SelectChip
 import com.example.mjapp.ui.custom.TextButton
-import com.example.mjapp.ui.structure.HighMediumLowContainer
+import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -48,12 +45,9 @@ fun PokemonCounterScreen(
     goToHistory: () -> Unit,
     viewModel: PokemonCounterViewModel = hiltViewModel()
 ) {
-    var uiState by remember {
-        mutableStateOf(PokemonCounterUiState())
-    }
     val status by viewModel.status.collectAsStateWithLifecycle()
 
-    HighMediumLowContainer(
+    HeaderBodyBottomContainer(
         status = status,
         modifier = Modifier.background(brush = pokemonBackground()),
         paddingValues = PaddingValues(0.dp),
@@ -83,7 +77,7 @@ fun PokemonCounterScreen(
                 title = "포켓몬 카운터"
             )
         },
-        mediumContent = {
+        bodyContent = {
             PokemonCounterBody(
                 list = viewModel.state.value.list,
                 selectIndex = viewModel.state.value.selectIndex,
@@ -91,7 +85,7 @@ fun PokemonCounterScreen(
                 updateCount = viewModel::updateCounter
             )
         },
-        lowContent = {
+        bottomContent = {
             PokemonCounterLow(
                 onDelete = viewModel::deleteCounter,
                 onGet = viewModel::updateCatch
@@ -121,10 +115,12 @@ fun PokemonCounterBody(
     }
 
     if (list.isNotEmpty()) {
-        PokemonCounterItem(
-            pokemon = list[selectIndex],
-            onUpdateClick = updateCount
-        )
+        list.getOrNull(selectIndex)?.let {
+            PokemonCounterItem(
+                pokemon = it,
+                onUpdateClick = updateCount
+            )
+        } ?: updateSelectIndex(list.lastIndex)
     }
 }
 

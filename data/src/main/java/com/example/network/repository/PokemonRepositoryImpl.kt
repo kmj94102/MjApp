@@ -69,18 +69,31 @@ class PokemonRepositoryImpl @Inject constructor(
     }
 
     /** 포켓몬 잡은 상태 업데이트 **/
-    override suspend fun updatePokemonCatch(
+    override fun updatePokemonCatch(
         pokemonCatch: UpdatePokemonCatch
-    ) = client.updatePokemonCatch(pokemonCatch).getFailureThrow()
+    ) = flow {
+        client.updatePokemonCatch(pokemonCatch)
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
 
     /** 포켓몬 카운터 추가 **/
-    override suspend fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo) =
-        client.insertPokemonCounter(pokemonDetailInfo.toPokemonCounterEntity())
+    override fun insertPokemonCounter(pokemonDetailInfo: PokemonDetailInfo) = flow {
+        client
+            .insertPokemonCounter(pokemonDetailInfo.toPokemonCounterEntity())
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
 
-    override suspend fun insertPokemonCounter(number: String) {
+
+    override fun insertPokemonCounter(number: String) = flow {
         client
             .fetchPokemonWithNumber(number)
-            .onSuccess { client.insertPokemonCounter(it.toPokemonCounterEntity()) }
+            .onSuccess {
+                client.insertPokemonCounter(it.toPokemonCounterEntity())
+                    .onSuccess { emit(it) }
+                    .getOrNull()
+            }
             .getFailureThrow()
     }
 

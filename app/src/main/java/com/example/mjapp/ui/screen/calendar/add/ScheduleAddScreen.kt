@@ -33,7 +33,7 @@ import com.example.mjapp.ui.dialog.DateSelectDialog
 import com.example.mjapp.ui.dialog.RecurrenceSelectDialog
 import com.example.mjapp.ui.dialog.TimeSelectDialog
 import com.example.mjapp.ui.screen.calendar.ScheduleAddUiState
-import com.example.mjapp.ui.structure.HighMediumLowContainer
+import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorPurple
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -51,7 +51,7 @@ fun ScheduleAddScreen(
     var uiState by remember { mutableStateOf(ScheduleAddUiState()) }
     val status by viewModel.status.collectAsStateWithLifecycle()
 
-    HighMediumLowContainer(
+    HeaderBodyBottomContainer(
         status = status,
         onBackClick = onBackClick,
         heightContent = {
@@ -60,7 +60,7 @@ fun ScheduleAddScreen(
                 onPlanAddClick = { goToPlanAdd(viewModel.initDate) }
             )
         },
-        mediumContent = {
+        bodyContent = {
             ScheduleAddMedium(
                 viewModel = viewModel,
                 onRecurrenceSelect = {
@@ -74,7 +74,7 @@ fun ScheduleAddScreen(
                 }
             )
         },
-        lowContent = {
+        bottomContent = {
             ScheduleAddLow(viewModel::insertSchedule)
         }
     )

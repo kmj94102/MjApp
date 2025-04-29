@@ -5,6 +5,8 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id "org.jetbrains.kotlin.plugin.compose"
+    id "kotlin-parcelize"
+    id "org.jetbrains.kotlin.plugin.serialization"
 }
 android {
     namespace 'com.example.mjapp'
@@ -108,5 +110,8 @@ dependencies {
     def paging_version = "3.2.0-rc02"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     implementation "androidx.paging:paging-compose:3.3.6"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0"
+    implementation "androidx.profileinstaller:profileinstaller:1.4.1"
 
 }

@@ -28,7 +28,7 @@ import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardButton
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.dialog.ExamResultDialog
-import com.example.mjapp.ui.structure.HighMediumLowContainer
+import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.util.nonRippleClickable
@@ -44,7 +44,7 @@ fun ExamScreen(
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
 
-    HighMediumLowContainer(
+    HeaderBodyBottomContainer(
         status = status,
         heightContent = {
             ExamHeader(
@@ -52,14 +52,14 @@ fun ExamScreen(
                 onBackClick = onBackClick
             )
         },
-        mediumContent = {
+        bodyContent = {
             ExamBody(
                 list = viewModel.state.value.list,
                 updateHint = viewModel::getNewHint,
                 updateMyAnswer = viewModel::setMyAnswer
             )
         },
-        lowContent = {
+        bottomContent = {
             ExamFooter(onSubmit = viewModel::submit)
         }
     )

@@ -23,6 +23,7 @@ import com.example.mjapp.ui.screen.game.pokemon.add.PokemonAddScreen
 import com.example.mjapp.ui.screen.game.pokemon.change.PokemonImageChangeScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterHistoryScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
+import com.example.mjapp.ui.screen.game.pokemon.detail.PokemonDetailScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.game.pokemon.generation.GenerationDetailScreen
 import com.example.mjapp.ui.screen.game.pokemon.generation.GenerationDexScreen
@@ -68,11 +69,7 @@ fun NavGraphBuilder.gameScreens(
         route = BottomNavItems.Game.item.routeWithPostFix
     ) {
         GameScreen(
-            goToScreen = {
-                if (it.isEmpty()) return@GameScreen
-
-                navController.navigate(it)
-            }
+            navHostController = navController
         )
     }
     /** 엘소드 캐릭터 소개 화면 **/
@@ -110,14 +107,7 @@ fun NavGraphBuilder.gameScreens(
             onBackClick = onBackClick
         )
     }
-    /** 포켓몬 리스트 화면 **/
-    composable(
-        route = NavScreen.PokemonDex.item.routeWithPostFix
-    ) {
-        PokemonDexScreen(
-            onBackClick = onBackClick
-        )
-    }
+
     /** 타이틀 도감 화면 **/
     composable(
         route = NavScreen.GenerationDex.item.routeWithPostFix
@@ -145,17 +135,6 @@ fun NavGraphBuilder.gameScreens(
             onBackClick = onBackClick
         )
     }
-    /** 포켓몬 카운터 화면 **/
-    composable(
-        route = NavScreen.PokemonCounter.item.routeWithPostFix
-    ) {
-        PokemonCounterScreen(
-            onBackClick = onBackClick,
-            goToHistory = {
-                navController.navigate(NavScreen.PokemonCounterHistory.item.routeWithPostFix)
-            }
-        )
-    }
     /** 포켓몬 카운터 히스토리 화면 **/
     composable(
         route = NavScreen.PokemonCounterHistory.item.routeWithPostFix
@@ -170,6 +149,25 @@ fun NavGraphBuilder.gameScreens(
     ) {
         PokemonImageChangeScreen(
             onBackClick = onBackClick
+        )
+    }
+
+
+    /** 포켓몬 리스트 화면 **/
+    composable<NavScreen2.PokemonDex> {
+        PokemonDexScreen(navController)
+    }
+    /** 포켓몬 상세 화면 **/
+    composable<NavScreen2.PokemonDetail> {
+        PokemonDetailScreen(navController)
+    }
+    /** 포켓몬 카운터 화면 **/
+    composable<NavScreen2.PokemonCounter> {
+        PokemonCounterScreen(
+            onBackClick = onBackClick,
+            goToHistory = {
+                navController.navigate(NavScreen.PokemonCounterHistory.item.routeWithPostFix)
+            }
         )
     }
 }
@@ -364,7 +362,7 @@ fun NavGraphBuilder.otherScreens(
         NoteScreen(
             onBackClick = onBackClick,
             goToWordDetail = { idx, title ->
-                val isExam = it.arguments?.getBoolean(NavScreen.Note.IS_EXAM) ?: false
+                val isExam = it.arguments?.getBoolean(NavScreen.Note.IS_EXAM) == true
 
                 if (isExam) {
                     navController.navigate(

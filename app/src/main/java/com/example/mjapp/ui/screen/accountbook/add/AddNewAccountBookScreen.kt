@@ -28,7 +28,7 @@ import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.ImageDoubleCard
 import com.example.mjapp.ui.dialog.DateSelectDialog
 import com.example.mjapp.ui.dialog.FrequentlyDialog
-import com.example.mjapp.ui.structure.HighMediumLowContainer
+import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorTurquoise
@@ -44,7 +44,7 @@ fun AddNewAccountBookItemScreen(
     val isShow = remember { mutableStateOf(false) }
 
     val status by viewModel.status.collectAsStateWithLifecycle()
-    HighMediumLowContainer(
+    HeaderBodyBottomContainer(
         status = status,
         onBackClick = onBackClick,
         heightContent = {
@@ -54,14 +54,14 @@ fun AddNewAccountBookItemScreen(
                 viewModel = viewModel
             )
         },
-        mediumContent = {
+        bodyContent = {
             AddNewAccountBookMediumItem(
                 color = color,
                 viewModel = viewModel,
                 onDateSelect = { isShow.value = true }
             )
         },
-        lowContent = {
+        bottomContent = {
             AddNewAccountBookLowItem(color = color, viewModel = viewModel)
         }
     )
@@ -253,7 +253,7 @@ fun ChooseWhereToUseCard(
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 10.dp)
         ) {
-            IncomeExpenditureType.values().forEach {
+            IncomeExpenditureType.entries.forEach {
                 Column {
                     ImageDoubleCard(
                         resId = it.imageRes,
