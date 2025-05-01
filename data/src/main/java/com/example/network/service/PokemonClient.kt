@@ -18,12 +18,18 @@ class PokemonClient @Inject constructor(
     suspend fun fetchPokemonList(
         name: String,
         skip: Int,
-        limit: Int
+        limit: Int,
+        generations: String,
+        types: String,
+        isCatch: String
     ) = runCatching {
         service.fetchPokemonList(
             name = name,
             skip = skip,
-            limit = limit
+            limit = limit,
+            generations = generations,
+            types = types,
+            isCatch = isCatch
         )
     }
 

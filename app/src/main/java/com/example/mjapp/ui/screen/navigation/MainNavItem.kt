@@ -155,4 +155,18 @@ sealed interface NavScreen2 {
 
     @Serializable
     data class PokemonDetail(val number: String): NavScreen2
+
+    @Serializable
+    data class PokemonSearch(
+        val name: String = "",
+        val types: List<String> = emptyList(),
+        val generations: List<String> = emptyList(),
+        val registrations: String = ALL,
+        val isCatch: String = ALL
+    ): NavScreen2 {
+        companion object {
+            const val ALL = "all"
+            const val IS_NOT_CATCH = "is_not_catch"
+        }
+    }
 }

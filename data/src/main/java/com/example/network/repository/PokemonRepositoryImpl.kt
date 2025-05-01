@@ -51,8 +51,11 @@ class PokemonRepositoryImpl @Inject constructor(
         name: String,
         skip: Int,
         limit: Int,
+        generations: String,
+        types: String,
+        isCatch: String
     ) = flow {
-        client.fetchPokemonList(name, skip * limit, limit)
+        client.fetchPokemonList(name, skip * limit, limit, generations, types, isCatch)
             .onSuccess {
                 val isMoreData = it.getIsMoreData(skip * limit)
                 val list = it.getMappingList()

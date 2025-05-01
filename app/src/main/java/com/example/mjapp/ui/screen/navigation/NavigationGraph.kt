@@ -27,6 +27,7 @@ import com.example.mjapp.ui.screen.game.pokemon.detail.PokemonDetailScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
 import com.example.mjapp.ui.screen.game.pokemon.generation.GenerationDetailScreen
 import com.example.mjapp.ui.screen.game.pokemon.generation.GenerationDexScreen
+import com.example.mjapp.ui.screen.game.pokemon.search.PokemonSearchScreen
 import com.example.mjapp.ui.screen.home.HomeScreen
 import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
@@ -169,6 +170,9 @@ fun NavGraphBuilder.gameScreens(
                 navController.navigate(NavScreen.PokemonCounterHistory.item.routeWithPostFix)
             }
         )
+    }
+    composable<NavScreen2.PokemonSearch> {
+        PokemonSearchScreen(navController)
     }
 }
 

@@ -6,13 +6,18 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +41,7 @@ import coil.request.ImageRequest
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonGnb
 import com.example.mjapp.ui.custom.CommonGnbBackButton
+import com.example.mjapp.ui.screen.game.pokemon.search.PokemonSearchItem
 import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -43,6 +49,7 @@ import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.pokemonBackground
 import com.example.mjapp.util.textStyle14
 import com.example.network.model.PokemonSummary
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PokemonDexScreen(
@@ -69,6 +76,7 @@ fun PokemonDexScreen(
                         painter = painterResource(R.drawable.ic_search),
                         contentDescription = null,
                         modifier = Modifier.nonRippleClickable {
+                            navHostController?.navigate(viewModel.getSearchInfo())
                         }
                     )
                 },
@@ -78,6 +86,7 @@ fun PokemonDexScreen(
         bodyContent = {
             PokemonDexBody(
                 list = viewModel.state.value.list,
+                filterList = viewModel.getFilterList(),
                 fetchMoreData = viewModel::fetchMoreData,
                 onClick = {
                     navHostController?.navigate(NavScreen2.PokemonDetail(it.number))
@@ -85,16 +94,37 @@ fun PokemonDexScreen(
             )
         }
     )
+
+    LaunchedEffect(Unit) {
+        navHostController
+            ?.currentBackStackEntry
+            ?.savedStateHandle
+            ?.getStateFlow<PokemonSearchItem>("filter", PokemonSearchItem())
+            ?.collectLatest(viewModel::updateFilterInfo)
+    }
 }
 
 @Composable
 fun PokemonDexBody(
     list: List<PokemonSummary>,
+    filterList: List<String>,
     fetchMoreData: (Int) -> Unit = {},
     onClick: (PokemonSummary) -> Unit = {}
 ) {
     val state = rememberLazyGridState()
     val index by remember { derivedStateOf { state.firstVisibleItemIndex } }
+
+    if (filterList.isNotEmpty()) {
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            items(count = filterList.size) {
+                PokemonFilterChip(filterList[it]) {}
+            }
+        }
+        Spacer(Modifier.height(25.dp))
+    }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
@@ -111,6 +141,28 @@ fun PokemonDexBody(
 
     LaunchedEffect(index) {
         fetchMoreData(index)
+    }
+}
+
+@Composable
+fun PokemonFilterChip(
+    text: String,
+    onClick: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .background(Color(0xFF0B8DB7), RoundedCornerShape(20.dp))
+            .padding(horizontal = 12.dp, vertical = 5.dp)
+            .nonRippleClickable(onClick)
+    ) {
+        Text(text, style = textStyle14(color = MyColorWhite))
+        Icon(
+            painterResource(R.drawable.ic_close),
+            contentDescription = null,
+            tint = MyColorWhite,
+            modifier = Modifier.size(18.dp)
+        )
     }
 }
 

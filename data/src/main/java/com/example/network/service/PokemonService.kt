@@ -18,7 +18,10 @@ interface PokemonService {
     suspend fun fetchPokemonList(
         @Query("name") name: String,
         @Query("skip") skip: Int,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int,
+        @Query("generations") generations: String,
+        @Query("types") types: String,
+        @Query("is_catch") isCatch: String
     ): PokemonListResult
 
     /** 포켓몬 상세 조회 **/

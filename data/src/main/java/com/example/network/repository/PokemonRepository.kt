@@ -12,6 +12,9 @@ interface PokemonRepository {
         name: String,
         skip: Int,
         limit: Int,
+        generations: String,
+        types: String,
+        isCatch: String
     ): Flow<Pair<Boolean, List<PokemonSummary>>>
 
     /** 포켓몬 상세 조회 **/

@@ -1,9 +1,13 @@
 package com.example.mjapp.ui.screen.game.pokemon.dex
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.example.mjapp.ui.screen.game.pokemon.search.PokemonSearchItem
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.BaseViewModel
+import com.example.mjapp.util.update
 import com.example.network.model.NetworkError
 import com.example.network.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,11 +18,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PokemonDexViewModel @Inject constructor(
-    private val repository: PokemonRepository
+    private val repository: PokemonRepository,
 ) : BaseViewModel() {
 
     private val _state = mutableStateOf(PokemonDexState())
     val state: State<PokemonDexState> = _state
+
+    private val filterInfo = mutableStateOf(PokemonSearchItem())
 
     private var page = 0
     private val limit = 100
@@ -27,12 +33,32 @@ class PokemonDexViewModel @Inject constructor(
         fetchPokemonDex()
     }
 
+    fun updateFilterInfo(item: PokemonSearchItem) {
+        if (filterInfo.value == item) return
+
+        filterInfo.update {
+            it.copy(
+                name = item.name,
+                registrationStatus = item.registrationStatus,
+                generation = item.generation,
+                type = item.type,
+            )
+        }
+        page = 0
+        _state.value = PokemonDexState()
+        fetchPokemonDex()
+    }
+
     fun fetchPokemonDex() {
+        Log.e("+++++", "${filterInfo.value}")
         repository
             .fetchPokemonList(
-                name = _state.value.search.trim(),
+                name = filterInfo.value.name.trim(),
                 skip = page,
-                limit = limit
+                limit = limit,
+                generations = filterInfo.value.generation.joinToString(","),
+                types = filterInfo.value.type.joinToString(","),
+                isCatch = filterInfo.value.registrationStatus
             )
             .setLoadingState()
             .onEach { (isMoreDate, list) ->
@@ -56,33 +82,13 @@ class PokemonDexViewModel @Inject constructor(
         }
     }
 
-    fun toggleShinyState() {
-        val value = _state.value
-        _state.value = value.copy(isShiny = value.isShiny.not())
-    }
+    fun getSearchInfo() = NavScreen2.PokemonSearch(
+        name =  filterInfo.value.name,
+        types = filterInfo.value.type,
+        generations = filterInfo.value.generation,
+        registrations = filterInfo.value.registrationStatus
+    )
 
-    fun updateSelectNumber(number: String) {
-        _state.value = _state.value.copy(selectNumber = number)
-    }
-
-    fun updateSearchValue(value: String) {
-        page = 0
-        _state.value = _state.value.copy(
-            search = value,
-            list = listOf(),
-            isMoreDate = true
-        )
-        fetchPokemonDex()
-    }
-
-    fun updateCatchState(isCatch: Boolean) {
-        val value = _state.value
-        val result = value.list.map {
-            if (it.number == value.selectNumber) {
-                it.copy(isCatch = isCatch)
-            } else it
-        }
-        _state.value = _state.value.copy(list = result)
-    }
+    fun getFilterList() = filterInfo.value.getFilterItems()
 
 }

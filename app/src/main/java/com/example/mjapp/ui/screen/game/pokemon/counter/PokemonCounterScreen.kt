@@ -186,27 +186,23 @@ fun PokemonCounterItem(
         ) {
             SelectChip(
                 text = "- 1",
-                isSelected = false,
                 unselectedColor = MyColorWhite,
                 onClick = { onUpdateClick(-1) },
                 modifier = Modifier.weight(1f)
             )
             SelectChip(
                 text = "- 5",
-                isSelected = false,
                 unselectedColor = MyColorWhite,
                 onClick = { onUpdateClick(-5) },
                 modifier = Modifier.weight(1f)
             )
             SelectChip(
                 text = "- 1Box",
-                isSelected = false,
                 unselectedColor = MyColorWhite,
                 onClick = { onUpdateClick(-30) },
             )
             SelectChip(
                 text = "- 5Box",
-                isSelected = false,
                 onClick = { onUpdateClick(-30 * 5) },
                 unselectedColor = MyColorWhite,
             )
@@ -218,27 +214,23 @@ fun PokemonCounterItem(
         ) {
             SelectChip(
                 text = "+ 1",
-                isSelected = false,
                 unselectedColor = MyColorWhite,
                 onClick = { onUpdateClick(1) },
                 modifier = Modifier.weight(1f)
             )
             SelectChip(
                 text = "+ 5",
-                isSelected = false,
                 unselectedColor = MyColorWhite,
                 onClick = { onUpdateClick(5) },
                 modifier = Modifier.weight(1f)
             )
             SelectChip(
                 text = "+ 1Box",
-                isSelected = false,
                 unselectedColor = MyColorWhite,
                 onClick = { onUpdateClick(30) },
             )
             SelectChip(
                 text = "+5Box",
-                isSelected = false,
                 unselectedColor = MyColorWhite,
                 onClick = { onUpdateClick(30 * 5) },
             )

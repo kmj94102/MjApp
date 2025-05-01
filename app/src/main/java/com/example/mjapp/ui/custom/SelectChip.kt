@@ -28,7 +28,7 @@ fun SelectChip(
     text: String,
     modifier: Modifier = Modifier,
     textStyle: TextStyle = textStyle14(),
-    isSelected: Boolean,
+    isSelected: Boolean = false,
     minWidth: Dp = 0.dp,
     selectedColor: Color = MyColorWhite,
     unselectedColor: Color = MyColorLightGray,

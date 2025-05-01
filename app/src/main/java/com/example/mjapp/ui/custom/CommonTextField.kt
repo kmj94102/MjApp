@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
@@ -21,7 +22,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.example.mjapp.util.textStyle16
+import com.example.mjapp.ui.theme.MyColorLightGray
+import com.example.mjapp.util.textStyle14
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class,
     ExperimentalMaterial3Api::class
@@ -31,7 +33,7 @@ fun CommonTextField(
     value: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = textStyle16(),
+    textStyle: TextStyle = textStyle14(),
     hint: String = "",
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardType: KeyboardType = KeyboardType.Text,
@@ -88,7 +90,13 @@ fun CommonTextField(
                     unfocusedContainerColor = Color.Transparent,
                     focusedContainerColor = Color.Transparent,
                     errorContainerColor = Color.Transparent
-                )
+                ),
+                placeholder = {
+                    Text(
+                        text = hint,
+                        style = textStyle14(color = MyColorLightGray)
+                    )
+                }
             )
         },
         modifier = modifier
