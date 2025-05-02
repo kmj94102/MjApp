@@ -21,7 +21,7 @@ import com.example.mjapp.ui.screen.game.elsword.counter.add.ElswordCounterAddScr
 import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
 import com.example.mjapp.ui.screen.game.pokemon.add.PokemonAddScreen
 import com.example.mjapp.ui.screen.game.pokemon.change.PokemonImageChangeScreen
-import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterHistoryScreen
+import com.example.mjapp.ui.screen.game.pokemon.counter.history.PokemonCounterHistoryScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.PokemonCounterScreen
 import com.example.mjapp.ui.screen.game.pokemon.detail.PokemonDetailScreen
 import com.example.mjapp.ui.screen.game.pokemon.dex.PokemonDexScreen
@@ -136,14 +136,6 @@ fun NavGraphBuilder.gameScreens(
             onBackClick = onBackClick
         )
     }
-    /** 포켓몬 카운터 히스토리 화면 **/
-    composable(
-        route = NavScreen.PokemonCounterHistory.item.routeWithPostFix
-    ) {
-        PokemonCounterHistoryScreen(
-            onBackClick = onBackClick
-        )
-    }
     /** 포켓몬 이미지 수정 **/
     composable(
         route = NavScreen.PokemonImageChange.item.routeWithPostFix
@@ -155,25 +147,15 @@ fun NavGraphBuilder.gameScreens(
 
 
     /** 포켓몬 리스트 화면 **/
-    composable<NavScreen2.PokemonDex> {
-        PokemonDexScreen(navController)
-    }
+    composable<NavScreen2.PokemonDex> { PokemonDexScreen(navController) }
     /** 포켓몬 상세 화면 **/
-    composable<NavScreen2.PokemonDetail> {
-        PokemonDetailScreen(navController)
-    }
+    composable<NavScreen2.PokemonDetail> { PokemonDetailScreen(navController) }
     /** 포켓몬 카운터 화면 **/
-    composable<NavScreen2.PokemonCounter> {
-        PokemonCounterScreen(
-            onBackClick = onBackClick,
-            goToHistory = {
-                navController.navigate(NavScreen.PokemonCounterHistory.item.routeWithPostFix)
-            }
-        )
-    }
-    composable<NavScreen2.PokemonSearch> {
-        PokemonSearchScreen(navController)
-    }
+    composable<NavScreen2.PokemonCounter> { PokemonCounterScreen(navController) }
+    /** 포켓몬 카운터 히스토리 화면 **/
+    composable<NavScreen2.PokemonCounterHistory> { PokemonCounterHistoryScreen(navController) }
+    /** 포켓몬 검색 화면 **/
+    composable<NavScreen2.PokemonSearch> { PokemonSearchScreen(navController) }
 }
 
 /** 달력 관련 화면 **/

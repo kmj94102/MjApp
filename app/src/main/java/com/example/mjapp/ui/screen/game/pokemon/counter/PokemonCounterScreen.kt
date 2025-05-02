@@ -24,16 +24,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonGnb
 import com.example.mjapp.ui.custom.CommonGnbBackButton
 import com.example.mjapp.ui.custom.SelectChip
 import com.example.mjapp.ui.custom.TextButton
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.formatAmount
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.pokemonBackground
 import com.example.mjapp.util.textStyle30B
@@ -41,8 +44,7 @@ import com.example.network.model.PokemonCounter
 
 @Composable
 fun PokemonCounterScreen(
-    onBackClick: () -> Unit,
-    goToHistory: () -> Unit,
+    navHostController: NavHostController? = null,
     viewModel: PokemonCounterViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
@@ -54,7 +56,7 @@ fun PokemonCounterScreen(
         heightContent = {
             CommonGnb(
                 startButton = {
-                    CommonGnbBackButton(onBackClick)
+                    CommonGnbBackButton { navHostController?.popBackStack() }
                 },
                 endButton = {
                     Row {
@@ -64,13 +66,18 @@ fun PokemonCounterScreen(
                             modifier = Modifier
                                 .padding(end = 10.dp)
                                 .size(28.dp)
-                                .nonRippleClickable(goToHistory)
+                                .nonRippleClickable {
+                                    navHostController?.navigate(NavScreen2.PokemonCounterHistory)
+                                }
                         )
                         Icon(
                             painterResource(R.drawable.ic_plus),
                             contentDescription = null,
                             tint = MyColorWhite,
                             modifier = Modifier.size(28.dp)
+                                .nonRippleClickable {
+                                    navHostController?.navigate(NavScreen2.PokemonDex)
+                                }
                         )
                     }
                 },
@@ -152,7 +159,7 @@ fun PokemonCounterListItem(
 @Composable
 fun PokemonCounterItem(
     pokemon: PokemonCounter,
-    onUpdateClick: (Int) -> Unit ={}
+    onUpdateClick: (Int) -> Unit = {}
 ) {
     Column(modifier = Modifier.padding(horizontal = 24.dp)) {
         Row(modifier = Modifier.padding(top = 25.dp, bottom = 15.dp)) {
@@ -172,9 +179,10 @@ fun PokemonCounterItem(
 
         Row {
             Text(
-                "${pokemon.count}",
+                pokemon.count.formatAmount(),
                 style = textStyle30B(color = MyColorWhite, textAlign = TextAlign.Center),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .border(1.dp, MyColorWhite, RoundedCornerShape(8.dp))
                     .padding(vertical = 13.dp)
             )
@@ -242,10 +250,12 @@ fun PokemonCounterItem(
 fun PokemonCounterLow(
     onDelete: () -> Unit = {},
     onGet: () -> Unit = {}
-){
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 24.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 20.dp, horizontal = 24.dp)
     ) {
         TextButton(
             text = "삭제",

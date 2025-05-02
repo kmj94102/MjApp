@@ -169,4 +169,7 @@ sealed interface NavScreen2 {
             const val IS_NOT_CATCH = "is_not_catch"
         }
     }
+
+    @Serializable
+    data object PokemonCounterHistory: NavScreen2
 }
