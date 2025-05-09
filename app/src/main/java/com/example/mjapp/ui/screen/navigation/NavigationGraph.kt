@@ -1,5 +1,6 @@
 package com.example.mjapp.ui.screen.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -359,27 +360,11 @@ fun NavGraphBuilder.otherScreens(
                         )
                     )
                 } else {
-                    navController.navigate(
-                        makeRouteWithArgs(
-                            NavScreen.WordDetail.item.route,
-                            idx.toString(),
-                            title
-                        )
-                    )
+                    Log.e("+++++", "$idx, $title")
+                    navController.navigate(NavScreen2.WordDetail(idx, title))
                 }
             }
         )
-    }
-
-    /** 단어 상세 화면 **/
-    composable(
-        route = NavScreen.WordDetail.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(Constants.INDEX) { type = NavType.IntType },
-            navArgument(Constants.TITLE) { type = NavType.StringType }
-        )
-    ) {
-        WordDetailScreen(onBackClick = onBackClick)
     }
 
     /** 단어 테스트 화면 **/
@@ -392,5 +377,8 @@ fun NavGraphBuilder.otherScreens(
     ) {
         ExamScreen(onBackClick = onBackClick)
     }
+
+    /** 단어 상세 화면 **/
+    composable<NavScreen2.WordDetail> { WordDetailScreen(navController) }
 
 }
