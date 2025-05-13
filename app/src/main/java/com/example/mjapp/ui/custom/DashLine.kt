@@ -31,11 +31,11 @@ fun DashLine(
 }
 
 @Composable
-fun DividerLine() {
+fun DividerLine(color: Color = MyColorBlack) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(1.dp)
-            .background(MyColorBlack)
+            .background(color)
     )
 }

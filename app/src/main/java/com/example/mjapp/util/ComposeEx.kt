@@ -21,6 +21,24 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.myFont
 
+fun textStyle12(
+    color: Color = MyColorBlack,
+    textAlign: TextAlign = TextAlign.Start
+): TextStyle = TextStyle(
+    color = color,
+    fontFamily = myFont,
+    fontWeight = FontWeight.Normal,
+    fontSize = 12.sp,
+    textAlign = textAlign,
+    lineHeight = 18.sp,
+    letterSpacing = -(0.025).em
+)
+
+fun textStyle12B(
+    color: Color = MyColorBlack,
+    textAlign: TextAlign = TextAlign.Start
+): TextStyle = textStyle12(color, textAlign).copy(fontWeight = FontWeight.Bold)
+
 fun textStyle14(
     color: Color = MyColorBlack,
     textAlign: TextAlign = TextAlign.Start
@@ -65,6 +83,7 @@ fun textStyle18(
     fontWeight = FontWeight.Normal,
     fontSize = 18.sp,
     textAlign = textAlign,
+    lineHeight = 26.sp,
     letterSpacing = -(0.025).em
 )
 

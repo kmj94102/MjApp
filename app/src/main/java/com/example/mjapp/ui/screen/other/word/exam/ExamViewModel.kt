@@ -4,8 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.BaseViewModel
-import com.example.mjapp.util.Constants
 import com.example.mjapp.util.update
 import com.example.network.model.NetworkError
 import com.example.network.model.NoteIdParam
@@ -22,19 +23,20 @@ class ExamViewModel @Inject constructor(
     private val repository: VocabularyRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
+    private val info = savedStateHandle.toRoute<NavScreen2.WordExam>()
 
-    private val _state =
-        mutableStateOf(ExamState(noteIdx = savedStateHandle.get<Int>(Constants.INDEX) ?: 0))
+    private val _state = mutableStateOf(ExamState())
     val state: State<ExamState> = _state
 
     init {
-        val index = savedStateHandle.get<Int>(Constants.INDEX) ?: 0
-        fetchTestItems(index)
+        fetchExamItems()
     }
 
-    private fun fetchTestItems(noteId: Int) {
+    fun getTitle() = info.title
+
+    private fun fetchExamItems() {
         repository
-            .fetchWords(NoteIdParam(noteId))
+            .fetchWords(NoteIdParam(info.index))
             .setLoadingState()
             .onEach { list ->
                 _state.update { state ->

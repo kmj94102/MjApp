@@ -174,8 +174,17 @@ sealed interface NavScreen2 {
     data object PokemonCounterHistory: NavScreen2
 
     @Serializable
+    data object WordStudy: NavScreen2
+
+    @Serializable
     data class WordDetail(
         val id: Int,
+        val title: String
+    ): NavScreen2
+
+    @Serializable
+    data class WordExam(
+        val index: Int,
         val title: String
     ): NavScreen2
 }

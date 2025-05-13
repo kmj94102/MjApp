@@ -4,7 +4,6 @@ import com.example.network.model.WordTest
 import com.example.network.model.WordTestResult
 
 data class ExamState(
-    val noteIdx: Int,
     val list: List<WordTest> = listOf(),
     val result: WordTestResult = WordTestResult(),
     val isResultShow: Boolean = false

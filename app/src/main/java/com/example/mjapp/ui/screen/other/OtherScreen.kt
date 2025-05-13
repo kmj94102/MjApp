@@ -15,11 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.mjapp.util.textStyle24B
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.PageMoveCard
 import com.example.mjapp.ui.custom.PageMoveCardItem
 import com.example.mjapp.ui.screen.navigation.NavScreen
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.theme.MyColorBeige
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.util.makeRouteWithArgs
@@ -27,7 +29,8 @@ import com.example.mjapp.util.textStyle16B
 
 @Composable
 fun OtherScreen(
-    goToScreen: (String) -> Unit
+    navHostController: NavHostController?= null,
+    goToScreen: (String) -> Unit,
 ) {
     val list = listOf(
         PageMoveCardItem(
@@ -39,12 +42,7 @@ fun OtherScreen(
             text = "영단어 암기",
             imageRes = R.drawable.ic_english_study,
             onClick = {
-                goToScreen(
-                    makeRouteWithArgs(
-                        NavScreen.Note.item.route,
-                        false.toString()
-                    )
-                )
+                navHostController?.navigate(NavScreen2.WordStudy)
             }
         ),
         PageMoveCardItem(

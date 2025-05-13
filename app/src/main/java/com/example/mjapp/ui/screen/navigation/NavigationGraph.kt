@@ -1,6 +1,5 @@
 package com.example.mjapp.ui.screen.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -34,7 +33,7 @@ import com.example.mjapp.ui.screen.other.OtherScreen
 import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
 import com.example.mjapp.ui.screen.other.word.detail.WordDetailScreen
 import com.example.mjapp.ui.screen.other.word.exam.ExamScreen
-import com.example.mjapp.ui.screen.other.word.note.NoteScreen
+import com.example.mjapp.ui.screen.other.word.note.WordStudyScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
 
@@ -327,7 +326,7 @@ fun NavGraphBuilder.otherScreens(
     composable(
         route = BottomNavItems.Other.item.routeWithPostFix
     ) {
-        OtherScreen {
+        OtherScreen(navController) {
             navController.navigate(it)
         }
     }
@@ -340,45 +339,10 @@ fun NavGraphBuilder.otherScreens(
         )
     }
     /** 단어 암기 리스트 화면 **/
-    composable(
-        route = NavScreen.Note.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(NavScreen.Note.IS_EXAM) { type = NavType.BoolType }
-        )
-    ) {
-        NoteScreen(
-            onBackClick = onBackClick,
-            goToWordDetail = { idx, title ->
-                val isExam = it.arguments?.getBoolean(NavScreen.Note.IS_EXAM) == true
-
-                if (isExam) {
-                    navController.navigate(
-                        makeRouteWithArgs(
-                            NavScreen.WordExam.item.route,
-                            idx.toString(),
-                            title
-                        )
-                    )
-                } else {
-                    Log.e("+++++", "$idx, $title")
-                    navController.navigate(NavScreen2.WordDetail(idx, title))
-                }
-            }
-        )
-    }
-
-    /** 단어 테스트 화면 **/
-    composable(
-        route = NavScreen.WordExam.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(Constants.INDEX) { type = NavType.IntType },
-            navArgument(Constants.TITLE) { type = NavType.StringType }
-        )
-    ) {
-        ExamScreen(onBackClick = onBackClick)
-    }
-
+    composable<NavScreen2.WordStudy> { WordStudyScreen(navController) }
     /** 단어 상세 화면 **/
     composable<NavScreen2.WordDetail> { WordDetailScreen(navController) }
+    /** 단어 테스트 화면 **/
+    composable<NavScreen2.WordExam> { ExamScreen(navController) }
 
 }

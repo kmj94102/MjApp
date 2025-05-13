@@ -2,7 +2,6 @@ package com.example.mjapp.ui.screen.other.word.exam
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,36 +9,45 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.example.mjapp.R
+import com.example.mjapp.ui.custom.CommonGnb
+import com.example.mjapp.ui.custom.CommonGnbBackButton
 import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DividerLine
-import com.example.mjapp.ui.custom.DoubleCard
-import com.example.mjapp.ui.custom.DoubleCardButton
-import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.custom.TextButton
 import com.example.mjapp.ui.dialog.ExamResultDialog
 import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
-import com.example.mjapp.ui.theme.MyColorBeige
-import com.example.mjapp.ui.theme.MyColorRed
+import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorDarkBlue
+import com.example.mjapp.ui.theme.MyColorGray
+import com.example.mjapp.ui.theme.MyColorLightBlack
+import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle14
-import com.example.mjapp.util.textStyle16
-import com.example.mjapp.util.textStyle18
+import com.example.mjapp.util.textStyle16B
+import com.example.mjapp.util.textStyle18B
 import com.example.network.model.WordTest
 
 @Composable
 fun ExamScreen(
-    onBackClick: () -> Unit,
+    navHostController: NavHostController?= null,
     viewModel: ExamViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
@@ -47,9 +55,11 @@ fun ExamScreen(
     HeaderBodyBottomContainer(
         status = status,
         heightContent = {
-            ExamHeader(
-                title = "",
-                onBackClick = onBackClick
+            CommonGnb(
+                title = viewModel.getTitle(),
+                startButton = {
+                    CommonGnbBackButton { navHostController?.popBackStack() }
+                }
             )
         },
         bodyContent = {
@@ -60,8 +70,19 @@ fun ExamScreen(
             )
         },
         bottomContent = {
-            ExamFooter(onSubmit = viewModel::submit)
-        }
+            TextButton(
+                text = "제출하기",
+                textStyle = textStyle18B(color = MyColorWhite),
+                borderColor = Color.Transparent,
+                backgroundColor = MyColorDarkBlue,
+                onClick = viewModel::submit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 17.dp, horizontal = 24.dp)
+            )
+        },
+        paddingValues = PaddingValues(),
+        modifier = Modifier.background(MyColorBlack)
     )
 
     ExamResultDialog(
@@ -69,29 +90,10 @@ fun ExamScreen(
         data = viewModel.state.value.result,
         onDismiss = {
             viewModel.onResultDialogDismiss()
-            onBackClick()
+            navHostController?.popBackStack()
         },
         goToWrongAnswer = {}
     )
-}
-
-@Composable
-fun ExamHeader(
-    title: String,
-    onBackClick: () -> Unit
-) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        IconBox(
-            boxColor = MyColorBeige,
-            onClick = onBackClick
-        )
-
-        Text(
-            text = title,
-            style = textStyle18(),
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
 }
 
 @Composable
@@ -101,17 +103,15 @@ fun ExamBody(
     updateMyAnswer: (String, Int) -> Unit
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(top = 10.dp, bottom = 30.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+        contentPadding = PaddingValues(top = 16.dp, bottom = 30.dp, start = 24.dp, end = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        list.forEachIndexed { index, testItem ->
-            item {
-                ExamItem(
-                    item = testItem,
-                    updateHint = { updateHint(index) },
-                    updateMyAnswer = { updateMyAnswer(it, index) }
-                )
-            }
+        itemsIndexed(list) { index, item ->
+            ExamItem(
+                item = item,
+                updateHint = { updateHint(index) },
+                updateMyAnswer = { updateMyAnswer(it, index) }
+            )
         }
     }
 }
@@ -122,53 +122,51 @@ fun ExamItem(
     updateHint: () -> Unit,
     updateMyAnswer: (String) -> Unit
 ) {
-    DoubleCard(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MyColorLightBlack, RoundedCornerShape(16.dp))
+            .padding(top = 20.dp)
+    ) {
+        Text(
+            item.meaning,
+            style = textStyle16B(color = MyColorWhite),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+        )
+        Spacer(Modifier.height(12.dp))
+
+        Text(
+            item.hint,
+            style = textStyle14(MyColorWhite),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+        )
+        Spacer(Modifier.height(5.dp))
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxWidth()
-                .background(MyColorBeige)
-                .padding(horizontal = 10.dp)
+                .padding(horizontal = 20.dp)
+                .nonRippleClickable(updateHint)
         ) {
-            Text(
-                text = item.meaning,
-                style = textStyle16(),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 5.dp)
-            )
+            Text("다른 문장 보기", style = textStyle14(MyColorGray).copy(fontSize = 12.sp))
             Icon(
-                painter = painterResource(id = R.drawable.ic_reload),
+                painterResource(R.drawable.ic_reload),
                 contentDescription = null,
-                modifier = Modifier
-                    .nonRippleClickable { updateHint() }
+                tint = MyColorGray,
+                modifier = Modifier.padding(start = 2.dp).size(16.dp)
             )
         }
-        DividerLine()
+        Spacer(Modifier.height(20.dp))
 
-        Column(modifier = Modifier.padding(vertical = 10.dp, horizontal = 15.dp)) {
-            Text(
-                text = item.hint,
-                style = textStyle14()
-            )
-            Spacer(modifier = Modifier.height(15.dp))
+        DividerLine(color = MyColorBlack.copy(alpha = 0.3f))
 
-            CommonTextField(
-                value = item.myAnswer,
-                onTextChange = updateMyAnswer
-            )
-        }
+        CommonTextField(
+            value = item.myAnswer,
+            onTextChange = updateMyAnswer,
+            hint = "답을 입력해 주세요",
+            textStyle = textStyle14(color = MyColorWhite),
+            modifier = Modifier.fillMaxWidth()
+                .padding(20.dp)
+        )
     }
-}
-
-@Composable
-fun ExamFooter(
-    onSubmit: () -> Unit
-) {
-    DoubleCardButton(
-        text = "제출하기",
-        topCardColor = MyColorRed,
-        onClick = onSubmit,
-        modifier = Modifier.fillMaxWidth()
-    )
 }

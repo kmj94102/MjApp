@@ -9,7 +9,7 @@ data class Note(
     val language: String
 ) {
     fun getLanguageKr() =
-        if (language == "us") "영어" else "일어"
+        if (language == "us") "영어" else "일본어"
 }
 
 data class NoteParam(

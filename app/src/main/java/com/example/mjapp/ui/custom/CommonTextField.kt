@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.example.mjapp.ui.theme.MyColorLightGray
+import com.example.mjapp.ui.theme.MyColorHintGray
 import com.example.mjapp.util.textStyle14
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class,
@@ -94,7 +94,7 @@ fun CommonTextField(
                 placeholder = {
                     Text(
                         text = hint,
-                        style = textStyle14(color = MyColorLightGray)
+                        style = textStyle14(color = MyColorHintGray)
                     )
                 }
             )

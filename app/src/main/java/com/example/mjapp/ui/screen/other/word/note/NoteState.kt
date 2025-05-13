@@ -1,6 +1,6 @@
 package com.example.mjapp.ui.screen.other.word.note
 
-import android.icu.util.Calendar
+import java.util.Calendar
 import com.example.network.model.Note
 import com.example.network.model.NoteParam
 import java.util.Date
@@ -36,4 +36,11 @@ data class NoteState(
     fun isLanguageSelect(value: String) = value == language
 
     fun getMonthString() = month.toString().padStart(2, '0')
+}
+
+data class WordStudyCalendar(
+    val date: Calendar? = null,
+    val noteList: List<Note> = emptyList()
+) {
+    fun getDate() = date?.get(Calendar.DAY_OF_MONTH)
 }
