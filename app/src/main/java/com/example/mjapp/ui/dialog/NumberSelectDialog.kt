@@ -40,7 +40,7 @@ fun NumberSelectDialog(
                 )
             }
         },
-        bottomButtonContents = {
+        bottomContents = {
             DoubleCardButton(
                 text = "설정하기",
                 topCardColor = MyColorRed,

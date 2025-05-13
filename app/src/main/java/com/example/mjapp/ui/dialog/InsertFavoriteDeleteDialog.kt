@@ -48,7 +48,7 @@ fun InsertFavoriteDeleteDialog(
             )
             Spacer(modifier = Modifier.height(25.dp))
         },
-        bottomButtonContents = {
+        bottomContents = {
             DoubleCardText(
                 onClick = {
                     onDelete(favorite)

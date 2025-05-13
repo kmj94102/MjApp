@@ -70,7 +70,7 @@ fun FrequentlyDialog(
             onSelect(viewModel.list[state.currentPage])
             onDismiss()
         },
-        topButtonContents = {
+        topContents = {
             IconBox(
                 iconSize = 22.dp,
                 iconRes = R.drawable.ic_setting,

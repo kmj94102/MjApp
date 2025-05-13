@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -35,16 +36,21 @@ import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.textStyle16
 
+// todo - 디자인 전체 수정후 title 제거 예정
 @Composable
 fun BaseDialog(
     isShow: Boolean,
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = {},
+    shape: RoundedCornerShape = RoundedCornerShape(25.dp),
+    backgroundColor: Color = MyColorBlack,
     isCancelable: Boolean = true,
-    title: String,
-    onDismiss: () -> Unit,
+    title: String = "",
     dialogHeight: Dp = 0.dp,
-    topButtonContents: @Composable RowScope.() -> Unit = { DialogCloseButton(onClose = onDismiss) },
-    bodyContents: @Composable ColumnScope.() -> Unit,
-    bottomButtonContents: @Composable RowScope.() -> Unit,
+    innerPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 32.dp),
+    topContents: @Composable () -> Unit = { DialogCloseButton(onClose = onDismiss) },
+    bodyContents: @Composable ColumnScope.() -> Unit = {},
+    bottomContents: @Composable () -> Unit = {},
 ) {
     if (isShow.not()) return
 
@@ -52,34 +58,19 @@ fun BaseDialog(
         onDismissRequest = { if (isCancelable) onDismiss() }
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(25.dp))
-                .border(1.dp, MyColorBlack, RoundedCornerShape(25.dp))
-                .background(MyColorWhite)
+                .clip(shape)
+                .background(backgroundColor)
+                .padding(paddingValues = innerPadding)
                 .then(
                     if (dialogHeight == 0.dp) Modifier.wrapContentHeight()
                     else Modifier.height(dialogHeight)
                 )
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, start = 10.dp, end = 10.dp)
-            ) {
-                Text(
-                    text = title,
-                    style = textStyle16(),
-                    modifier = Modifier.align(Alignment.Center)
-                )
-                Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                    topButtonContents()
-                }
-            }
+            topContents()
             bodyContents()
-            Row(modifier = Modifier.padding(start = 20.dp, end = 17.dp, bottom = 20.dp)) {
-                bottomButtonContents()
-            }
+            bottomContents()
         }
     }
 }
@@ -94,29 +85,30 @@ fun ConfirmCancelDialog(
     confirmText: String = "확인",
     onConfirmClick: () -> Unit,
     onDismiss: () -> Unit,
-    topButtonContents: @Composable RowScope.() -> Unit = { DialogCloseButton(onClose = onDismiss) },
-    bodyContents: @Composable ColumnScope.() -> Unit,
+    topButtonContents: @Composable () -> Unit = { DialogCloseButton(onClose = onDismiss) },
+    bodyContents: @Composable ColumnScope.() -> Unit = {},
     color: Color,
 ) {
     BaseDialog(
         isShow = isShow,
         isCancelable = isCancelable,
-        title = title,
-        topButtonContents = topButtonContents,
+        topContents = topButtonContents,
         bodyContents = bodyContents,
-        bottomButtonContents = {
-            DoubleCardButton(
-                text = cancelText,
-                onClick = onCancelClick,
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            DoubleCardButton(
-                text = confirmText,
-                onClick = onConfirmClick,
-                topCardColor = color,
-                modifier = Modifier.weight(1f)
-            )
+        bottomContents = {
+            Row {
+                DoubleCardButton(
+                    text = cancelText,
+                    onClick = onCancelClick,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                DoubleCardButton(
+                    text = confirmText,
+                    onClick = onConfirmClick,
+                    topCardColor = color,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         },
         onDismiss = onDismiss
     )
@@ -144,16 +136,16 @@ fun StatusDialog(
     title: String,
     onDismiss: () -> Unit,
     dialogHeight: Dp = 0.dp,
-    topButtonContents: @Composable RowScope.() -> Unit = { DialogCloseButton(onClose = onDismiss) },
-    bodyContents: @Composable ColumnScope.() -> Unit,
-    bottomButtonContents: @Composable RowScope.() -> Unit = {}
+    topButtonContents: @Composable () -> Unit = { DialogCloseButton(onClose = onDismiss) },
+    bodyContents: @Composable ColumnScope.() -> Unit = {},
+    bottomContents: @Composable () -> Unit = {}
 ) {
     BaseDialog(
         isShow = isShow,
         isCancelable = isCancelable,
         title = title,
         dialogHeight = dialogHeight,
-        topButtonContents = topButtonContents,
+        topContents = topButtonContents,
         bodyContents = {
             when {
                 status.isLoading -> {
@@ -179,7 +171,7 @@ fun StatusDialog(
                 }
             }
         },
-        bottomButtonContents = bottomButtonContents,
+        bottomContents = bottomContents,
         onDismiss = onDismiss
     )
 }
@@ -195,30 +187,32 @@ fun ConfirmCancelStatusDialog(
     confirmText: String = "확인",
     onConfirmClick: () -> Unit,
     onDismiss: () -> Unit,
-    topButtonContents: @Composable RowScope.() -> Unit = { DialogCloseButton(onClose = onDismiss) },
-    bodyContents: @Composable ColumnScope.() -> Unit,
+    topContents: @Composable () -> Unit = { DialogCloseButton(onClose = onDismiss) },
+    bodyContents: @Composable ColumnScope.() -> Unit = {},
     color: Color,
 ) {
     StatusDialog(
         status = status,
         isShow = isShow,
-        isCancelable = isCancelable,
         title = title,
-        topButtonContents = topButtonContents,
+        isCancelable = isCancelable,
+        topButtonContents = topContents,
         bodyContents = bodyContents,
-        bottomButtonContents = {
-            DoubleCardButton(
-                text = cancelText,
-                onClick = onCancelClick,
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            DoubleCardButton(
-                text = confirmText,
-                onClick = onConfirmClick,
-                topCardColor = color,
-                modifier = Modifier.weight(1f)
-            )
+        bottomContents = {
+            Row {
+                DoubleCardButton(
+                    text = cancelText,
+                    onClick = onCancelClick,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                DoubleCardButton(
+                    text = confirmText,
+                    onClick = onConfirmClick,
+                    topCardColor = color,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         },
         onDismiss = onDismiss
     )
@@ -229,7 +223,7 @@ fun PokemonDialog(
     isShow: Boolean,
     onDismiss: () -> Unit,
     topIcon: @Composable () -> Unit = {},
-    bodyContents: @Composable ColumnScope.() -> Unit,
+    bodyContents: @Composable ColumnScope.() -> Unit = {},
     bottomContents: @Composable RowScope.() -> Unit = { Spacer(modifier = Modifier.height(30.dp)) }
 ) {
     if (isShow.not()) return

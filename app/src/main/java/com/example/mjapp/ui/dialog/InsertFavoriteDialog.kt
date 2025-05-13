@@ -56,7 +56,7 @@ fun InsertFavoriteDialog(
             )
             Spacer(modifier = Modifier.height(15.dp))
         },
-        bottomButtonContents = {
+        bottomContents = {
             DoubleCardText(
                 onClick = {
                     onInsert(
