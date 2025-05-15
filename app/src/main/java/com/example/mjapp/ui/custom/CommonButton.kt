@@ -52,7 +52,7 @@ fun TextButton(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(16.dp),
     backgroundColor: Color = MyColorRed,
-    borderColor: Color = MyColorWhite,
+    borderColor: Color = Color.Transparent,
     borderWidth: Dp = 1.dp,
     text: String,
     textStyle: TextStyle = textStyle20B(MyColorWhite),

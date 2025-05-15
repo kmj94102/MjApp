@@ -2,7 +2,6 @@ package com.example.mjapp.ui.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,13 +15,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -30,11 +29,15 @@ import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonLottieAnimation
 import com.example.mjapp.ui.custom.DoubleCardButton
 import com.example.mjapp.ui.custom.IconBox
+import com.example.mjapp.ui.custom.TextButton
 import com.example.mjapp.ui.structure.BaseStatus
 import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorDarkBlue
+import com.example.mjapp.ui.theme.MyColorGray
+import com.example.mjapp.ui.theme.MyColorLightBlack
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorWhite
-import com.example.mjapp.util.textStyle16
+import com.example.mjapp.util.textStyle18B
 
 // todo - 디자인 전체 수정후 title 제거 예정
 @Composable
@@ -47,7 +50,7 @@ fun BaseDialog(
     isCancelable: Boolean = true,
     title: String = "",
     dialogHeight: Dp = 0.dp,
-    innerPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 32.dp),
+    innerPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
     topContents: @Composable () -> Unit = { DialogCloseButton(onClose = onDismiss) },
     bodyContents: @Composable ColumnScope.() -> Unit = {},
     bottomContents: @Composable () -> Unit = {},
@@ -113,6 +116,55 @@ fun ConfirmCancelDialog(
         onDismiss = onDismiss
     )
 }
+
+@Composable
+fun ConfirmCancelDialog(
+    isShow: Boolean,
+    isCancelable: Boolean = true,
+    cancelText: String = "취소",
+    cancelTextStyle: TextStyle = textStyle18B(MyColorGray),
+    cancelBackgroundColor: Color = MyColorLightBlack,
+    onCancelClick: () -> Unit,
+    confirmText: String = "확인",
+    onConfirmClick: () -> Unit,
+    confirmTextStyle: TextStyle = textStyle18B(MyColorWhite),
+    confirmBackgroundColor: Color = MyColorDarkBlue,
+    onDismiss: () -> Unit,
+    innerPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
+    topContents: @Composable () -> Unit = { DialogCloseButton(onClose = onDismiss) },
+    bodyContents: @Composable ColumnScope.() -> Unit = {},
+) {
+    BaseDialog(
+        isShow = isShow,
+        isCancelable = isCancelable,
+        innerPadding = innerPadding,
+        topContents = topContents,
+        bodyContents = bodyContents,
+        bottomContents = {
+            Row {
+                TextButton(
+                    text = cancelText,
+                    textStyle = cancelTextStyle,
+                    onClick = onCancelClick,
+                    innerPadding = PaddingValues(vertical = 13.dp),
+                    backgroundColor = cancelBackgroundColor,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(
+                    text = confirmText,
+                    textStyle = confirmTextStyle,
+                    onClick = onConfirmClick,
+                    innerPadding = PaddingValues(vertical = 13.dp),
+                    backgroundColor = confirmBackgroundColor,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        },
+        onDismiss = onDismiss
+    )
+}
+
 
 @Composable
 fun DialogCloseButton(
