@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
             MjAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MyColorBlack
                 ) {
                     MainScreen()
                 }
@@ -57,7 +56,7 @@ fun MainScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MyColorWhite)
+            .background(MyColorBlack)
     ) {
         NavigationGraph(navController = navController)
         BottomNavigationBar(
@@ -76,7 +75,7 @@ fun BottomNavigationBar(
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val items = BottomNavItems.values().map { it.item }
+    val items = BottomNavItems.entries.map { it.item }
     val backStackEntry by navController.currentBackStackEntryAsState()
     val isVisible = items
         .map { it.routeWithPostFix }

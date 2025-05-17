@@ -5,6 +5,8 @@ import com.example.network.model.NoteIdParam
 import com.example.network.model.NoteParam
 import com.example.network.model.Word
 import com.example.network.model.WrongAnswerInsertParam
+import com.example.network.model.WrongAnswerParam
+import com.example.network.model.WrongAnswerResult
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -20,5 +22,10 @@ interface VocabularyService {
     /** 오답 등록 **/
     @POST("/vocabulary/insert/wrongAnswer")
     suspend fun insertWrongAnswer(@Body item: List<WrongAnswerInsertParam>): String
+
+    /** 오답 노트 조회 **/
+    @POST("/vocabulary/select/wrongAnswer")
+    suspend fun fetchWrongAnswer(@Body item: WrongAnswerParam): WrongAnswerResult
+
 
 }

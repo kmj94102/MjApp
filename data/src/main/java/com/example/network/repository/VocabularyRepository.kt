@@ -5,6 +5,8 @@ import com.example.network.model.NoteIdParam
 import com.example.network.model.NoteParam
 import com.example.network.model.Word
 import com.example.network.model.WrongAnswerInsertParam
+import com.example.network.model.WrongAnswerParam
+import com.example.network.model.WrongAnswerResult
 import kotlinx.coroutines.flow.Flow
 
 interface VocabularyRepository {
@@ -16,4 +18,7 @@ interface VocabularyRepository {
 
     /** 오답 등록 **/
     fun insertWrongAnswer(param: List<WrongAnswerInsertParam>): Flow<String>
+
+    /** 오답 노트 조회 **/
+    fun fetchWrongAnswer(param: WrongAnswerParam): Flow<WrongAnswerResult>
 }

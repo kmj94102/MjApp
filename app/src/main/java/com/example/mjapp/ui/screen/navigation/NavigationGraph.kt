@@ -34,6 +34,7 @@ import com.example.mjapp.ui.screen.other.internet.InternetFavoritesScreen
 import com.example.mjapp.ui.screen.other.word.detail.WordDetailScreen
 import com.example.mjapp.ui.screen.other.word.exam.ExamScreen
 import com.example.mjapp.ui.screen.other.word.note.WordStudyScreen
+import com.example.mjapp.ui.screen.other.word.wronganswer.WrongAnswerScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
 
@@ -344,5 +345,7 @@ fun NavGraphBuilder.otherScreens(
     composable<NavScreen2.WordDetail> { WordDetailScreen(navController) }
     /** 단어 테스트 화면 **/
     composable<NavScreen2.WordExam> { ExamScreen(navController) }
+    /** 오답 노트 화면 **/
+    composable<NavScreen2.WrongAnswer> { WrongAnswerScreen(navController) }
 
 }

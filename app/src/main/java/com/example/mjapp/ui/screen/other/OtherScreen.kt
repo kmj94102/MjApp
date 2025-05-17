@@ -46,15 +46,10 @@ fun OtherScreen(
             }
         ),
         PageMoveCardItem(
-            text = "단어 테스트하기",
+            text = "오답노트",
             imageRes = R.drawable.ic_exam,
             onClick = {
-                goToScreen(
-                    makeRouteWithArgs(
-                        NavScreen.Note.item.route,
-                        true.toString()
-                    )
-                )
+                navHostController?.navigate(NavScreen2.WrongAnswer)
             }
         ),
     )

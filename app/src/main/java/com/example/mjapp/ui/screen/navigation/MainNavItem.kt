@@ -187,4 +187,7 @@ sealed interface NavScreen2 {
         val index: Int,
         val title: String
     ): NavScreen2
+
+    @Serializable
+    data object WrongAnswer: NavScreen2
 }

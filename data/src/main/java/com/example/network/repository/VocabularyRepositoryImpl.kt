@@ -5,6 +5,8 @@ import com.example.network.model.NoteIdParam
 import com.example.network.model.NoteParam
 import com.example.network.model.Word
 import com.example.network.model.WrongAnswerInsertParam
+import com.example.network.model.WrongAnswerParam
+import com.example.network.model.WrongAnswerResult
 import com.example.network.model.getFailureThrow
 import com.example.network.service.VocabularyClient
 import kotlinx.coroutines.flow.Flow
@@ -31,9 +33,17 @@ class VocabularyRepositoryImpl @Inject constructor(
     }
 
     /** 오답 등록 **/
-    override fun insertWrongAnswer(param: List<WrongAnswerInsertParam>) = flow{
+    override fun insertWrongAnswer(param: List<WrongAnswerInsertParam>) = flow {
         client
             .insertWrongAnswer(param)
+            .onSuccess { emit(it) }
+            .getFailureThrow()
+    }
+
+    /** 오답 노트 조회 **/
+    override fun fetchWrongAnswer(param: WrongAnswerParam): Flow<WrongAnswerResult> = flow {
+        client
+            .fetchWrongAnswer(param)
             .onSuccess { emit(it) }
             .getFailureThrow()
     }

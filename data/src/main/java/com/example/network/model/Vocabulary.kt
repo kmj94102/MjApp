@@ -100,3 +100,40 @@ data class WordTestResult(
 ) {
     fun getCount() = " ($correctCount/${totalSize})"
 }
+
+data class WrongAnswerParam(
+    val sort: String = SORT_TIMESTAMP,
+    val limit: Int = 100,
+    val skip: Int = 0
+) {
+    companion object {
+        const val SORT_COUNT = "counter"
+        const val SORT_TIMESTAMP = "timestamp"
+    }
+}
+
+data class WrongAnswerResult(
+    val list: List<WrongAnswerItem>,
+    val totalCount: Int
+)
+
+data class WrongAnswerItem(
+    val noteId: Int,
+    val wordId: Int,
+    val word: String,
+    val meaning: String,
+    val note1: String,
+    val note2: String,
+    val count: Int,
+    val examples: List<WordExample>
+) {
+    fun toWord() = Word(
+        noteId = noteId,
+        wordId = wordId,
+        word = word,
+        meaning = meaning,
+        note1 = note1,
+        note2 = note2,
+        examples = examples
+    )
+}
