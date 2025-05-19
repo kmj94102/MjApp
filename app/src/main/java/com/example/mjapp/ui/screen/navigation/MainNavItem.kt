@@ -174,6 +174,12 @@ sealed interface NavScreen2 {
     data object PokemonCounterHistory: NavScreen2
 
     @Serializable
+    data object Persona3: NavScreen2
+
+    @Serializable
+    data object Persona3Community: NavScreen2
+
+    @Serializable
     data object WordStudy: NavScreen2
 
     @Serializable

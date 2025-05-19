@@ -73,7 +73,7 @@ data class GameCardItem(
     @DrawableRes
     val imageRes: Int,
     val color: Color,
-    val pageAddress: String,
+    val pageAddress: String = "",
     val page: NavScreen2? = null
 )
 
@@ -95,8 +95,13 @@ fun createGameCardItemList() = listOf(
         text = "포켓몬\n카운터",
         imageRes = R.drawable.img_pokemon_counter,
         color = MyColorTurquoise,
-        pageAddress = NavScreen.PokemonCounter.item.routeWithPostFix,
         page = NavScreen2.PokemonCounter
+    ),
+    GameCardItem(
+        text = "페르소나3",
+        imageRes = R.drawable.img_pokemon_counter,
+        color = MyColorTurquoise,
+        page = NavScreen2.Persona3
     ),
     GameCardItem(
         text = "엘소드\n캐릭터 소개",
@@ -109,12 +114,6 @@ fun createGameCardItemList() = listOf(
         imageRes = R.drawable.img_elsword_counter,
         color = MyColorPurple,
         pageAddress = NavScreen.ElswordCounter.item.routeWithPostFix
-    ),
-    GameCardItem(
-        text = "포켓몬\n등록",
-        imageRes = R.drawable.img_pokemon_counter,
-        color = MyColorTurquoise,
-        pageAddress = NavScreen.PokemonAdd.item.routeWithPostFix
     ),
     GameCardItem(
         text = "포켓몬 이미지\n수정",
