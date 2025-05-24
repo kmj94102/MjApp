@@ -95,6 +95,19 @@ object NetworkModule {
         pokemonDao: PokemonDao
     ): PokemonClient = PokemonClient(pokemonService, pokemonDao)
 
+₩    @Provides
+    @Singleton
+    fun providePersonaService(
+        @Named("internal") retrofit: Retrofit
+    ): PersonaService =
+        retrofit.create(PersonaService::class.java)
+
+    @Provides
+    @Singleton
+    fun providePersonaClient(
+        personaService: PersonaService
+    ): PersonaClient = PersonaClient(personaService)
+
     @Provides
     @Singleton
     fun provideCalendarService(

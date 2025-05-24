@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,8 +33,11 @@ import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle12B
 import com.example.mjapp.util.textStyle14
-import com.example.mjapp.util.textStyle16B
+import com.example.mjapp.util.textStyle16
 import com.example.mjapp.util.textStyle20B
+import com.example.network.model.Persona3CommunityUpdateParam
+import com.example.network.model.Persona3Schedule
+import com.example.network.model.getUpdateCommunityParam
 
 @Composable
 fun Persona3Screen(
@@ -43,6 +45,7 @@ fun Persona3Screen(
     viewModel: Persona3ViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
+    val info by viewModel.info.collectAsStateWithLifecycle()
 
     HeaderBodyContainer(
         status = status,
@@ -56,7 +59,8 @@ fun Persona3Screen(
                     Image(
                         painter = painterResource(R.drawable.ic_history),
                         contentDescription = null,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier
+                            .size(28.dp)
                             .nonRippleClickable {
                                 navHostController?.navigate(NavScreen2.Persona3Community)
                             }
@@ -65,7 +69,7 @@ fun Persona3Screen(
             )
         },
         bodyContent = {
-            Persona3Body()
+            Persona3Body(info, viewModel::updateSchedule)
         },
         paddingValues = PaddingValues(),
         modifier = Modifier.background(Color(0xFF005AA4))
@@ -73,37 +77,57 @@ fun Persona3Screen(
 }
 
 @Composable
-fun Persona3Body() {
+fun Persona3Body(
+    info: Map<String, List<Persona3Schedule>>,
+    onCompleteClick: (String, List<Int>, List<Persona3CommunityUpdateParam>) -> Unit = { _, _, _ -> }
+) {
     LazyColumn(
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 50.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        stickyHeader {
-            Text(
-                "4월",
-                style = textStyle20B(color = Color(0xFF0EF2E5)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF005AA4))
-                    .padding(16.dp)
-            )
-        }
+        var header = ""
+        info.forEach { key, list ->
+            if (key.split(".").getOrNull(0) != header) {
+                val month = key.split(".").getOrElse(0) { "" }
 
-        items((0..10).toList()) {
-            Persona3Item()
+                stickyHeader {
+                    Text(
+                        "${month}월",
+                        style = textStyle20B(color = Color(0xFF0EF2E5)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFF005AA4))
+                            .padding(12.dp)
+                    )
+                }
+                header = month
+            }
+
+            item {
+                Persona3Item(
+                    list = list,
+                    onCompleteClick = { idxList, communityList ->
+                        onCompleteClick(key, idxList, communityList)
+                    }
+                )
+            }
         }
     }
 }
 
 @Composable
-fun Persona3Item() {
+fun Persona3Item(
+    list: List<Persona3Schedule>,
+    onCompleteClick: (List<Int>, List<Persona3CommunityUpdateParam>) -> Unit = { _, _ -> }
+) {
+    val item = list.first()
     Column(
         modifier = Modifier
             .background(Color(0xCC131234), shape = RoundedCornerShape(16.dp))
             .padding(20.dp)
     ) {
         Text(
-            "1일 수요일",
+            item.getDayInfo(),
             style = textStyle12B(color = MyColorWhite),
             modifier = Modifier
                 .background(Color(0xFF0036FB), RoundedCornerShape(12.dp))
@@ -111,47 +135,25 @@ fun Persona3Item() {
         )
         Spacer(Modifier.height(12.dp))
 
-        Text("아침/낮", style = textStyle14(MyColorGray))
-        Spacer(Modifier.height(6.dp))
-        Text(
-            "아침 행동관련 내용이 들어갑니다.\n두번째줄까지 있는 내용입니다",
-            style = textStyle16B(MyColorWhite),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(16.dp))
-
-        Text("방과후", style = textStyle14(MyColorGray))
-        Spacer(Modifier.height(6.dp))
-        Text(
-            "방과후 행동관련 내용이 들어갑니다.",
-            style = textStyle16B(MyColorWhite),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(16.dp))
-
-        Text("밤", style = textStyle14(MyColorGray))
-        Spacer(Modifier.height(6.dp))
-        Text(
-            "밤 행동관련 내용이 들어갑니다.\n두번째줄까지 있는 내용입니다",
-            style = textStyle16B(MyColorWhite),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(16.dp))
-
-        Text("비고", style = textStyle14(MyColorGray))
-        Spacer(Modifier.height(6.dp))
-        Text(
-            "비고 행동관련 내용이 들어갑니다.",
-            style = textStyle16B(MyColorWhite),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(30.dp))
+        list.forEach {
+            Text(it.title, style = textStyle14(MyColorGray))
+            Spacer(Modifier.height(6.dp))
+            Text(
+                it.contents,
+                style = textStyle16(MyColorWhite),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(16.dp))
+        }
+        Spacer(Modifier.height(14.dp))
 
         TextButton(
             text = "완료",
             borderColor = Color(0xFF0EF2E5),
             backgroundColor = Color.Transparent,
             modifier = Modifier.fillMaxWidth()
-        ) { }
+        ) {
+            onCompleteClick(list.map { it.idx }, list.getUpdateCommunityParam())
+        }
     }
 }
