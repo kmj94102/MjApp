@@ -7,6 +7,7 @@ data class BottomNavItem(
     val title: String,
     val route: String,
     val routeWithPostFix: String = route,
+    val screen: NavScreen2? = null,
     @DrawableRes
     val icon: Int
 )
@@ -30,6 +31,7 @@ enum class BottomNavItems(val item: BottomNavItem) {
         item = BottomNavItem(
             title = "달력",
             route = "Schedule",
+            screen = NavScreen2.Calendar,
             icon = R.drawable.ic_calendar
         )
     ),

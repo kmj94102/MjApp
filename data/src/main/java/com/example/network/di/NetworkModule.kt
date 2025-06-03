@@ -95,7 +95,7 @@ object NetworkModule {
         pokemonDao: PokemonDao
     ): PokemonClient = PokemonClient(pokemonService, pokemonDao)
 
-₩    @Provides
+    @Provides
     @Singleton
     fun providePersonaService(
         @Named("internal") retrofit: Retrofit

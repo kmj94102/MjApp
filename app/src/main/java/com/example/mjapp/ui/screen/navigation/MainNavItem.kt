@@ -180,6 +180,12 @@ sealed interface NavScreen2 {
     data object Persona3Community: NavScreen2
 
     @Serializable
+    data object Calendar: NavScreen2
+
+    @Serializable
+    data object CalendarWrite: NavScreen2
+
+    @Serializable
     data object WordStudy: NavScreen2
 
     @Serializable

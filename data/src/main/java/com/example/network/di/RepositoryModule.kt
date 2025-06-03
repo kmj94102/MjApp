@@ -20,6 +20,11 @@ interface RepositoryModule {
     ): PokemonRepository
 
     @Binds
+    fun bindPersonaRepository(
+        personaRepositoryImpl: PersonaRepositoryImpl
+    ): PersonaRepository
+
+    @Binds
     fun bindElswordRepository(
         elswordRepositoryImpl: ElswordRepositoryImpl
     ): ElswordRepository

@@ -170,21 +170,6 @@ fun NavGraphBuilder.calendarScreens(
     onBackClick: () -> Unit,
     navController: NavHostController
 ) {
-    /** 달력 화면 **/
-    composable(
-        route = BottomNavItems.Calendar.item.routeWithPostFix
-    ) {
-        CalendarScreen(
-            goToAdd = {
-                navController.navigate(
-                    makeRouteWithArgs(
-                        NavScreen.ScheduleAdd.item.route,
-                        it
-                    )
-                )
-            }
-        )
-    }
     /** 일정 아이템 추가 화면 **/
     composable(
         route = NavScreen.ScheduleAdd.item.routeWithPostFix,
@@ -227,6 +212,9 @@ fun NavGraphBuilder.calendarScreens(
             }
         )
     }
+
+    /** 달력 화면 **/
+    composable<NavScreen2.Calendar> { CalendarScreen(navController) }
 }
 
 /** 가계부 관련 화면 **/

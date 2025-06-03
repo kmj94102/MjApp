@@ -2,6 +2,7 @@ package com.example.network.repository
 
 import com.example.network.model.MyCalendarInfo
 import com.example.network.model.PlanTasksModify
+import com.example.network.model.ScheduleCalendarInfo
 import com.example.network.model.ScheduleModifier
 import kotlinx.coroutines.flow.Flow
 
@@ -11,7 +12,7 @@ interface CalendarRepository {
     fun fetchCalendarByMonth(
         year: Int,
         month: Int
-    ): Flow<List<MyCalendarInfo>>
+    ): Flow<List<ScheduleCalendarInfo>>
 
     /** 일정 등록 **/
     suspend fun insertSchedule(item: ScheduleModifier): Result<String>

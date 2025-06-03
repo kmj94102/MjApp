@@ -42,8 +42,6 @@ import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.OutlineText
 import com.example.mjapp.ui.custom.WeekCalendar
-import com.example.mjapp.ui.screen.calendar.CalendarPlanContainer
-import com.example.mjapp.ui.screen.calendar.CalendarScheduleContainer
 import com.example.mjapp.ui.screen.game.elsword.ElswordCharacters
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorBlack
@@ -118,20 +116,9 @@ fun HomeBody(
             itemContent = {
                 when (it) {
                     is CalendarItem.PlanInfo -> {
-                        CalendarPlanContainer(
-                            info = it,
-                            modifier = Modifier.fillMaxWidth(),
-                            onTaskClick = { _, _ -> },
-                            deleteListener = viewModel::deletePlanTasks
-                        )
                     }
 
                     is CalendarItem.ScheduleInfo -> {
-                        CalendarScheduleContainer(
-                            info = it,
-                            modifier = Modifier.fillMaxWidth(),
-                            deleteListener = viewModel::deleteSchedule
-                        )
                     }
                 }
             }

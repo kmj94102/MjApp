@@ -1,5 +1,6 @@
 package com.example.network.model
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -84,6 +85,28 @@ data class CalendarResult(
             list = scheduleInfoList + planInfoList
         )
     }
+
+    fun toScheduleCalendarInfo(): ScheduleCalendarInfo? {
+        val isHoliday = calendarInfoList.any { it.isHoliday }
+        val isSpecialDay = calendarInfoList.any { it.isSpecialDay }
+        val info = if (calendarInfoList.isNotEmpty()) {
+            calendarInfoList.map { it.info }.reduce { acc, s -> "$acc, $s" }
+        } else ""
+        val sdfInput = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val calendar = Calendar.getInstance().apply {
+            sdfInput.parse(date) ?: return null
+        }
+        return ScheduleCalendarInfo(
+            date = calendar,
+            isHoliday = isHoliday,
+            isSpecialDay = isSpecialDay,
+            dateInfo = info,
+            itemList = mutableListOf<CalendarItem>().also {
+                it.addAll(scheduleInfoList)
+                it.addAll(planInfoList)
+            }
+        )
+    }
 }
 
 data class MyCalendarInfo(
@@ -132,4 +155,90 @@ sealed class CalendarItem(val type: String) {
         const val Schedule = "schedule"
         const val Plan = "plan"
     }
+}
+
+open class CalendarInfo2 {
+    open val date: Calendar? = null
+    open val isHoliday: Boolean = false
+    open val isSpecialDay: Boolean = false
+
+    open fun getDate(): Int?  {
+        return date?.get(Calendar.DAY_OF_MONTH)
+    }
+
+    open fun itemSize(): Int {
+        return 0
+    }
+}
+
+data class ScheduleCalendarInfo(
+    override val date: Calendar?,
+    override val isHoliday: Boolean = false,
+    override val isSpecialDay: Boolean = false,
+    val dateInfo: String = "",
+    val dayOfWeek: String = "",
+    val detailDate: String = "",
+    val itemList: List<CalendarItem> = listOf(),
+): CalendarInfo2() {
+    override fun itemSize(): Int {
+        return itemList.size
+    }
+
+//    fun getDateAndDayOfWeek() = "${date.padStart(2, '0')}(${dayOfWeek})"
+}
+
+fun getMonthList(year: Int, month: Int): List<Calendar?> {
+    val sdfInput = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.YEAR, year)
+    calendar.set(Calendar.MONTH, month - 1)
+
+    calendar.set(Calendar.DAY_OF_MONTH, 1)
+    val firstDay = calendar.time
+
+    val lastDayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+    calendar.set(Calendar.DAY_OF_MONTH, lastDayOfMonth)
+    val lastDay = calendar.time
+
+    return createCalendarList(sdfInput.format(firstDay), sdfInput.format(lastDay))
+}
+
+fun createCalendarList(
+    startDate: String,
+    endDate: String,
+): List<Calendar?> {
+    val sdfInput = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+
+    val startCalendar = Calendar.getInstance()
+    val endCalendar = Calendar.getInstance()
+
+    runCatching {
+        startCalendar.time = sdfInput.parse(startDate) ?: return emptyList()
+        endCalendar.time = sdfInput.parse(endDate) ?: return emptyList()
+    }.onFailure {
+        it.printStackTrace()
+        return emptyList()
+    }
+
+    val dayOfWeek = startCalendar.get(Calendar.DAY_OF_WEEK)
+    val emptyDays = if (dayOfWeek == Calendar.SUNDAY) 0 else dayOfWeek - 1
+
+    val list = mutableListOf<Calendar?>()
+
+    repeat(emptyDays) {
+        list.add(null)
+    }
+
+    while (startCalendar <= endCalendar) {
+        list.add(startCalendar.clone() as Calendar)
+        startCalendar.add(Calendar.DAY_OF_MONTH, 1)
+    }
+
+    return list
+}
+
+fun isSameDay(cal1: Calendar?, cal2: Calendar?): Boolean {
+    return cal1 != null && cal2 != null && cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+            cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+            cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH)
 }

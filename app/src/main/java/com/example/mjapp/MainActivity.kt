@@ -21,11 +21,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mjapp.ui.screen.navigation.BottomNavItem
 import com.example.mjapp.ui.screen.navigation.BottomNavItems
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.screen.navigation.NavigationGraph
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.nonRippleClickable
@@ -71,7 +72,7 @@ fun MainScreen() {
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavController,
+    navController: NavHostController,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -95,7 +96,10 @@ fun BottomNavigationBar(
                 MyBottomNavItem(
                     item = it,
                     selected = backStackEntry?.destination?.route == it.routeWithPostFix,
-                    onClick = onClick
+                    onClick = onClick,
+                    onNav2Click = {
+                        navController.navigate(it)
+                    }
                 )
             }
             Spacer(modifier = Modifier.width(10.dp))
@@ -107,7 +111,8 @@ fun BottomNavigationBar(
 fun RowScope.MyBottomNavItem(
     item: BottomNavItem,
     selected: Boolean,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    onNav2Click: (NavScreen2) -> Unit = {}
 ) {
     val background = if (selected) MyColorSkyBlue else Color.Transparent
     val border = BorderStroke(1.dp, if (selected) MyColorBlack else Color.Transparent)
@@ -123,7 +128,9 @@ fun RowScope.MyBottomNavItem(
             .clip(RoundedCornerShape(10.dp))
             .border(border, RoundedCornerShape(10.dp))
             .background(background)
-            .nonRippleClickable { onClick(item.routeWithPostFix) }
+            .nonRippleClickable {
+                item.screen?.let { onNav2Click(it) } ?: onClick(item.routeWithPostFix)
+            }
     ) {
         Image(
             painter = painterResource(id = item.icon),
