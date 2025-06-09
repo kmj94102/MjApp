@@ -4,14 +4,18 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.BaseViewModel
-import com.example.mjapp.util.Constants
-import com.example.mjapp.util.getToday
 import com.example.mjapp.util.update
+import com.example.network.model.PlanTasksModify
 import com.example.network.model.ScheduleModifier
+import com.example.network.model.TaskItem
 import com.example.network.repository.CalendarRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,99 +23,105 @@ class ScheduleAddViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: CalendarRepository
 ) : BaseViewModel() {
-
-    val initDate = savedStateHandle.get<String>(Constants.DATE) ?: "2023.01.01"
-    private var selectItem = SCHEDULE_DATE
-
-    private val _scheduleModifier = mutableStateOf(ScheduleModifier())
-    val scheduleModifier: State<ScheduleModifier> = _scheduleModifier
+    private val _state = mutableStateOf(ScheduleAddState())
+    val state: State<ScheduleAddState> = _state
 
     init {
-        updateDate(initDate)
-    }
-
-    fun updateSelectItem(type: String) {
-        when (type) {
-            SCHEDULE_DATE -> {
-                selectItem = type
-                _scheduleModifier.update {
-                    it.copy(selectDate = it.date.ifEmpty { getToday() })
-                }
-            }
-
-            RECURRENCE_END_DATE -> {
-                selectItem = type
-                _scheduleModifier.update {
-                    it.copy(selectDate = it.recurrenceEndDate.ifEmpty { getToday() })
-                }
-            }
-
-            START_TIME -> {
-                selectItem = type
-                _scheduleModifier.update {
-                    it.copy(selectTime = it.startTime.ifEmpty { "00:00" })
-                }
-            }
-
-            END_TIME -> {
-                selectItem = type
-                _scheduleModifier.update {
-                    it.copy(selectTime = it.endTime.ifEmpty { "00:00" })
-                }
-            }
+        val initDate = savedStateHandle.toRoute<NavScreen2.ScheduleAdd>().date
+        _state.update {
+            it.copy(
+                scheduleInfo = ScheduleModifier(date = initDate),
+                planInfo = PlanTasksModify(planDate = initDate)
+            )
         }
     }
 
-    fun updateTitle(value: String) {
-        _scheduleModifier.update { it.copy(scheduleTitle = value) }
+    fun updateIsSchedule(value: Boolean) {
+        _state.update { it.copy(isSchedule = value) }
     }
 
-    fun updateContent(value: String) {
-        _scheduleModifier.update { it.copy(scheduleContent = value) }
+    fun updateSchedule(value: ScheduleModifier) {
+        _state.update { it.copy(scheduleInfo = value) }
     }
 
-    fun updateRecurrence(value: String) {
-        _scheduleModifier.update { it.copy(recurrenceType = value) }
+    fun updatePlan(value: PlanTasksModify) {
+        _state.update { it.copy(planInfo = value) }
+    }
+
+    fun updateAddTask() {
+        val newList = state.value.planInfo.taskList.toMutableList()
+        newList.add(TaskItem(contents = ""))
+
+        _state.update { it.copy(planInfo = it.planInfo.copy(taskList = newList)) }
     }
 
     fun updateDate(value: String) {
-        if (selectItem == SCHEDULE_DATE) {
-            _scheduleModifier.update { it.copy(date = value) }
-        } else if (selectItem == RECURRENCE_END_DATE) {
-            _scheduleModifier.update { it.copy(recurrenceEndDate = value) }
+        _state.update {
+            it.copy(
+                scheduleInfo = it.scheduleInfo.copy(date = value),
+                planInfo = it.planInfo.copy(planDate = value)
+            )
         }
     }
 
-    fun updateTime(value: String) {
-        if (selectItem == START_TIME) {
-            _scheduleModifier.update {
-                it.copy(
-                    startTime = value,
-                    endTime = _scheduleModifier.value.calculateEndTime(value)
-                )
-            }
-        } else if (selectItem == END_TIME) {
-            _scheduleModifier.update { it.copy(endTime = value) }
+    fun updateStartTime(value: String) {
+        _state.update {
+            it.copy(
+                scheduleInfo = it.scheduleInfo.copy(startTime = value),
+            )
         }
     }
 
-    fun insertSchedule() = viewModelScope.launch {
+    fun updateEndTime(value: String) {
+        _state.update {
+            it.copy(
+                scheduleInfo = it.scheduleInfo.copy(endTime = value),
+            )
+        }
+    }
+
+    fun updateRecurrenceType(value: String) {
+        _state.update {
+            it.copy(
+                scheduleInfo = it.scheduleInfo.copy(recurrenceType = value),
+            )
+        }
+    }
+
+    fun submit() {
+        if(_state.value.isSchedule) {
+            insertSchedule()
+        } else {
+            insertPlan()
+        }
+    }
+
+    private fun insertSchedule()  {
         repository
-            .insertSchedule(item = _scheduleModifier.value)
-            .onSuccess {
-                updateMessage(it)
+            .insertSchedule(_state.value.scheduleInfo)
+            .setLoadingState()
+            .onEach {
+                updateMessage("일정 등록 완료")
                 updateFinish()
             }
-            .onFailure { e ->
-                e.message?.let { updateMessage(it) } ?: updateMessage("등록 중 오류가 발생하였습니다.")
+            .catch {
+                it.message?.let { message -> updateMessage(message) } ?: updateMessage("일정 등록 실패")
             }
+            .launchIn(viewModelScope)
     }
 
-    companion object {
-        const val SCHEDULE_DATE = "scheduleDate"
-        const val RECURRENCE_END_DATE = "recurrenceEndDate"
-        const val START_TIME = "startTime"
-        const val END_TIME = "endTime"
+    private fun insertPlan()  {
+        repository
+            .insertPlan(_state.value.planInfo)
+            .setLoadingState()
+            .onEach {
+                updateMessage("계획 등록 완료")
+                updateFinish()
+            }
+            .catch {
+                it.message?.let { message -> updateMessage(message) } ?: updateMessage("계획 등록 실패")
+            }
+            .launchIn(viewModelScope)
     }
 
 }

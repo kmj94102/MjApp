@@ -1,26 +1,29 @@
 package com.example.mjapp.ui.dialog
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.mjapp.ui.custom.SelectSpinner
-import com.example.mjapp.ui.theme.MyColorPurple
-import java.util.*
+import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.textStyle16
+import java.util.Calendar
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DateSelectDialog(
     date: String,
     isShow: Boolean,
-    color: Color = MyColorPurple,
     onDismiss: () -> Unit,
     onSelect: (String) -> Unit
 ) {
@@ -45,13 +48,19 @@ fun DateSelectDialog(
             getDayList(yearList[yearState.currentPage], monthList[monthState.currentPage])
     }
 
-    ConfirmCancelDialog(
+    ConfirmCancelDialog2(
         isShow = isShow,
-        title = "날짜 선택",
         bodyContents = {
+            Text(
+                "날짜 선택",
+                style = textStyle16(MyColorWhite),
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(Modifier.height(32.dp))
+
             Row(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier
-                    .padding(vertical = 34.dp)
                     .align(Alignment.CenterHorizontally)
             ) {
                 SelectSpinner(
@@ -60,7 +69,6 @@ fun DateSelectDialog(
                     initValue = year,
                     width = 80.dp
                 )
-                Spacer(modifier = Modifier.width(20.dp))
 
                 SelectSpinner(
                     selectList = monthList,
@@ -68,7 +76,6 @@ fun DateSelectDialog(
                     initValue = month,
                     width = 80.dp
                 )
-                Spacer(modifier = Modifier.width(20.dp))
 
                 SelectSpinner(
                     selectList = dayList.value,
@@ -77,6 +84,7 @@ fun DateSelectDialog(
                     width = 80.dp
                 )
             }
+            Spacer(Modifier.height(24.dp))
         },
         onCancelClick = onDismiss,
         onConfirmClick = {
@@ -85,7 +93,6 @@ fun DateSelectDialog(
             )
             onDismiss()
         },
-        color = color,
         onDismiss = onDismiss
     )
 }

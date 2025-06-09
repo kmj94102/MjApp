@@ -15,10 +15,10 @@ interface CalendarRepository {
     ): Flow<List<ScheduleCalendarInfo>>
 
     /** 일정 등록 **/
-    suspend fun insertSchedule(item: ScheduleModifier): Result<String>
+    fun insertSchedule(item: ScheduleModifier): Flow<String>
 
     /** 계획 등록 **/
-    suspend fun insertPlan(item: PlanTasksModify): Result<String>
+    fun insertPlan(item: PlanTasksModify): Flow<String>
 
     /** 일정 삭제 **/
     suspend fun deleteSchedule(id: Int)

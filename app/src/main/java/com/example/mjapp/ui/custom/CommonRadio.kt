@@ -78,7 +78,7 @@ fun CommonRadio(
                 }
             },
             style = textStyle.copy(
-                color = if (check) MyColorBlack else MyColorLightGray,
+                color = if (check) MyColorWhite else MyColorLightGray,
             )
         )
 

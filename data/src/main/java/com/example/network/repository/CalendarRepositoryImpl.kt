@@ -42,15 +42,15 @@ class CalendarRepositoryImpl @Inject constructor(
     }
 
     /** 일정 등록 **/
-    override suspend fun insertSchedule(item: ScheduleModifier) = runCatching {
+    override fun insertSchedule(item: ScheduleModifier) = flow {
         client.insertSchedule(item.checkValidity().toMyCalendarItem()).getFailureThrow()
-        "일정 등록 완료"
+        emit("일정 등록 완료")
     }
 
     /** 계획 등록 **/
-    override suspend fun insertPlan(item: PlanTasksModify) = runCatching {
+    override fun insertPlan(item: PlanTasksModify) = flow {
         client.insertPlan(item.checkValidity().toPlanTasks()).getFailureThrow()
-        "계획 등록 완료"
+        emit("계획 등록 완료")
     }
 
     /** 일정 삭제 **/
