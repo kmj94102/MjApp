@@ -118,6 +118,48 @@ fun ConfirmCancelDialog(
 }
 
 @Composable
+fun ConfirmCancelDialog2(
+    isShow: Boolean,
+    isCancelable: Boolean = true,
+    cancelText: String = "취소",
+    onCancelClick: () -> Unit,
+    cancelButtonColor: Color = MyColorLightBlack,
+    confirmText: String = "확인",
+    onConfirmClick: () -> Unit,
+    confirmButtonColor: Color = MyColorDarkBlue,
+    onDismiss: () -> Unit,
+    topButtonContents: @Composable () -> Unit = {},
+    bodyContents: @Composable ColumnScope.() -> Unit = {},
+) {
+    BaseDialog(
+        isShow = isShow,
+        backgroundColor = MyColorBlack,
+        shape = RoundedCornerShape(16.dp),
+        isCancelable = isCancelable,
+        topContents = topButtonContents,
+        bodyContents = bodyContents,
+        bottomContents = {
+            Row {
+                TextButton (
+                    text = cancelText,
+                    onClick = onCancelClick,
+                    backgroundColor = cancelButtonColor,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(
+                    text = confirmText,
+                    onClick = onConfirmClick,
+                    backgroundColor = confirmButtonColor,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        },
+        onDismiss = onDismiss
+    )
+}
+
+@Composable
 fun ConfirmCancelDialog(
     isShow: Boolean,
     isCancelable: Boolean = true,

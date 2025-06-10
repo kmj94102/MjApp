@@ -93,9 +93,9 @@ data class CalendarResult(
             calendarInfoList.map { it.info }.reduce { acc, s -> "$acc, $s" }
         } else ""
         val sdfInput = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val calendar = Calendar.getInstance().apply {
-            sdfInput.parse(date) ?: return null
-        }
+        val calendar = Calendar.getInstance()
+        calendar.time = sdfInput.parse(date) ?: return null
+
         return ScheduleCalendarInfo(
             date = calendar,
             isHoliday = isHoliday,
@@ -172,11 +172,10 @@ open class CalendarInfo2 {
 }
 
 data class ScheduleCalendarInfo(
-    override val date: Calendar?,
+    override val date: Calendar?= null,
     override val isHoliday: Boolean = false,
     override val isSpecialDay: Boolean = false,
     val dateInfo: String = "",
-    val dayOfWeek: String = "",
     val detailDate: String = "",
     val itemList: List<CalendarItem> = listOf(),
 ): CalendarInfo2() {
@@ -184,7 +183,23 @@ data class ScheduleCalendarInfo(
         return itemList.size
     }
 
-//    fun getDateAndDayOfWeek() = "${date.padStart(2, '0')}(${dayOfWeek})"
+    fun getDayInfo(): String {
+        val sdfInput = SimpleDateFormat("MM월 dd일", Locale.getDefault())
+        return date?.let { "${sdfInput.format(it.time)} ${getDayOfWeek()}" } ?: ""
+    }
+
+    fun getDayOfWeek(): String {
+        return when (date?.get(Calendar.DAY_OF_WEEK)) {
+            Calendar.SUNDAY -> "일요일"
+            Calendar.MONDAY -> "월요일"
+            Calendar.TUESDAY -> "화요일"
+            Calendar.WEDNESDAY -> "수요일"
+            Calendar.THURSDAY -> "목요일"
+            Calendar.FRIDAY -> "금요일"
+            Calendar.SATURDAY -> "토요일"
+            else -> ""
+        }
+    }
 }
 
 fun getMonthList(year: Int, month: Int): List<Calendar?> {

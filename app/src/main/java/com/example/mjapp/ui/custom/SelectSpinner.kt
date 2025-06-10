@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import com.example.mjapp.ui.theme.MyColorGray
-import com.example.mjapp.util.textStyle24B
+import com.example.mjapp.ui.theme.MyColorWhite
+import com.example.mjapp.util.textStyle30B
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -44,7 +44,7 @@ fun SelectSpinner(
             ) {
                 Text(
                     text = selectList[index],
-                    style = textStyle24B().copy(fontSize = 22.sp),
+                    style = textStyle30B(MyColorWhite),
                     modifier = Modifier.graphicsLayer {
                         val pageOffset = ((state.currentPage - index)
                                 + state.currentPageOffsetFraction).absoluteValue

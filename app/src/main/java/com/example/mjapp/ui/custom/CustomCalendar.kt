@@ -39,6 +39,7 @@ import java.util.Calendar
 
 @Composable
 fun CustomCalendar(
+    modifier: Modifier = Modifier,
     yearMonth: String = "",
     selectDate: Calendar = Calendar.getInstance(),
     list: List<CalendarInfo2> = emptyList(),
@@ -47,7 +48,7 @@ fun CustomCalendar(
     onDateClick: (Calendar) -> Unit = {}
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(MyColorLightBlack, RoundedCornerShape(16.dp))
             .padding(16.dp)
     ) {

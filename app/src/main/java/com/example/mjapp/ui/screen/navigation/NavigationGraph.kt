@@ -12,8 +12,7 @@ import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
 import com.example.mjapp.ui.screen.accountbook.detail.AccountBookDetailScreen
 import com.example.mjapp.ui.screen.accountbook.fixed.AddFixedAccountBookScreen
 import com.example.mjapp.ui.screen.accountbook.fixed.RegistrationFixedAccountBookScreen
-import com.example.mjapp.ui.screen.calendar.CalendarScreen
-import com.example.mjapp.ui.screen.calendar.add.PlanAddScreen
+import com.example.mjapp.ui.screen.calendar.ScheduleScreen
 import com.example.mjapp.ui.screen.calendar.add.ScheduleAddScreen
 import com.example.mjapp.ui.screen.game.GameScreen
 import com.example.mjapp.ui.screen.game.elsword.counter.ElswordCounterScreen
@@ -57,7 +56,7 @@ fun NavigationGraph(
             HomeScreen()
         }
         gameScreens(onBackClick, navController)
-        calendarScreens(onBackClick, navController)
+        calendarScreens(navController)
         accountBookScreens(onBackClick, navController)
         otherScreens(onBackClick, navController)
     }
@@ -167,54 +166,12 @@ fun NavGraphBuilder.gameScreens(
 
 /** 달력 관련 화면 **/
 fun NavGraphBuilder.calendarScreens(
-    onBackClick: () -> Unit,
     navController: NavHostController
 ) {
-    /** 일정 아이템 추가 화면 **/
-    composable(
-        route = NavScreen.ScheduleAdd.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(Constants.DATE) { type = NavType.StringType }
-        )
-    ) {
-        ScheduleAddScreen(
-            onBackClick = onBackClick,
-            goToPlanAdd = {
-                navController.navigate(
-                    makeRouteWithArgs(
-                        NavScreen.PlanAdd.item.route,
-                        it
-                    )
-                ) {
-                    navController.popBackStack()
-                }
-            }
-        )
-    }
-    /** 계획 아이템 추가 화면 **/
-    composable(
-        route = NavScreen.PlanAdd.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(Constants.DATE) { type = NavType.StringType }
-        )
-    ) {
-        PlanAddScreen(
-            onBackClick = onBackClick,
-            goToScheduleAdd = {
-                navController.navigate(
-                    makeRouteWithArgs(
-                        NavScreen.ScheduleAdd.item.route,
-                        it
-                    )
-                ) {
-                    navController.popBackStack()
-                }
-            }
-        )
-    }
-
     /** 달력 화면 **/
-    composable<NavScreen2.Calendar> { CalendarScreen(navController) }
+    composable<NavScreen2.Schedule> { ScheduleScreen(navController) }
+    /** 달력 내용 추가 화면 **/
+    composable<NavScreen2.ScheduleAdd> { ScheduleAddScreen(navController) }
 }
 
 /** 가계부 관련 화면 **/

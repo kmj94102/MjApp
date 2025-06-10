@@ -31,7 +31,7 @@ enum class BottomNavItems(val item: BottomNavItem) {
         item = BottomNavItem(
             title = "달력",
             route = "Schedule",
-            screen = NavScreen2.Calendar,
+            screen = NavScreen2.Schedule,
             icon = R.drawable.ic_calendar
         )
     ),

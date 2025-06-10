@@ -23,6 +23,7 @@ data class CalendarState(
 
 data class ScheduleAddUiState(
     val isDateSelectDialogShow: Boolean = false,
-    val isTimeSelectDialogShow: Boolean = false,
+    val isStartTimeSelectDialogShow: Boolean = false,
+    val isEndTimeSelectDialogShow: Boolean = false,
     val isRecurrenceSelectDialogShow: Boolean = false,
 )

@@ -9,9 +9,9 @@ enum class Recurrence(val originName: String, val koreanName: String) {
 
     companion object {
         fun getRecurrenceState(name: String): Recurrence =
-            Recurrence.values().find { it.originName == name } ?: NoRecurrence
+            entries.find { it.originName == name } ?: NoRecurrence
 
         fun getRecurrenceKoreanName(name: String): String =
-            Recurrence.values().find { it.originName == name }?.koreanName ?: NoRecurrence.koreanName
+            entries.find { it.originName == name }?.koreanName ?: NoRecurrence.koreanName
     }
 }
