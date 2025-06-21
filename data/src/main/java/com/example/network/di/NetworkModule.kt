@@ -1,6 +1,7 @@
 package com.example.network.di
 
 import com.example.network.BuildConfig
+import com.example.network.database.dao.PersonaDao
 import com.example.network.database.dao.PokemonDao
 import com.example.network.service.*
 import dagger.Module
@@ -105,8 +106,9 @@ object NetworkModule {
     @Provides
     @Singleton
     fun providePersonaClient(
-        personaService: PersonaService
-    ): PersonaClient = PersonaClient(personaService)
+        personaService: PersonaService,
+        dao: PersonaDao
+    ): PersonaClient = PersonaClient(personaService, dao)
 
     @Provides
     @Singleton

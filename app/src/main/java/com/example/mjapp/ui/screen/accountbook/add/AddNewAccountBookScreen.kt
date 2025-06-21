@@ -69,7 +69,6 @@ fun AddNewAccountBookItemScreen(
     DateSelectDialog(
         date = viewModel.item.value.date,
         isShow = isShow.value,
-        color = color,
         onDismiss = { isShow.value = false },
         onSelect = { viewModel.updateDateInfo(it) }
     )

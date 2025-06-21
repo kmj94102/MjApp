@@ -1,5 +1,6 @@
 package com.example.network.repository
 
+import com.example.network.database.entity.Persona3Quest
 import com.example.network.model.Persona3Community
 import com.example.network.model.Persona3CommunityUpdateParam
 import com.example.network.model.Persona3Schedule
@@ -43,4 +44,14 @@ class PersonaRepositoryImpl @Inject constructor(
                 .onSuccess { emit(it) }
                 .getFailureThrow()
         }
+
+    override fun fetchPersona3Quest(): Flow<List<Persona3Quest>> = client.fetchPersona3Quest()
+
+    override suspend fun insertPersona3Quest(): Boolean = client.insertPersona3Quest().isSuccess
+
+    override fun updatePersona3Quest(id: Int): Flow<String> = flow {
+        client.updatePersona3Quest(id)
+            .onSuccess { emit("$id 업데이트 완료") }
+            .getFailureThrow()
+    }
 }

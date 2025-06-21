@@ -6,10 +6,13 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.network.database.dao.ElswordDao
 import com.example.network.database.dao.InternetDao
+import com.example.network.database.dao.PersonaDao
 import com.example.network.database.dao.PokemonDao
 import com.example.network.database.entity.ElswordCounterEntity
 import com.example.network.database.entity.ElswordProgressEntity
 import com.example.network.database.entity.InternetEntity
+import com.example.network.database.entity.Persona3CommunitySelect
+import com.example.network.database.entity.Persona3Quest
 import com.example.network.database.entity.PokemonCounterEntity
 
 @Database(
@@ -17,7 +20,9 @@ import com.example.network.database.entity.PokemonCounterEntity
         PokemonCounterEntity::class,
         ElswordCounterEntity::class,
         ElswordProgressEntity::class,
-        InternetEntity::class
+        InternetEntity::class,
+        Persona3Quest::class,
+        Persona3CommunitySelect::class
     ],
     version = 4,
     exportSchema = true
@@ -30,9 +35,7 @@ abstract class MjDatabase : RoomDatabase() {
 
     abstract fun internetDao(): InternetDao
 
-    val migration_3_4 = object : Migration(3, 4) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE PokemonCounterEntity ADD COLUMN name TEXT")
-        }
-    }
+    abstract fun insertPersonaDao(): PersonaDao
+
+
 }

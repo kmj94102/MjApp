@@ -1,5 +1,6 @@
 package com.example.network.repository
 
+import com.example.network.database.entity.Persona3Quest
 import com.example.network.model.Persona3Community
 import com.example.network.model.Persona3CommunityUpdateParam
 import com.example.network.model.Persona3Schedule
@@ -19,4 +20,13 @@ interface PersonaRepository {
 
     /** 페르소나3 커뮤니티 업데이트 **/
     fun updatePersona3Community(item: Persona3CommunityUpdateParam): Flow<String>
+
+    /** 페르소나3 퀘스트 조회 **/
+    fun fetchPersona3Quest(): Flow<List<Persona3Quest>>
+
+    /** 페르소나3 퀘스트 등록 **/
+    suspend fun insertPersona3Quest(): Boolean
+
+    /** 페르소나3 퀘스트 업데이트 **/
+    fun updatePersona3Quest(id: Int): Flow<String>
 }
