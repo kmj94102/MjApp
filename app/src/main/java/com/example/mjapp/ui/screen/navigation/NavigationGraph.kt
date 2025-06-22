@@ -20,6 +20,7 @@ import com.example.mjapp.ui.screen.game.elsword.counter.add.ElswordCounterAddScr
 import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
 import com.example.mjapp.ui.screen.game.persona.Persona3Screen
 import com.example.mjapp.ui.screen.game.persona.community.Persona3CommunityScreen
+import com.example.mjapp.ui.screen.game.persona.quest.Persona3QuestScreen
 import com.example.mjapp.ui.screen.game.pokemon.add.PokemonAddScreen
 import com.example.mjapp.ui.screen.game.pokemon.change.PokemonImageChangeScreen
 import com.example.mjapp.ui.screen.game.pokemon.counter.history.PokemonCounterHistoryScreen
@@ -162,6 +163,8 @@ fun NavGraphBuilder.gameScreens(
     composable<NavScreen2.Persona3> { Persona3Screen(navController) }
     /** 페로소나 커뮤 진행도 화면 **/
     composable<NavScreen2.Persona3Community> { Persona3CommunityScreen(navController) }
+    /** 페로소나 커뮤 퀘스트 화면 **/
+    composable<NavScreen2.Persona3Quest> { Persona3QuestScreen(navController) }
 }
 
 /** 달력 관련 화면 **/
