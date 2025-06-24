@@ -3,6 +3,7 @@ package com.example.mjapp.ui.custom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -34,6 +35,9 @@ fun SelectChip(
     unselectedColor: Color = MyColorLightGray,
     selectedBackground: Color = MyColorRed,
     unselectedBackground: Color = Color.Transparent,
+    selectedTextColor: Color = selectedColor,
+    unselectedTextColor: Color = unselectedColor,
+    paddingValues: PaddingValues = PaddingValues(vertical = 12.dp, horizontal = 18.dp),
     onClick: () -> Unit
 ) {
     Box(
@@ -48,13 +52,13 @@ fun SelectChip(
                 if (isSelected) selectedBackground else unselectedBackground,
                 RoundedCornerShape(25.dp)
             )
-            .padding(vertical = 12.dp, horizontal = 18.dp)
+            .padding(paddingValues)
             .widthIn(minWidth)
             .nonRippleClickable(onClick)
     ) {
         Text(
             text,
-            style = textStyle.copy(color = if (isSelected) selectedColor else unselectedColor)
+            style = textStyle.copy(color = if (isSelected) selectedTextColor else unselectedTextColor)
         )
     }
 }

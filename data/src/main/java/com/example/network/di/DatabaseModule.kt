@@ -36,7 +36,7 @@ object DatabaseModule {
                             contents TEXT NOT NULL,
                             guide TEXT NOT NULL,
                             reward TEXT NOT NULL,
-                            isComplete INTEGER NOT NULL DEFAULT 0
+                            isComplete INTEGER NOT NULL DEFAULT 0,
                             PRIMARY KEY(id)
                         )
                     """.trimIndent()
@@ -53,9 +53,16 @@ object DatabaseModule {
                 )
             }
         }
+
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE Persona3CommunitySelect ADD COLUMN arcana TEXT NOT NULL DEFAULT 'undefined'")
+            }
+        }
+
         return Room
             .databaseBuilder(application, MjDatabase::class.java, "mj_database.db")
-            .addMigrations(MIGRATION_4_5)
+            .addMigrations(MIGRATION_4_5, MIGRATION_5_6)
             .build()
     }
 

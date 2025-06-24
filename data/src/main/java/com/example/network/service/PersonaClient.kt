@@ -1,6 +1,7 @@
 package com.example.network.service
 
 import com.example.network.database.dao.PersonaDao
+import com.example.network.database.entity.createPersona3CommunitySelectList
 import com.example.network.database.entity.createPersona3QuestList
 import com.example.network.model.Persona3CommunityUpdateParam
 import com.example.network.model.Persona3ScheduleParam
@@ -36,5 +37,15 @@ class PersonaClient @Inject constructor(
     /** 페르소나3 퀘스트 업데이트 **/
     fun updatePersona3Quest(id: Int) = runCatching {
         dao.updatePersona3Quest(id, true)
+    }
+    /** 페르소나3 커뮤니티 선택 카운터 **/
+    suspend fun getPersona3CommunitySelectCount(): Int = dao.getPersona3CommunitySelectCount()
+    /** 페르소나3 커뮤니티 선택 등록 **/
+    suspend fun insertPersona3CommunitySelect() = runCatching {
+        dao.insertPersona3CommunitySelect(createPersona3CommunitySelectList())
+    }
+    /** 페르소나3 커뮤니티 선택 조회 **/
+    suspend fun fetchPersona3CommunitySelect(arcana: String) = runCatching {
+        dao.fetchPersona3CommunitySelect(arcana)
     }
 }

@@ -2,8 +2,6 @@ package com.example.network.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.network.database.dao.ElswordDao
 import com.example.network.database.dao.InternetDao
 import com.example.network.database.dao.PersonaDao
@@ -24,7 +22,7 @@ import com.example.network.database.entity.PokemonCounterEntity
         Persona3Quest::class,
         Persona3CommunitySelect::class
     ],
-    version = 4,
+    version = 6,
     exportSchema = true
 )
 abstract class MjDatabase : RoomDatabase() {

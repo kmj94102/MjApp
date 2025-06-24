@@ -1,5 +1,7 @@
 package com.example.network.model
 
+import com.example.network.database.entity.Persona3CommunitySelect
+
 data class Persona3ScheduleParam(
     val skip: Int = 0,
     val limit: Int = 100
@@ -44,5 +46,29 @@ data class Persona3Community(
     val idx: Int,
     val arcana: String,
     val name: String,
-    val rank: Int
+    val rank: Int,
+    val selectRank: Int = rank + 1
 )
+
+data class Persona3CommunityResult(
+    val image: String,
+    val idx: Int,
+    val arcana: String,
+    val name: String,
+    val rank: Int,
+    val selectRank: Int,
+    val list: List<Persona3CommunitySelect>
+) {
+    companion object {
+        fun from(item: Persona3Community, list: List<Persona3CommunitySelect>) =
+            Persona3CommunityResult(
+                image = item.image,
+                idx = item.idx,
+                arcana = item.arcana,
+                name = item.name,
+                rank = item.rank,
+                selectRank = item.selectRank,
+                list = list
+            )
+    }
+}

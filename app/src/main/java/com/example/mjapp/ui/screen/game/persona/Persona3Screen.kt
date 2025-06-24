@@ -5,11 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -50,29 +52,47 @@ fun Persona3Screen(
     HeaderBodyContainer(
         status = status,
         headerContent = {
-            CommonGnb(
-                title = "커뮤 스케줄",
-                startButton = {
-                    CommonGnbBackButton { navHostController?.popBackStack() }
-                },
-                endButton = {
-                    Image(
-                        painter = painterResource(R.drawable.ic_history),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(28.dp)
-                            .nonRippleClickable {
-                                navHostController?.navigate(NavScreen2.Persona3Community)
-                            }
-                    )
-                }
-            )
+            Persona3Header(navHostController)
         },
         bodyContent = {
             Persona3Body(info, viewModel::updateSchedule)
         },
         paddingValues = PaddingValues(),
         modifier = Modifier.background(Color(0xFF005AA4))
+    )
+}
+
+@Composable
+fun Persona3Header(navHostController: NavHostController? = null) {
+    CommonGnb(
+        title = "커뮤 스케줄",
+        startButton = {
+            CommonGnbBackButton { navHostController?.popBackStack() }
+        },
+        endButton = {
+            Row {
+                Image(
+                    painter = painterResource(R.drawable.ic_star),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .nonRippleClickable {
+                            navHostController?.navigate(NavScreen2.Persona3Quest)
+                        }
+                )
+                Spacer(Modifier.width(10.dp))
+
+                Image(
+                    painter = painterResource(R.drawable.ic_history),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(28.dp)
+                        .nonRippleClickable {
+                            navHostController?.navigate(NavScreen2.Persona3Community)
+                        }
+                )
+            }
+        }
     )
 }
 

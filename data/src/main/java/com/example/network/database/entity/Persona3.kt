@@ -8,6 +8,7 @@ data class Persona3CommunitySelect(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val rank: Int,
+    val arcana: String,
     val contents: String
 )
 
@@ -833,5 +834,932 @@ fun createPersona3QuestList(): List<Persona3Quest> =
             contents = "최강의 적을 쓰러뜨린다",
             guide = "255F 모나드문 가장 안쪽의 문으로 들어가서 '그분'과 전투 후 승리\n※ 진행하기 전에 - 입장 전 세이브 데이터 저장\n최강의 적을 처치 시 '백금 세공 책갈피' 획득",
             reward = "전능의 진구"
+        ),
+    )
+
+fun createPersona3CommunitySelectList(): List<Persona3CommunitySelect> =
+    listOf(
+        // 마법사
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "마법사",
+            contents = "그건 비밀\n연상이 최고야"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "마법사",
+            contents = "인생이?\n힘내"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "마법사",
+            contents = "임의 선택\n힘내"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "마법사",
+            contents = "그렇네..."
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "마법사",
+            contents = "임의 선택\n이미 정했어"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "마법사",
+            contents = "무슨 일 있었어?\n결혼 정보지\n축하해"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "마법사",
+            contents = "고민 있어?\n둘이서 상의해"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "마법사",
+            contents = "한마디하고 올게"
+        ),
+
+        // 여법황
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "여법황",
+            contents = "상관없어\n임의 선택\n딱히 상관없어"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "여법황",
+            contents = "착착...\n급할 거 없어\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "여법황",
+            contents = "임의 선택\n후카는 노력가야\n그렇지 않아"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "여법황",
+            contents = "노력했구나\n도움이 됐다니 다행이네\n또 만들어 줘"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "여법황",
+            contents = "딱히 상관없어\n바로 그 마음가짐이야"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "여법황",
+            contents = "임의 선택\n임의 선택\n너무하네\n정말 그것뿐이야?"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "여법황",
+            contents = "임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "여법황",
+            contents = "임의 선택\n임의 선택\n후카를 좋아해\n임의 선택"
+        ),
+
+        // 여황제
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "여황제",
+            contents = "임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "여황제",
+            contents = "먹어볼래?\n기뻐?\n임의 선택\n잊을게"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "여황제",
+            contents = "무슨 일 있었어?\n사랑의 결실\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "여황제",
+            contents = "즐거웠다니 다행이야\n오토바이?\n언젠가 함께 여행하고 싶어"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "여황제",
+            contents = "찾는 책이라도?\n임의 선택\n처음 듣는데\n내가 어떻게든 할게"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "여황제",
+            contents = "알았어"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "여황제",
+            contents = "임의 선택\n임의 선택\n미츠루의 자유야\n용서 못 해\n시키는 대로 할 거야?"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "여황제",
+            contents = "기뻤어\n임의 선택\n나도 미츠루를 좋아해\n임의 선택"
+        ),
+
+        // 황제
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "황제",
+            contents = "한심해"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "황제",
+            contents = "임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "황제",
+            contents = "임의 선택\n열심히 하네"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "황제",
+            contents = "나쁜 사람들이네"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "황제",
+            contents = "임의 선택\n방금 왔는데..."
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "황제",
+            contents = "과한 처분이야"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "황제",
+            contents = "임의 선택\n난 범인이 아니야"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "황제",
+            contents = "자책하지 마"
+        ),
+
+        // 법황
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "법황",
+            contents = "(본인 이름)입니다\n고마워요\n임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "법황",
+            contents = "뭐 찾으세요?\n도와드릴게요\n임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "법황",
+            contents = "임의 선택\n임의 선택\n걱정이네요"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "법황",
+            contents = "나 아무렇지도 않아요\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "법황",
+            contents = "싸우지 마세요\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "법황",
+            contents = "대체 무슨 일이에요?\n그거 다행이네요\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "법황",
+            contents = "임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "법황",
+            contents = "임의 선택 all"
+        ),
+
+        // 연인
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "연인",
+            contents = "귀여운 핑크\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "연인",
+            contents = "임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "연인",
+            contents = "괜찮아?"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "연인",
+            contents = "임의 선택\n임의 선택\n임의 선택\n남자 친구다\n미안해"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "연인",
+            contents = "그 정도쯤이야\n신경 안 써"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "연인",
+            contents = "둘이서 가자"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "연인",
+            contents = "좋아\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "연인",
+            contents = "... ...\n좋아해"
+        ),
+
+        // 전차
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "전차",
+            contents = "근성이 부족하다\n임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "전차",
+            contents = "정말 괜찮아?\n나을것 같아?"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "전차",
+            contents = "임의 선택\n고생했네"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "전차",
+            contents = "병원 갔다 오는 길이야?\n내 어깨에 기대"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "전차",
+            contents = "근성이야\n왜 그렇게까지 해?\n네 무릎은 어쩌고?"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "전차",
+            contents = "상태는 어때?\n근성이야"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "전차",
+            contents = "... ..."
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "전차",
+            contents = "괜찮아"
+        ),
+
+        // 정의
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "정의",
+            contents = "괜찮아\n만화책을 자주 읽어\n즐거워\n임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "정의",
+            contents = "파렴치해\n찬성이야"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "정의",
+            contents = "임의 선택\n곁에 있을게"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "정의",
+            contents = "뭐든 물어봐\n연애 감정이야\n치히로의 상담이라면 환영이야\n손을 잡는다"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "정의",
+            contents = "재미있어?\n무슨 뜻이야?"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "정의",
+            contents = "뭔가 오해가 있는 것 같아\n어떻게든 해야겠어..."
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "정의",
+            contents = "임의 선택\n난 알아"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "정의",
+            contents = "힘이 되어 줄거야\n임의 선택\n임의 선택\n갑자기 왜 그래?\n치히로와 같은 마음이야\n임의 선택"
+        ),
+
+        // 은둔자
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "은둔자",
+            contents = "기억해\n인도어파야?"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "은둔자",
+            contents = "무슨 일 있었어?\n일이 싫어?"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "은둔자",
+            contents = "결혼하자"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "은둔자",
+            contents = "멍청이이이이이!\nY양은 선생님이야?"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "은둔자",
+            contents = "그 녀석이라니?"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "은둔자",
+            contents = "젊어야지\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "은둔자",
+            contents = "얘기할 생각은 있어?\n어떤 애야?"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "은둔자",
+            contents = "이건 아니지\n임의 선택\n어쩌려고?"
+        ),
+
+        // 운명
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "운명",
+            contents = "임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "운명",
+            contents = "히라가의 실력이야\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "운명",
+            contents = "임의 선택\n여기서 이래봐야 소용없어"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "운명",
+            contents = "임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "운명",
+            contents = "임의 선택\n마음대로 해"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "운명",
+            contents = "의사가 되려고?"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "운명",
+            contents = "괜찮아\n임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "운명",
+            contents = "가면 안 돼\n임의 선택 all"
+        ),
+
+        // 힘
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "힘",
+            contents = "무슨 일 있었어?\n어쩔 수 없지\n그래 맞아"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "힘",
+            contents = "임의 선택\n신경 쓰지 마\n영광이야"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "힘",
+            contents = "임의 선택\n물론이지"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "힘",
+            contents = "잘 가르쳐서 그래\n유우코를 믿어"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "힘",
+            contents = "임의 선택\n믿자"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "힘",
+            contents = "애들 말대로 할까?\n후련해?\n하자"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "힘",
+            contents = "임의 선택\n임의 선택\n여자아이"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "힘",
+            contents = "임의 선택\n스포츠 강사?\n임의 선택\n좋아하니까\n임의 선택"
+        ),
+
+        // 사형수
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "사형수",
+            contents = "가자\n임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "사형수",
+            contents = "임의 선택\n분명 돌아올거야"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "사형수",
+            contents = "다행이네"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "사형수",
+            contents = "너무하네\n그렇지 않아"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "사형수",
+            contents = "진정해\n그것만 있으면 괜찮아"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "사형수",
+            contents = "임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "사형수",
+            contents = "햄버거\n대단해\n아빠"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "사형수",
+            contents = "계속 친구야"
+        ),
+
+        // 절제
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "절제",
+            contents = "임의 선택\n동감이야"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "절제",
+            contents = "임의 선택\n기모노는?"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "절제",
+            contents = "기운이 없네\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "절제",
+            contents = "가자\n일본에 머물러"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "절제",
+            contents = "좀 쉬어\n임의 선택\n응원할게"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "절제",
+            contents = "좋은 생각 같아"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "절제",
+            contents = "인정해 주실 거야"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "절제",
+            contents = "고국이 그립지 않아?"
+        ),
+
+        // 악마
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "악마",
+            contents = "플라시보\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "악마",
+            contents = "조금은 있어요"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "악마",
+            contents = "있어요!"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "악마",
+            contents = "그 녀석이라뇨?\n임의 선택\n돈 이야기만 하고..."
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "악마",
+            contents = "재밌었겠네요"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "악마",
+            contents = "그런 것 같기도...\n일그러진 오이"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "악마",
+            contents = "짚이는 데 있나요?"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "악마",
+            contents = "기부할 거에요?"
+        ),
+
+        // 탑
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "탑",
+            contents = "당신과는 상관없어요\n뭐라고 부르면 돼요?"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "탑",
+            contents = "친구 같은거 없어요"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "탑",
+            contents = "미는 것도 좋겠네요"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "탑",
+            contents = "의외로 어떻게든 돼요\n있어요"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "탑",
+            contents = "돌아가는게 좋겠어요\n절에서 일하는 사람은 없어요?"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "탑",
+            contents = "안 하는게 좋을 것 같아요"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "탑",
+            contents = "아버지?\n꼭 말해야 해요?\n임의 선택\n도망치고 있는 거에요?"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "탑",
+            contents = "임의 선택 all"
+        ),
+
+        // 별
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "별",
+            contents = "부담되지 않아?\n나 자신이 라이벌이야"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "별",
+            contents = "임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "별",
+            contents = "임의 선택\n좋은 이야기인걸\n편해지실 거야"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "별",
+            contents = "괜찮아\n또 먹으러 오자"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "별",
+            contents = "임의 선택\n임의 선택\n임의 선택\n괜찮아"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "별",
+            contents = "괜찮아\n임의 선택\n임의 선택\n포기하지 마"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "별",
+            contents = "선물로 사 가\n신경 쓰지 마"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "별",
+            contents = "이겼어?\n축하해\n임의 선택\n고마워"
+        ),
+
+        // 달
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "달",
+            contents = "맞아"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "달",
+            contents = "미식왕"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "달",
+            contents = "어디 아파?"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "달",
+            contents = "맞아"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "달",
+            contents = "병 걸렸어?"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "달",
+            contents = "멸망이라고?\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "달",
+            contents = "그건 아닌 것 같은데"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "달",
+            contents = "임의 선택"
+        ),
+
+        // 태양
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "태양",
+            contents = "그래?\n일리가 있네"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "태양",
+            contents = "모르겠어\n이제 그만 말해"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "태양",
+            contents = "좋아해\n시시하면 보다 말아"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "태양",
+            contents = "자각이 부족한 것 같아"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "태양",
+            contents = "좋은데?\n재밌을 것 같아"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "태양",
+            contents = "어두운 이야기네"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "태양",
+            contents = "기다릴게\n끊는 이유가 뭐야?"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "태양",
+            contents = "이야기를 다 쓴거야?"
+        ),
+
+        // 영겁
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "영겁",
+            contents = "좋아해"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "영겁",
+            contents = "임의 선택\n그렇지 않아"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "영겁",
+            contents = "못봤어\n알았어\n임의 선택"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "영겁",
+            contents = "그럴지도"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "영겁",
+            contents = "아무 잘못 없어"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "영겁",
+            contents = "임의 선택 all"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "영겁",
+            contents = "지금이 그러고 있지\n임의 선택\n사랑이야"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "영겁",
+            contents = "그렇네\n나도 좋아해"
+        ),
+
+        // 광대
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "광대",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "광대",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "광대",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "광대",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "광대",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "광대",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "광대",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "광대",
+            contents = "스토리 진행"
+        ),
+
+        // 사신
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "사신",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "사신",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "사신",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "사신",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "사신",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "사신",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "사신",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "사신",
+            contents = "스토리 진행"
+        ),
+
+        // 심판
+        Persona3CommunitySelect(
+            rank = 2,
+            arcana = "심판",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 3,
+            arcana = "심판",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 4,
+            arcana = "심판",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 5,
+            arcana = "심판",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 6,
+            arcana = "심판",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 7,
+            arcana = "심판",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 8,
+            arcana = "심판",
+            contents = "스토리 진행"
+        ),
+        Persona3CommunitySelect(
+            rank = 9,
+            arcana = "심판",
+            contents = "스토리 진행"
         ),
     )

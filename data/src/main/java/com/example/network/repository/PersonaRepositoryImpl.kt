@@ -1,7 +1,7 @@
 package com.example.network.repository
 
 import com.example.network.database.entity.Persona3Quest
-import com.example.network.model.Persona3Community
+import com.example.network.model.Persona3CommunityResult
 import com.example.network.model.Persona3CommunityUpdateParam
 import com.example.network.model.Persona3Schedule
 import com.example.network.model.Persona3ScheduleParam
@@ -31,10 +31,23 @@ class PersonaRepositoryImpl @Inject constructor(
                 .getFailureThrow()
         }
 
-    override fun fetchPersona3Community(): Flow<List<Persona3Community>> =
+    override fun fetchPersona3Community(): Flow<List<Persona3CommunityResult>> =
         flow {
+            if (client.getPersona3CommunitySelectCount() == 0) {
+                client.insertPersona3CommunitySelect()
+            }
+
             client.fetchPersona3Community()
-                .onSuccess { emit(it) }
+                .onSuccess { result ->
+                    emit(
+                        result.map {
+                            val list = client.fetchPersona3CommunitySelect(it.arcana)
+                                .getOrNull()
+                                ?: throw Exception("커뮤니티 선택 조회 실패")
+                            Persona3CommunityResult.from(it, list)
+                        }
+                    )
+                }
                 .getFailureThrow()
         }
 
@@ -49,9 +62,5 @@ class PersonaRepositoryImpl @Inject constructor(
 
     override suspend fun insertPersona3Quest(): Boolean = client.insertPersona3Quest().isSuccess
 
-    override fun updatePersona3Quest(id: Int): Flow<String> = flow {
-        client.updatePersona3Quest(id)
-            .onSuccess { emit("$id 업데이트 완료") }
-            .getFailureThrow()
-    }
+    override suspend fun updatePersona3Quest(id: Int) = client.updatePersona3Quest(id)
 }
