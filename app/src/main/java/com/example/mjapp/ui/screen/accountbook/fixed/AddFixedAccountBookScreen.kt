@@ -1,5 +1,6 @@
 package com.example.mjapp.ui.screen.accountbook.fixed
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,8 +27,8 @@ import com.example.mjapp.ui.custom.DoubleCardText
 import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.dialog.DaySelectDialog
-import com.example.mjapp.ui.screen.accountbook.add.ChooseWhereToUseCard
 import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
+import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.ui.theme.MyColorWhite
@@ -46,6 +47,8 @@ fun AddFixedAccountBookScreen(
 
     HeaderBodyBottomContainer(
         status = status,
+        paddingValues = PaddingValues(),
+        modifier = Modifier.background(MyColorBlack),
         heightContent = {
             AddFixedAccountBookHigh(
                 onBackClick = onBackClick,
@@ -165,11 +168,6 @@ fun AddFixedAccountBookMedium(
         }
 
         item {
-            ChooseWhereToUseCard(
-                color = color,
-                usageType = viewModel.item.value.usageType,
-                onItemClick = viewModel::updateUsageType
-            )
         }
     }
 }

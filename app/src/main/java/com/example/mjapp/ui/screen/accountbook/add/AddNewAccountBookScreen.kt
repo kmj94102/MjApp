@@ -1,10 +1,15 @@
 package com.example.mjapp.ui.screen.accountbook.add
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,54 +20,76 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import com.example.mjapp.ui.custom.CommonGnb
+import com.example.mjapp.ui.custom.CommonGnbBackButton
 import com.example.mjapp.ui.custom.CommonRadio
+import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.ui.custom.DoubleCardTextField
 import com.example.mjapp.ui.custom.IconBox
 import com.example.mjapp.ui.custom.ImageDoubleCard
+import com.example.mjapp.ui.custom.TextButton
 import com.example.mjapp.ui.dialog.DateSelectDialog
 import com.example.mjapp.ui.dialog.FrequentlyDialog
 import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorDarkBlue
+import com.example.mjapp.ui.theme.MyColorLightBlack
+import com.example.mjapp.ui.theme.MyColorLightGray
 import com.example.mjapp.ui.theme.MyColorRed
 import com.example.mjapp.ui.theme.MyColorTurquoise
 import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.*
+import com.example.network.model.ElswordQuestUpdate
 
 @Composable
 fun AddNewAccountBookItemScreen(
-    onBackClick: () -> Unit,
+    navController: NavHostController?,
     viewModel: AddNewAccountBookItemViewModel = hiltViewModel()
 ) {
-    val color = if (viewModel.isIncome.value) MyColorTurquoise else MyColorRed
     val isShow = remember { mutableStateOf(false) }
 
     val status by viewModel.status.collectAsStateWithLifecycle()
+    //수입
     HeaderBodyBottomContainer(
         status = status,
-        onBackClick = onBackClick,
+        onBackClick = { navController?.popBackStack() },
+        paddingValues = PaddingValues(),
+        modifier = Modifier.background(MyColorBlack),
         heightContent = {
-            AddNewAccountBookHeightItem(
-                onBackClick = onBackClick,
-                color = color,
-                viewModel = viewModel
+            CommonGnb(
+                title = "가계부 등록",
+                startButton = {
+                    CommonGnbBackButton { navController?.popBackStack() }
+                }
             )
         },
         bodyContent = {
-            AddNewAccountBookMediumItem(
-                color = color,
-                viewModel = viewModel,
-                onDateSelect = { isShow.value = true }
+            AddNewAccountBookBody(
+                isIncome = viewModel.isIncome.value,
+                updateIsIncome = { viewModel.updateIsIncome(it) }
             )
         },
         bottomContent = {
-            AddNewAccountBookLowItem(color = color, viewModel = viewModel)
+            TextButton(
+                text = "등록하기",
+                backgroundColor = MyColorDarkBlue,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                onClick = {
+
+                }
+            )
         }
     )
 
@@ -75,249 +102,159 @@ fun AddNewAccountBookItemScreen(
 }
 
 @Composable
-fun AddNewAccountBookHeightItem(
-    onBackClick: () -> Unit,
-    color: Color,
-    viewModel: AddNewAccountBookItemViewModel
+fun AddNewAccountBookBody(
+    isIncome: Boolean,
+    updateIsIncome: (Boolean) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 3.dp)
-    ) {
-        IconBox(boxColor = color) {
-            onBackClick()
-        }
-        Spacer(modifier = Modifier.weight(1f))
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .height(30.dp)
-                .border(1.dp, MyColorBlack, RoundedCornerShape(5.dp))
-                .clip(RoundedCornerShape(5.dp))
-                .background(
-                    if (viewModel.isIncome.value) color else MyColorWhite,
-                )
-                .nonRippleClickable { viewModel.updateIsIncome(true) }
-        ) {
-            Text(
-                text = "수입",
-                style = textStyle16B(),
-                modifier = Modifier.padding(horizontal = 5.dp)
-            )
-        }
-        Spacer(modifier = Modifier.width(5.dp))
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .height(30.dp)
-                .border(1.dp, MyColorBlack, RoundedCornerShape(5.dp))
-                .clip(RoundedCornerShape(5.dp))
-                .background(
-                    if (viewModel.isIncome.value) MyColorWhite else color,
-                )
-                .nonRippleClickable { viewModel.updateIsIncome(false) }
-        ) {
-            Text(
-                text = "지출",
-                style = textStyle16B(),
-                modifier = Modifier.padding(horizontal = 5.dp)
-            )
-        }
-    }
-}
-
-
-@Composable
-fun AddNewAccountBookMediumItem(
-    color: Color,
-    viewModel: AddNewAccountBookItemViewModel,
-    onDateSelect: () -> Unit
-) {
-    var isShow by remember { mutableStateOf(false) }
-
     LazyColumn(
-        contentPadding = PaddingValues(top = 10.dp, bottom = 30.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+        contentPadding = PaddingValues(24.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
-            DoubleCard(
-                bottomCardColor = color,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .nonRippleClickable(onDateSelect)
-            ) {
-                Text(
-                    text = viewModel.item.value.date,
-                    style = textStyle16(),
-                    modifier = Modifier
-                        .padding(vertical = 10.dp)
-                        .padding(start = 15.dp)
-                )
-            }
+            NewAccountBookTextField(
+                title = "날짜",
+                value = "",
+                onTextChange = {}
+            )
+        }
+        item {
+           Row {
+               CommonRadio(
+                   text = "수입",
+                   textStyle = textStyle14(),
+                   check = isIncome,
+                   onCheckedChange = { updateIsIncome(true) }
+               )
+
+               CommonRadio(
+                   text = "지출",
+                   textStyle = textStyle14(),
+                   check = !isIncome,
+                   onCheckedChange = { updateIsIncome(false) }
+               )
+           }
+        }
+        item {
+            NewAccountBookTextField(
+                title = "사용 금액",
+                value = "",
+                onTextChange = {}
+            )
+        }
+        item {
+            NewAccountBookTextField(
+                title = "사용 내용",
+                value = "",
+                onTextChange = {}
+            )
         }
 
-        item {
-            DoubleCard(
-                topCardColor = color,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .nonRippleClickable { isShow = true }
-            ) {
-                Text(
-                    text = "고정 내역에서 찾기",
-                    style = textStyle16B(),
-                    modifier = Modifier
-                        .padding(vertical = 10.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
-            }
-        }
+        item { ChooseWhereToUseCard() }
 
         item {
-            DoubleCardTextField(
-                value = viewModel.item.value.amount.formatAmount(),
-                onTextChange = {
-                    viewModel.updateAmount(it)
-                },
-                textStyle = textStyle16().copy(textAlign = TextAlign.End),
-                keyboardType = KeyboardType.Number,
-                tailIcon = {
-                    Text(
-                        text = "원",
-                        style = textStyle16(),
-                        modifier = Modifier.padding(end = 10.dp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = true,
+                        onCheckedChange = {},
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MyColorDarkBlue,
+                            uncheckedColor = MyColorLightGray
+                        ),
+                        modifier = Modifier.padding(end = 8.dp)
                     )
-                },
-                hint = "수입/지출 금액",
-                bottomCardColor = color,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+                    Text(
+                        "고정내역에서 찾기",
+                        style = textStyle14(MyColorWhite),
+                    )
+                }
+                Spacer(Modifier.weight(1f))
 
-        item {
-            DoubleCardTextField(
-                value = viewModel.item.value.whereToUse,
-                onTextChange = {
-                    viewModel.updateWhereToUse(it)
-                },
-                hint = "사용 내용",
-                bottomCardColor = color,
-                modifier = Modifier.fillMaxWidth()
-            )
+                Text(
+                    "고정내역에서 찾기",
+                    style = textStyle14(MyColorWhite),
+                )
+            }
         }
-
-        item {
-            ChooseWhereToUseCard(
-                color = color,
-                usageType = viewModel.item.value.usageType,
-                onItemClick = viewModel::updateUsageType
-            )
-        }
-
     }
-
-    FrequentlyDialog(
-        isShow = isShow,
-        onDismiss = { isShow = false },
-        onSelect = viewModel::updateWithFixedItem
-    )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ChooseWhereToUseCard(
-    color: Color,
-    usageType: String,
-    onItemClick: (String) -> Unit
+fun NewAccountBookTextField(
+    title: String,
+    value: String,
+    onTextChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
-    DoubleCard(
-        bottomCardColor = color,
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    Column {
+        Text(
+            title,
+            style = textStyle14(MyColorLightGray),
+            modifier = Modifier.padding(start = 8.dp)
+        )
+        Spacer(Modifier.height(8.dp))
+
+        CommonTextField(
+            value = value,
+            onTextChange = onTextChange,
+            keyboardType = keyboardType,
+            contentPadding = PaddingValues(20.dp),
+            focusedIndicatorColor = MyColorDarkBlue,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MyColorLightBlack, RoundedCornerShape(16.dp))
+        )
+    }
+}
+
+@Composable
+fun ChooseWhereToUseCard() {
+    Column {
         Text(
             text = "사용처 선택",
-            style = textStyle16(),
-            modifier = Modifier.padding(top = 10.dp, start = 15.dp)
+            style = textStyle14(MyColorLightGray),
+            modifier = Modifier.padding(start = 8.dp)
         )
-
+        Spacer(Modifier.height(8.dp))
 
         FlowRow(
-            verticalArrangement = Arrangement.spacedBy(5.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             maxItemsInEachRow = 5,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 10.dp)
         ) {
             IncomeExpenditureType.entries.forEach {
                 Column {
-                    ImageDoubleCard(
-                        resId = it.imageRes,
-                        imageSize = DpSize(47.dp, 47.dp),
-                        innerPadding = PaddingValues(3.dp),
-                        topCardColor = if (usageType == it.type) {
-                            color
-                        } else {
-                            MyColorWhite
-                        },
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .size(50.dp)
-                            .nonRippleClickable {
-                                onItemClick(it.type)
-                            }
-                    )
+                            .background(
+                                MyColorLightBlack,
+                                RoundedCornerShape(16.dp)
+                            )
+                            .border(1.dp, MyColorDarkBlue, RoundedCornerShape(16.dp))
+                    ) {
+                        Icon(
+                            painter = painterResource(it.imageRes),
+                            contentDescription = null,
+                            tint = MyColorWhite,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
                     Text(
                         text = it.typeName,
-                        style = textStyle14().copy(textAlign = TextAlign.Center),
+                        style = textStyle14().copy(
+                            color = MyColorWhite,
+                            textAlign = TextAlign.Center
+                        ),
                         modifier = Modifier
                             .width(50.dp)
                             .padding(top = 5.dp)
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun AddNewAccountBookLowItem(
-    color: Color,
-    viewModel: AddNewAccountBookItemViewModel
-) {
-    Column {
-        CommonRadio(
-            text = "고정내역에 추가",
-            check = viewModel.item.value.isAddFrequently,
-            onCheckedChange = {
-                viewModel.updateIsAddFrequently()
-            },
-            color = color,
-            shape = RoundedCornerShape(3.dp),
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 3.dp)
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-
-        DoubleCard(
-            topCardColor = color,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp)
-        ) {
-            Text(
-                text = "등록하기",
-                style = textStyle16B().copy(textAlign = TextAlign.Center),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp)
-                    .nonRippleClickable {
-                        viewModel.insertNewAccountBook()
-                    }
-            )
         }
     }
 }

@@ -39,6 +39,7 @@ enum class BottomNavItems(val item: BottomNavItem) {
         item = BottomNavItem(
             title = "가계부",
             route = "AccountBook",
+            screen = NavScreen2.AccountBook,
             icon = R.drawable.ic_flower
         )
     ),

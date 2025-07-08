@@ -4,6 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -22,15 +27,20 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.example.mjapp.ui.custom.DoubleCard
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CenteredDoubleCard
+import com.example.mjapp.ui.custom.CommonGnb
+import com.example.mjapp.ui.custom.CommonGnbBackButton
 import com.example.mjapp.ui.custom.DashLine
 import com.example.mjapp.ui.custom.ImageDoubleCard
 import com.example.mjapp.ui.custom.TitleText
 import com.example.mjapp.ui.dialog.UsageHistoryDialog
 import com.example.mjapp.ui.screen.accountbook.add.IncomeExpenditureType
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.BaseContainer
+import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.*
 import com.example.mjapp.util.*
 import com.example.network.model.DateConfiguration
@@ -41,451 +51,161 @@ import com.example.network.model.ThisYearSummaryItem
 
 @Composable
 fun AccountBookScreen(
-    goToNewAccountBookItem: (String) -> Unit,
-    goToFixedAccountBookItem: (String) -> Unit,
-    goToDetail: (String) -> Unit,
+    navController: NavHostController?,
     viewModel: AccountBookViewModel = hiltViewModel()
 ) {
     val status by viewModel.status.collectAsStateWithLifecycle()
 
-    BaseContainer(
+    HeaderBodyContainer(
         status = status,
-        reload = { viewModel.fetchSummaryThisMonth() },
-    ) {
-        TitleText(
-            title = "가계부",
-            color = MyColorTurquoise,
-            modifier = Modifier.padding(bottom = 10.dp)
-        )
-
-        BaseDateAndAddButtonsRow(
-            goToNewAccountBookItem = goToNewAccountBookItem,
-            goToFixedAccountBookItem = goToFixedAccountBookItem
-        )
-
-        AccountBookBody(
-            viewModel = viewModel,
-            goToDetail = goToDetail
-        )
-    }
-
-    val lifecycleEvent = rememberLifecycleEvent()
-    LaunchedEffect(lifecycleEvent) {
-        if (lifecycleEvent == Lifecycle.Event.ON_RESUME) {
-            viewModel.fetchSummaryThisMonth()
-        }
-    }
-}
-
-@Composable
-fun BaseDateAndAddButtonsRow(
-    goToNewAccountBookItem: (String) -> Unit,
-    goToFixedAccountBookItem: (String) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(70.dp)
-    ) {
-        DoubleCard(
-            topCardColor = MyColorTurquoise,
-            modifier = Modifier.width(73.dp)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.size(70.dp)
-            ) {
-                Column(modifier = Modifier.width(IntrinsicSize.Max)) {
-                    Text(
-                        text = "기준일",
-                        style = textStyle14().copy(
-                            color = MyColorWhite,
-                            textAlign = TextAlign.End
-                        ),
-                        modifier = Modifier.fillMaxWidth()
+        paddingValues = PaddingValues(),
+        modifier = Modifier.background(MyColorBlack),
+        headerContent = {
+            CommonGnb(
+                title = "가계부",
+                startButton = {
+                    CommonGnbBackButton { navController?.popBackStack() }
+                },
+                endButton = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_plus),
+                        contentDescription = null,
+                        tint = MyColorWhite,
+                        modifier = Modifier
+                            .size(28.dp)
+                            .nonRippleClickable {
+                                navController?.navigate(NavScreen2.AddAccountBook)
+                            }
                     )
-                    Text(text = "25일", style = textStyle24B())
                 }
-            }
-        }
-        Spacer(modifier = Modifier.width(10.dp))
-
-        DoubleCard(
-            bottomCardColor = MyColorTurquoise,
-            modifier = Modifier
-                .weight(1f)
-                .nonRippleClickable {
-                    goToFixedAccountBookItem(getToday("yyyy.MM"))
-                }
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_pin),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(text = "고정 내역으로 등록", style = textStyle16B().copy(fontSize = 14.sp))
-            }
-        }
-        Spacer(modifier = Modifier.width(10.dp))
-
-        DoubleCard(
-            bottomCardColor = MyColorTurquoise,
-            modifier = Modifier.weight(1f)
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-                    .nonRippleClickable {
-                        goToNewAccountBookItem(getToday())
-                    }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_plus),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(text = "신규 내역 등록", style = textStyle16B().copy(fontSize = 14.sp))
-            }
-        }
-    }
-}
-
-@Composable
-fun AccountBookBody(
-    viewModel: AccountBookViewModel,
-    goToDetail: (String) -> Unit,
-) {
-    LazyColumn(
-        contentPadding = PaddingValues(bottom = 70.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp)
-    ) {
-        viewModel.info.value?.let {
-            item {
-                SummaryThisMonthContainer(
-                    info = it.thisMonthSummary,
-                    goToDetail = goToDetail
-                )
-            }
-            item {
-                AnalyzeLastMonthContainer(
-                    info = it.lastMonthAnalysis
-                )
-            }
-            item {
-                SummaryThisYearContainer(
-                    list = it.thisYearSummary
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun SummaryThisMonthContainer(
-    modifier: Modifier = Modifier,
-    info: ThisMonthSummary,
-    goToDetail: (String) -> Unit
-) {
-    DoubleCard(
-        bottomCardColor = MyColorTurquoise,
-        modifier = modifier
-            .fillMaxWidth()
-            .nonRippleClickable { goToDetail(getToday()) }
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MyColorTurquoise)
-        ) {
-            Text(
-                text = "이번 달 요약",
-                style = textStyle16B(),
-                modifier = Modifier.padding(start = 15.dp)
             )
-            Spacer(modifier = Modifier.weight(1f))
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_next),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 10.dp, top = 4.dp, bottom = 4.dp)
-                    .size(24.dp)
-            )
+        },
+        bodyContent = {
+            AccountBookBody()
         }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(MyColorBlack)
-        )
-
-        Text(
-            text = "${info.startDate} ~ ${info.endDate}",
-            style = textStyle14().copy(color = MyColorGray, textAlign = TextAlign.End),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp, bottom = 5.dp, end = 15.dp)
-        )
-
-        TitleAmountRow(
-            title = "수입",
-            amount = info.income,
-            modifier = Modifier.padding(horizontal = 15.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-
-        TitleAmountRow(
-            title = "지출",
-            amount = info.expenditure,
-            modifier = Modifier.padding(horizontal = 15.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-
-        DashLine(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-
-        TitleAmountRow(
-            title = "차액",
-            amount = info.difference,
-            isAmountBold = true,
-            modifier = Modifier.padding(horizontal = 15.dp)
-        )
-        Spacer(modifier = Modifier.height(15.dp))
-    }
-}
-
-@Composable
-fun AnalyzeLastMonthContainer(
-    modifier: Modifier = Modifier,
-    info: LastMonthAnalysis
-) {
-    DoubleCard(
-        bottomCardColor = MyColorTurquoise,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .background(MyColorTurquoise)
-        ) {
-            Text(
-                text = "지난 달 분석",
-                style = textStyle16B(),
-                modifier = Modifier.padding(start = 15.dp)
-            )
-            Spacer(modifier = Modifier.weight(1f))
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_next),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 10.dp, top = 4.dp, bottom = 4.dp)
-                    .size(24.dp)
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(MyColorBlack)
-        )
-
-        Text(
-            text = "${info.start} ~ ${info.end}",
-            style = textStyle14(color = MyColorGray, textAlign = TextAlign.End),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp, bottom = 5.dp, end = 15.dp)
-        )
-
-        info.result.forEach {
-            AnalyzeLastMonthItem(
-                item = it,
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .padding(bottom = 10.dp)
-            )
-        }
-        if (info.result.isEmpty()) {
-            Text(
-                text = "사용 내역이 없습니다.",
-                style = textStyle14(color = MyColorGray, textAlign = TextAlign.Center),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 15.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(5.dp))
-    }
-}
-
-@Composable
-fun AnalyzeLastMonthItem(
-    modifier: Modifier = Modifier,
-    item: LastMonthAnalysisItem
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        ImageDoubleCard(
-            resId = IncomeExpenditureType.getImageByType(item.usageType),
-            imageSize = DpSize(24.dp, 24.dp),
-            innerPadding = PaddingValues(3.dp),
-            topCardColor = if (item.amount < 0) MyColorRed else MyColorTurquoise,
-            connerSize = 5.dp,
-            modifier = Modifier.size(30.dp)
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 10.dp)
-        ) {
-            Text(
-                text = IncomeExpenditureType.getNameByType(item.usageType),
-                style = textStyle16B(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = "${item.percentage}%",
-                style = textStyle14().copy(color = MyColorGray, fontSize = 10.sp),
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        Text(text = item.amount.formatAmountWithSign(), style = textStyle16B())
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun SummaryThisYearContainer(
-    modifier: Modifier = Modifier,
-    list: List<ThisYearSummaryItem>
-) {
-    var isShow by remember { mutableStateOf(false) }
-    var dateConfiguration by remember {
-        mutableStateOf(DateConfiguration(date = "2023.01.01", baseDate = 25))
-    }
-
-    DoubleCard(
-        bottomCardColor = MyColorTurquoise,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MyColorTurquoise)
-        ) {
-            Text(
-                text = "1년 요약",
-                style = textStyle16B(),
-                modifier = Modifier.padding(start = 15.dp)
-            )
-            Spacer(modifier = Modifier.weight(1f))
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_next),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 10.dp, top = 4.dp, bottom = 4.dp)
-                    .size(24.dp)
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(MyColorBlack)
-        )
-
-        Text(
-            text = "${getToday("yyyy")}년",
-            style = textStyle14().copy(color = MyColorGray, textAlign = TextAlign.End),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp, bottom = 5.dp, end = 15.dp)
-        )
-
-        FlowRow(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            maxItemsInEachRow = 4,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            list.forEach {
-                SummaryThisYearItem(
-                    item = it,
-                    onItemClick = { startDate ->
-                        dateConfiguration = DateConfiguration.create(startDate, 25)
-                        isShow = true
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-    }
-
-    UsageHistoryDialog(
-        isShow = isShow,
-        dateConfiguration = dateConfiguration,
-        onDismiss = { isShow = false }
     )
 }
 
 @Composable
-fun SummaryThisYearItem(
-    item: ThisYearSummaryItem,
-    onItemClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun AccountBookBody() {
+    val list = listOf(
+        TemporaryData(
+            date = "7월 8일 화요일",
+            title = "월급",
+            price = 1000000
+        ),
+        TemporaryData(
+            date = "7월 8일 화요일",
+            title = "월급2",
+            price = 1300000
+        ),
+        TemporaryData(
+            date = "7월 8일 화요일",
+            title = "월급3",
+            price = 600000
+        ),
+        TemporaryData(
+            date = "7월 8일 화요일",
+            title = "월급4",
+            price = 700000
+        ),
+        TemporaryData(
+            date = "7월 9일 화요일",
+            title = "월급5",
+            price = 12000000
+        ),
+        TemporaryData(
+            date = "7월 9일 화요일",
+            title = "월급6",
+            price = 1050000
+        ),
+    )
+
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.nonRippleClickable { onItemClick(item.startDate) }
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .background(MyColorLightBlack, RoundedCornerShape(32.dp))
+            .padding(20.dp)
     ) {
-        CenteredDoubleCard(
-            topCardColor = when {
-                item.info == 0 -> MyColorLightGray
-                item.info > 0 -> MyColorTurquoise
-                else -> MyColorRed
-            },
-            modifier = Modifier.size(46.dp)
-        ) {
-            Text(text = item.month.toString(), style = textStyle16B().copy(fontSize = 18.sp))
+        Text(
+            "07.26 ~ 08.25",
+            style = textStyle12B(color = MyColorWhite),
+            modifier = Modifier
+                .background(MyColorDarkBlue, RoundedCornerShape(12.dp))
+                .padding(horizontal = 13.dp, vertical = 7.5.dp)
+        )
+        Spacer(Modifier.height(12.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("수입", style = textStyle14(color = MyColorGray))
+            Spacer(Modifier.weight(1f))
+
+            Text("1,000,000원", style = textStyle16B(color = MyColorWhite))
         }
 
-        Text(
-            text = item.info.formatAmountInTenThousand(),
-            style = textStyle14().copy(color = MyColorGray),
-            modifier = Modifier.padding(top = 5.dp)
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("지출", style = textStyle14(color = MyColorGray))
+            Spacer(Modifier.weight(1f))
+
+            Text("1,000,000원", style = textStyle16B(color = MyColorDarkBlue))
+        }
     }
+
+    LazyColumn(
+        contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 50.dp),
+    ) {
+        var header = ""
+        list.forEach { data ->
+            if (data.date != header) {
+                stickyHeader {
+                    Text(
+                        data.date,
+                        style = textStyle20B(color = MyColorWhite),
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
+                }
+                header = data.date
+            }
+            item { AccountBookItem(data) }
+        }
+    }
+}
+
+@Composable
+fun AccountBookItem(
+    item: TemporaryData
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(bottom = 16.dp)
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(48.dp)
+                .background(MyColorDarkBlue.copy(alpha = 0.1f), CircleShape)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_meal),
+                contentDescription = null,
+                tint = MyColorDarkBlue,
+                modifier = Modifier.size(32.dp)
+            )
+        }
+        Spacer(Modifier.weight(1f))
+
+        Column {
+            Text(item.title, style = textStyle14(color = MyColorWhite))
+            Text(item.getPriceFormat(), style = textStyle16B(color = MyColorDarkBlue))
+        }
+    }
+}
+
+data class TemporaryData(
+    val date: String,
+    val title: String,
+    val price: Int
+) {
+    fun getPriceFormat() = price.formatAmount() + "원"
 }

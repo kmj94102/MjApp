@@ -82,7 +82,7 @@ fun CommonTextField(
                 leadingIcon = leadingIcon,
                 trailingIcon = trailingIcon,
                 contentPadding = contentPadding,
-                shape = RoundedCornerShape(3.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.colors(
                     unfocusedIndicatorColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,

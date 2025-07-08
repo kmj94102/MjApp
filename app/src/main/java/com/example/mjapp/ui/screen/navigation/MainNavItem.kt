@@ -191,6 +191,12 @@ sealed interface NavScreen2 {
     ): NavScreen2
 
     @Serializable
+    data object AccountBook: NavScreen2
+
+    @Serializable
+    data object AddAccountBook: NavScreen2
+
+    @Serializable
     data object WordStudy: NavScreen2
 
     @Serializable

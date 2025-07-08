@@ -182,48 +182,6 @@ fun NavGraphBuilder.accountBookScreens(
     onBackClick: () -> Unit,
     navController: NavHostController
 ) {
-    /** 가계부 화면 **/
-    composable(
-        route = BottomNavItems.AccountBook.item.routeWithPostFix
-    ) {
-        AccountBookScreen(
-            goToNewAccountBookItem = {
-                navController.navigate(
-                    makeRouteWithArgs(
-                        NavScreen.AddNewAccountBookItem.item.route,
-                        it
-                    )
-                )
-            },
-            goToFixedAccountBookItem = {
-                navController.navigate(
-                    makeRouteWithArgs(
-                        NavScreen.RegistrationFixedAccountBookItem.item.route,
-                        it
-                    )
-                )
-            },
-            goToDetail = {
-                navController.navigate(
-                    makeRouteWithArgs(
-                        NavScreen.AccountBookDetail.item.route,
-                        it
-                    )
-                )
-            }
-        )
-    }
-
-    /** 수입/지출 추가 화면 **/
-    composable(
-        route = NavScreen.AddNewAccountBookItem.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(NavScreen.AddNewAccountBookItem.DATE) { type = NavType.StringType }
-        )
-    ) {
-        AddNewAccountBookItemScreen(onBackClick)
-    }
-
     /** 고정 내역으로 등록 화면 **/
     composable(
         route = NavScreen.RegistrationFixedAccountBookItem.item.routeWithPostFix,
@@ -270,6 +228,11 @@ fun NavGraphBuilder.accountBookScreens(
             }
         )
     }
+
+    /** 가계부 화면 **/
+    composable<NavScreen2.AccountBook> { AccountBookScreen(navController) }
+    /** 수입/지출 추가 화면 **/
+    composable<NavScreen2.AddAccountBook> { AddNewAccountBookItemScreen(navController) }
 }
 
 /** 기타 관련 화면 **/
