@@ -1,5 +1,6 @@
 package com.example.network.model
 
+import com.example.network.util.priceFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -13,7 +14,11 @@ data class AccountBookItem(
     val amount: Int,
     val usageType: String,
     val whereToUse: String
-) : AccountBookHistory()
+) : AccountBookHistory() {
+    fun isIncome() = amount > 0
+
+    fun getFormattedAmount() = amount.priceFormat()
+}
 
 data class AccountBookHistoryDate(val date: String) : AccountBookHistory()
 
@@ -140,6 +145,14 @@ data class AccountBookDetailInfo(
             }
         return historyList
     }
+
+    fun getDateInfo() = "$startDate ~ $endDate"
+
+    fun getIncomeFormat() = income.priceFormat()
+
+    fun getExpenditureFormat() = expenditure.priceFormat()
+
+    fun isExcessOfBudget() = expenditure > income
 
     companion object {
         fun init() = AccountBookDetailInfo(
