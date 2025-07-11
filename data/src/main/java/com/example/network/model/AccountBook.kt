@@ -30,7 +30,8 @@ data class AccountBookInsertItem(
     val amount: Int,
     val usageType: String,
     val whereToUse: String,
-    val isAddFrequently: Boolean
+    val isAddFrequently: Boolean,
+    val isIncome: Boolean
 ) {
     fun updateDate(dateValue: String): AccountBookInsertItem {
         val sdfInput = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
@@ -52,7 +53,7 @@ data class AccountBookInsertItem(
         else -> ""
     }
 
-    fun uploadFormat(isIncome: Boolean) = copy(
+    fun uploadFormat() = copy(
         date = "${date.replace(".", "-")}T10:00:00.000Z",
         amount = if (isIncome) abs(amount) else abs(amount) * -1
     )
@@ -64,8 +65,16 @@ data class AccountBookInsertItem(
             amount = 0,
             usageType = "",
             whereToUse = "",
-            isAddFrequently = false
-        )
+            isAddFrequently = false,
+            isIncome = true
+        ).updateDate(getToday())
+
+        fun getToday(format: String = "yyyy.MM.dd"): String {
+            val today = Calendar.getInstance().time
+            val formatter = SimpleDateFormat(format, Locale.KOREA)
+
+            return formatter.format(today)
+        }
     }
 }
 
@@ -188,7 +197,8 @@ data class FixedAccountBook(
         amount = amount,
         usageType = usageType,
         whereToUse = whereToUse,
-        isAddFrequently = false
+        isAddFrequently = false,
+        isIncome = true
     ).updateDate("$yearMonth.$date")
 
     companion object {

@@ -21,9 +21,8 @@ class AccountBookRepositoryImpl @Inject constructor(
 
     /** 가계부 등록 **/
     override suspend fun insertNewAccountBookItem(
-        item: AccountBookInsertItem,
-        isIncome: Boolean
-    ) = client.insertNewAccountBookItem(item.uploadFormat(isIncome)).printStackTrace()
+        item: AccountBookInsertItem
+    ) = client.insertNewAccountBookItem(item.uploadFormat()).printStackTrace()
 
     /** 이번달 상세 조회 **/
     override fun fetchThisMonthDetail(dateConfiguration: DateConfiguration) = flow {

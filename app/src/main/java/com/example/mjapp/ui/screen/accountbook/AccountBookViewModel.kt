@@ -2,6 +2,7 @@ package com.example.mjapp.ui.screen.accountbook
 
 import androidx.lifecycle.viewModelScope
 import com.example.mjapp.ui.structure.BaseViewModel
+import com.example.mjapp.util.getToday
 import com.example.network.model.AccountBookDetailInfo
 import com.example.network.model.DateConfiguration
 import com.example.network.model.NetworkError
@@ -19,7 +20,7 @@ class AccountBookViewModel @Inject constructor(
     val info = repository
         .fetchThisMonthDetail(
             DateConfiguration.create(
-                date = "2023.07.09",
+                date = getToday(),
                 baseDate = 25
             )
         )

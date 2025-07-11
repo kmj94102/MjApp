@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -165,10 +166,10 @@ fun AccountBookInfo(
                 modifier = Modifier.size(32.dp)
             )
         }
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.width(10.dp))
 
         Column(
-            horizontalAlignment = Alignment.End
+            modifier = Modifier.weight(1f)
         ) {
             Text(item.whereToUse, style = textStyle14(color = MyColorWhite))
             Text(

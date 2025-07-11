@@ -11,8 +11,7 @@ interface AccountBookRepository {
 
     /** 가계부 등록 **/
     suspend fun insertNewAccountBookItem(
-        item: AccountBookInsertItem,
-        isIncome: Boolean
+        item: AccountBookInsertItem
     ): Result<String>
 
     /** 이번달 상세 조회 **/
