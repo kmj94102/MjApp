@@ -10,8 +10,7 @@ import androidx.navigation.navArgument
 import com.example.mjapp.ui.screen.accountbook.AccountBookScreen
 import com.example.mjapp.ui.screen.accountbook.add.AddNewAccountBookItemScreen
 import com.example.mjapp.ui.screen.accountbook.detail.AccountBookDetailScreen
-import com.example.mjapp.ui.screen.accountbook.fixed.AddFixedAccountBookScreen
-import com.example.mjapp.ui.screen.accountbook.fixed.RegistrationFixedAccountBookScreen
+import com.example.mjapp.ui.screen.accountbook.fixed.SelectFixedAccountBookScreen
 import com.example.mjapp.ui.screen.calendar.ScheduleScreen
 import com.example.mjapp.ui.screen.calendar.add.ScheduleAddScreen
 import com.example.mjapp.ui.screen.game.GameScreen
@@ -39,6 +38,8 @@ import com.example.mjapp.ui.screen.other.word.note.WordStudyScreen
 import com.example.mjapp.ui.screen.other.word.wronganswer.WrongAnswerScreen
 import com.example.mjapp.util.Constants
 import com.example.mjapp.util.makeRouteWithArgs
+import com.example.network.model.FixedAccountBook
+import com.google.gson.Gson
 
 @Composable
 fun NavigationGraph(
@@ -182,30 +183,6 @@ fun NavGraphBuilder.accountBookScreens(
     onBackClick: () -> Unit,
     navController: NavHostController
 ) {
-    /** 고정 내역으로 등록 화면 **/
-    composable(
-        route = NavScreen.RegistrationFixedAccountBookItem.item.routeWithPostFix,
-        arguments = listOf(
-            navArgument(Constants.DATE) { type = NavType.StringType }
-        )
-    ) {
-        RegistrationFixedAccountBookScreen(
-            onBackClick = onBackClick,
-            goToAddFixed = {
-                navController.navigate(NavScreen.AddFixedAccountBook.item.routeWithPostFix)
-            }
-        )
-    }
-
-    /** 고정 내역 추가 화면 **/
-    composable(
-        route = NavScreen.AddFixedAccountBook.item.routeWithPostFix
-    ) {
-        AddFixedAccountBookScreen(
-            onBackClick = onBackClick
-        )
-    }
-
     /** 월별 가계부 상세 조회 **/
     composable(
         route = NavScreen.AccountBookDetail.item.routeWithPostFix,
@@ -232,7 +209,20 @@ fun NavGraphBuilder.accountBookScreens(
     /** 가계부 화면 **/
     composable<NavScreen2.AccountBook> { AccountBookScreen(navController) }
     /** 수입/지출 추가 화면 **/
-    composable<NavScreen2.AddAccountBook> { AddNewAccountBookItemScreen(navController) }
+    composable<NavScreen2.AddAccountBook> { entry ->
+        val data = entry
+            .savedStateHandle
+            .get<String>(Constants.SELECT_AMOUNT_ITEM)
+
+        AddNewAccountBookItemScreen(
+            navController = navController,
+            data = Gson().fromJson(data, FixedAccountBook::class.java)
+        )
+    }
+    /** 고정 내역 선택 화면 **/
+    composable<NavScreen2.SelectFixedAccountBook> {
+        SelectFixedAccountBookScreen(navController)
+    }
 }
 
 /** 기타 관련 화면 **/

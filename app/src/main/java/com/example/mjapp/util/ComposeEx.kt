@@ -1,17 +1,39 @@
 package com.example.mjapp.util
 
+import android.graphics.BlurMaskFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -19,6 +41,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.mjapp.ui.theme.MyColorBlack
+import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.ui.theme.myFont
 
 fun textStyle12(
@@ -200,3 +223,68 @@ fun pokemonGrayBackground() = Brush.verticalGradient(
         Color(0xFF767676)
     )
 )
+
+fun Modifier.innerShadow(
+    shape: Shape,
+    color: Color,
+    blur: Dp,
+    offsetY: Dp,
+    offsetX: Dp,
+    spread: Dp
+) = drawWithContent {
+    drawContent()
+
+    val rect = Rect(Offset.Zero, size)
+    val paint = Paint().apply {
+        this.color = color
+        this.isAntiAlias = true
+    }
+
+    val shadowOutline = shape.createOutline(size, layoutDirection, this)
+
+    drawIntoCanvas { canvas ->
+        canvas.saveLayer(rect, paint)
+        canvas.drawOutline(shadowOutline, paint)
+
+        val frameworkPaint = paint.asFrameworkPaint()
+        frameworkPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+        if (blur.toPx() > 0) {
+            frameworkPaint.maskFilter = BlurMaskFilter(blur.toPx(), BlurMaskFilter.Blur.NORMAL)
+        }
+        paint.color = Color.Black
+
+        val spreadOffsetX = offsetX.toPx() + if (offsetX.toPx() < 0) -spread.toPx() else spread.toPx()
+        val spreadOffsetY = offsetY.toPx() + if (offsetY.toPx() < 0) -spread.toPx() else spread.toPx()
+
+        canvas.translate(spreadOffsetX, spreadOffsetY)
+        canvas.drawOutline(shadowOutline, paint)
+        canvas.restore()
+    }
+}
+
+
+@Preview
+@Composable
+fun InnerShadowTest() {
+    Scaffold { innerPadding ->
+        LazyColumn(modifier = Modifier.padding(innerPadding)) {
+            stickyHeader {
+                Row(
+                    modifier = Modifier.fillMaxWidth().background(MyColorWhite).innerShadow(
+                        shape = RoundedCornerShape(0.dp),
+                        color = MyColorWhite,
+                        blur = 10.dp,
+                        offsetY = 10.dp,
+                        offsetX = 10.dp,
+                        spread = 10.dp
+                    )
+                ) {
+                    Text("이곳은 해더입니다.", modifier = Modifier.fillMaxWidth().padding(20.dp))
+                }
+            }
+            items((0..100).toList()) {
+                Text("이곳은 아이템입니다. $it", modifier = Modifier.fillMaxWidth().padding(20.dp))
+            }
+        }
+    }
+}

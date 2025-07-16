@@ -197,6 +197,9 @@ sealed interface NavScreen2 {
     data object AddAccountBook: NavScreen2
 
     @Serializable
+    data object SelectFixedAccountBook: NavScreen2
+
+    @Serializable
     data object WordStudy: NavScreen2
 
     @Serializable

@@ -1,5 +1,6 @@
 package com.example.mjapp.ui.screen.accountbook.add
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +39,7 @@ import com.example.mjapp.ui.custom.CommonGnbBackButton
 import com.example.mjapp.ui.custom.CommonTextField
 import com.example.mjapp.ui.custom.TextButton
 import com.example.mjapp.ui.dialog.DateSelectDialog
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.HeaderBodyBottomContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorDarkBlue
@@ -47,11 +50,13 @@ import com.example.mjapp.ui.theme.MyColorWhite
 import com.example.mjapp.util.nonRippleClickable
 import com.example.mjapp.util.textStyle14
 import com.example.network.model.AccountBookInsertItem
+import com.example.network.model.FixedAccountBook
 import com.example.network.util.priceFormat
 
 @Composable
 fun AddNewAccountBookItemScreen(
     navController: NavHostController?,
+    data: FixedAccountBook?,
     viewModel: AddNewAccountBookItemViewModel = hiltViewModel()
 ) {
     val isShow = remember { mutableStateOf(false) }
@@ -78,7 +83,10 @@ fun AddNewAccountBookItemScreen(
                 updateAmount = { viewModel.updateAmount(it) },
                 updateWhereToUse = { viewModel.updateWhereToUse(it) },
                 updateUsageType = { viewModel.updateUsageType(it) },
-                updateIsAddFrequently = viewModel::updateIsAddFrequently
+                updateIsAddFrequently = viewModel::updateIsAddFrequently,
+                goToSelectFixedItem = {
+                    navController?.navigate(NavScreen2.SelectFixedAccountBook)
+                }
             )
         },
         bottomContent = {
@@ -99,6 +107,10 @@ fun AddNewAccountBookItemScreen(
         onDismiss = { isShow.value = false },
         onSelect = { viewModel.updateDateInfo(it) }
     )
+
+    LaunchedEffect(data) {
+        data?.let(viewModel::updateWithFixedItem)
+    }
 }
 
 @Composable
@@ -109,7 +121,8 @@ fun AddNewAccountBookBody(
     updateAmount: (String) -> Unit = {},
     updateWhereToUse: (String) -> Unit = {},
     updateUsageType: (String) -> Unit = {},
-    updateIsAddFrequently: () -> Unit = {}
+    updateIsAddFrequently: () -> Unit = {},
+    goToSelectFixedItem: () -> Unit = {}
 ) {
     LazyColumn(
         contentPadding = PaddingValues(24.dp),
@@ -175,6 +188,7 @@ fun AddNewAccountBookBody(
                 Text(
                     "고정내역에서 찾기",
                     style = textStyle14(MyColorWhite),
+                    modifier = Modifier.nonRippleClickable(goToSelectFixedItem)
                 )
             }
         }

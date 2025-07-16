@@ -1,6 +1,7 @@
 package com.example.network.model
 
 import com.example.network.util.priceFormat
+import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -180,7 +181,8 @@ data class FixedAccountBook(
     val amount: Int,
     val usageType: String,
     val whereToUse: String,
-    val isIncome: Boolean
+    val isIncome: Boolean,
+    val isSelect: Boolean = false
 ) {
     fun checkValidity() = when {
         amount == 0 -> throw Exception("금액을 입력해 주세요.")
@@ -188,6 +190,8 @@ data class FixedAccountBook(
         whereToUse.isEmpty() -> throw Exception("사용 내용을 입력해 주세요")
         else -> this
     }
+
+    fun getAmountFormat() = amount.priceFormat()
 
     fun toAccountBookInsertItem(
         yearMonth: String

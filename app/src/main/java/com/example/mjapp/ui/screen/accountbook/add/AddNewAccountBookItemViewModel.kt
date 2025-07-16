@@ -8,15 +8,16 @@ import com.example.mjapp.util.isNumeric
 import com.example.mjapp.util.removeNumberFormat
 import com.example.mjapp.util.update
 import com.example.network.model.AccountBookInsertItem
-import com.example.network.model.FixedItem
+import com.example.network.model.FixedAccountBook
 import com.example.network.repository.AccountBookRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.abs
 
 @HiltViewModel
 class AddNewAccountBookItemViewModel @Inject constructor(
-    private val repository: AccountBookRepository,
+    private val repository: AccountBookRepository
 ): BaseViewModel() {
     private val _item = mutableStateOf(AccountBookInsertItem.initItem())
     val item: State<AccountBookInsertItem> = _item
@@ -79,10 +80,10 @@ class AddNewAccountBookItemViewModel @Inject constructor(
         _item.update { it.copy(isIncome = isIncome) }
     }
 
-    fun updateWithFixedItem(item: FixedItem) {
+    fun updateWithFixedItem(item: FixedAccountBook) {
         _item.update {
             it.copy(
-                amount = item.amount,
+                amount = abs(item.amount),
                 usageType = item.usageType,
                 whereToUse = item.whereToUse,
                 isAddFrequently = false,
