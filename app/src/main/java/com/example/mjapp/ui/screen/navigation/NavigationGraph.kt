@@ -49,14 +49,10 @@ fun NavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = BottomNavItems.Home.item.routeWithPostFix
+        startDestination = NavScreen2.Home
     ) {
         /** 홈 화면 **/
-        composable(
-            route = BottomNavItems.Home.item.routeWithPostFix
-        ) {
-            HomeScreen()
-        }
+        composable<NavScreen2.Home> { HomeScreen(navController) }
         gameScreens(onBackClick, navController)
         calendarScreens(navController)
         accountBookScreens(onBackClick, navController)
@@ -70,13 +66,7 @@ fun NavGraphBuilder.gameScreens(
     navController: NavHostController
 ) {
     /** 게임 화면 **/
-    composable(
-        route = BottomNavItems.Game.item.routeWithPostFix
-    ) {
-        GameScreen(
-            navHostController = navController
-        )
-    }
+    composable<NavScreen2.Game> { GameScreen(navController) }
     /** 엘소드 캐릭터 소개 화면 **/
     composable(
         route = NavScreen.ElswordIntroduce.item.routeWithPostFix
@@ -234,6 +224,11 @@ fun NavGraphBuilder.otherScreens(
     composable(
         route = BottomNavItems.Other.item.routeWithPostFix
     ) {
+        OtherScreen(navController) {
+            navController.navigate(it)
+        }
+    }
+    composable<NavScreen2.Other> {
         OtherScreen(navController) {
             navController.navigate(it)
         }

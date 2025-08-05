@@ -148,6 +148,15 @@ sealed class NavScreen(val item: MainNavItem) {
 
 sealed interface NavScreen2 {
     @Serializable
+    data object Home: NavScreen2
+
+    @Serializable
+    data object Game: NavScreen2
+
+    @Serializable
+    data object Other: NavScreen2
+
+    @Serializable
     data object PokemonDex: NavScreen2
 
     @Serializable
