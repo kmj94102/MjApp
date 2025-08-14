@@ -3,6 +3,7 @@ package com.example.mjapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -11,6 +12,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,14 +60,12 @@ fun MainScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .navigationBarsPadding()
             .background(MyColorBlack)
     ) {
         NavigationGraph(navController = navController)
         BottomNavigationBar(
             navController = navController,
-            onClick = { value ->
-                navController.navigate(value)
-            },
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
@@ -73,78 +74,89 @@ fun MainScreen() {
 @Composable
 fun BottomNavigationBar(
     navController: NavHostController,
-    onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val items = BottomNavItems.entries.map { it.item }
     val backStackEntry by navController.currentBackStackEntryAsState()
+    val items = MyNavigation.items
     val isVisible = items
-        .map { it.routeWithPostFix }
-        .contains(backStackEntry?.destination?.route)
+        .map { it.route }
+        .contains(backStackEntry?.destination?.route?.split(".")?.last())
 
     if (isVisible) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .border(1.dp, MyColorBlack, RoundedCornerShape(10.dp))
-                .background(MyColorBeige)
+                .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                .background(MyColorLightBlack)
         ) {
-            Spacer(modifier = Modifier.width(10.dp))
             items.forEach {
                 MyBottomNavItem(
                     item = it,
-                    selected = backStackEntry?.destination?.route == it.routeWithPostFix,
-                    onClick = onClick,
-                    onNav2Click = {
-                        navController.navigate(it)
-                    }
+                    isSelected = backStackEntry?.destination?.route?.split(".")?.last() == it.route,
+                    navController = navController,
+                    modifier = Modifier.weight(1f)
                 )
             }
-            Spacer(modifier = Modifier.width(10.dp))
         }
     }
 }
 
 @Composable
 fun RowScope.MyBottomNavItem(
-    item: BottomNavItem,
-    selected: Boolean,
-    onClick: (String) -> Unit,
-    onNav2Click: (NavScreen2) -> Unit = {}
+    item: MyNavigation,
+    isSelected: Boolean,
+    navController: NavHostController,
+    modifier: Modifier = Modifier
 ) {
-    val background = if (selected) MyColorSkyBlue else Color.Transparent
-    val border = BorderStroke(1.dp, if (selected) MyColorBlack else Color.Transparent)
-    val weight = animateFloatAsState(targetValue = if (selected) 1f else 0.4f)
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .weight(weight.value)
-            .heightIn(max = 47.dp)
-            .padding(vertical = 6.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .border(border, RoundedCornerShape(10.dp))
-            .background(background)
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .padding(vertical = 21.dp)
             .nonRippleClickable {
-                item.screen?.let { onNav2Click(it) } ?: onClick(item.routeWithPostFix)
+                navController.navigate(item.item)
             }
     ) {
-        Image(
-            painter = painterResource(id = item.icon),
-            contentDescription = item.title,
-            modifier = Modifier
-                .padding(vertical = 5.dp)
-                .size(27.dp)
+        Icon(
+            painter = painterResource(item.icon),
+            contentDescription = null,
+            tint = if (isSelected) MyColorDarkBlue else MyColorGray
         )
-        AnimatedVisibility(visible = selected) {
-            Text(
-                text = item.title,
-                style = textStyle16B(),
-                modifier = Modifier.padding(start = 5.dp)
-            )
-        }
+    }
+}
+
+data class MyNavigation(
+    val item: NavScreen2,
+    val route: String,
+    @DrawableRes
+    val icon: Int
+) {
+    companion object {
+        val items = listOf(
+            MyNavigation(
+                item = NavScreen2.Home,
+                route = NavScreen2.Home.toString(),
+                icon = R.drawable.ic_home
+            ),
+            MyNavigation(
+                item = NavScreen2.Game,
+                route = NavScreen2.Game.toString(),
+                icon = R.drawable.ic_game_pad
+            ),
+            MyNavigation(
+                item = NavScreen2.Schedule,
+                route = NavScreen2.Schedule.toString(),
+                icon = R.drawable.ic_calendar
+            ),
+            MyNavigation(
+                item = NavScreen2.AccountBook,
+                route = NavScreen2.AccountBook.toString(),
+                icon = R.drawable.ic_flower
+            ),
+            MyNavigation(
+                item = NavScreen2.Other,
+                route = NavScreen2.Other.toString(),
+                icon = R.drawable.ic_other
+            ),
+        )
     }
 }
