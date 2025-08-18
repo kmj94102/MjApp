@@ -10,7 +10,7 @@ data class HomeState(
     val pokemonSelectIndex: Int = 0,
     val index: Int = 0
 ) {
-    private fun getPokemonCounterList() = homeInfo.pokemonInfo
+    fun getPokemonCounterList() = homeInfo.pokemonInfo
 
     fun getPokemonCounterListSize() = getPokemonCounterList().size
 
@@ -22,6 +22,8 @@ data class HomeState(
     }.getOrNull()
 
     fun getElswordQuestList() = homeInfo.questInfo
+
+    fun getScheduleList() = list.map { it.itemList }.flatten()
 
     fun getSelectCalendarItem() =
         list.getOrElse(index) { MyCalendar() }

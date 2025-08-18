@@ -25,10 +25,10 @@ object DatabaseModule {
         application: Application
     ): MjDatabase {
         val MIGRATION_4_5 = object : Migration(4, 5) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
                     """
-                        CREATE TABLE Persona3Quest (
+                        CREATE TABLE IF NOT EXISTS Persona3Quest (
                             id INTEGER NOT NULL,
                             title TEXT NOT NULL,
                             deadline TEXT NOT NULL,
@@ -41,9 +41,9 @@ object DatabaseModule {
                         )
                     """.trimIndent()
                 )
-                database.execSQL(
+                db.execSQL(
                     """
-                        CREATE TABLE Persona3CommunitySelect (
+                        CREATE TABLE IF NOT EXISTS Persona3CommunitySelect (
                             id INTEGER NOT NULL,
                             rank INTEGER NOT NULL,
                             contents TEXT NOT NULL,
@@ -55,8 +55,24 @@ object DatabaseModule {
         }
 
         val MIGRATION_5_6 = object : Migration(5, 6) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE Persona3CommunitySelect ADD COLUMN arcana TEXT NOT NULL DEFAULT 'undefined'")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                val cursor = db.query("PRAGMA table_info(Persona3CommunitySelect)")
+                var hasArcana = false
+
+                while (cursor.moveToNext()) {
+                    val columnName = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                    if (columnName == "arcana") {
+                        hasArcana = true
+                        break
+                    }
+                }
+                cursor.close()
+
+                if (!hasArcana) {
+                    db.execSQL(
+                        "ALTER TABLE Persona3CommunitySelect ADD COLUMN arcana TEXT NOT NULL DEFAULT 'undefined'"
+                    )
+                }
             }
         }
 
