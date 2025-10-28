@@ -1,4 +1,4 @@
-package com.example.mjapp.ui.screen.game.dmo.list
+package com.example.mjapp.ui.screen.game.dmo.union
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.viewModelScope

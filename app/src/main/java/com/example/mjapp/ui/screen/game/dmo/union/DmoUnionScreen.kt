@@ -1,4 +1,4 @@
-package com.example.mjapp.ui.screen.game.dmo.list
+package com.example.mjapp.ui.screen.game.dmo.union
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
