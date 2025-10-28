@@ -86,6 +86,12 @@ fun createGameCardItemList() = listOf(
         page = NavScreen2.PokemonDex
     ),
     GameCardItem(
+        text = "디지몬 유니온",
+        imageRes = R.drawable.img_pokemon_dex,
+        color = MyColorBeige,
+        page = NavScreen2.DmoUnion
+    ),
+    GameCardItem(
         text = "타이틀\n도감",
         imageRes = R.drawable.img_pokemon_dex,
         color = MyColorBeige,

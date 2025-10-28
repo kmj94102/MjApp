@@ -98,6 +98,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideDigimonService(
+        @Named("internal") retrofit: Retrofit
+    ): DigimonService =
+        retrofit.create(DigimonService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideDigimonClient(
+        digimonService: DigimonService,
+    ): DigimonClient = DigimonClient(digimonService)
+
+    @Provides
+    @Singleton
     fun providePersonaService(
         @Named("internal") retrofit: Retrofit
     ): PersonaService =
