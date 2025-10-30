@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.example.mjapp.R
 import com.example.mjapp.ui.custom.CommonGnb
 import com.example.mjapp.ui.custom.CommonGnbBackButton
+import com.example.mjapp.ui.screen.navigation.NavScreen2
 import com.example.mjapp.ui.structure.HeaderBodyContainer
 import com.example.mjapp.ui.theme.MyColorBlack
 import com.example.mjapp.ui.theme.MyColorDarkBlue
@@ -58,19 +59,27 @@ fun DmoUnionScreen(
             )
         },
         bodyContent = {
-            DmoUnionBody(viewModel.list)
+            DmoUnionBody(
+                list = viewModel.list,
+                goToDetail = {
+                    navHostController?.navigate(NavScreen2.DmoUnionDetail(it))
+                }
+            )
         }
     )
 }
 
 @Composable
-fun DmoUnionBody(list: List<DmoUnionInfo>) {
+fun DmoUnionBody(
+    list: List<DmoUnionInfo>,
+    goToDetail: (Int) -> Unit
+) {
     LazyColumn {
         items(list.size) {
             DmoUnionItem(
                 item = list[it],
                 isOdd = it % 2 == 0,
-                onClick = {}
+                onClick = goToDetail
             )
         }
     }

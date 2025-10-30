@@ -15,6 +15,7 @@ import com.example.mjapp.ui.screen.calendar.ScheduleScreen
 import com.example.mjapp.ui.screen.calendar.add.ScheduleAddScreen
 import com.example.mjapp.ui.screen.game.GameScreen
 import com.example.mjapp.ui.screen.game.dmo.union.DmoUnionScreen
+import com.example.mjapp.ui.screen.game.dmo.union.detail.DmoUnionDetailScreen
 import com.example.mjapp.ui.screen.game.elsword.counter.ElswordCounterScreen
 import com.example.mjapp.ui.screen.game.elsword.counter.add.ElswordCounterAddScreen
 import com.example.mjapp.ui.screen.game.elsword.introduce.ElswordIntroduceScreen
@@ -159,6 +160,8 @@ fun NavGraphBuilder.gameScreens(
     composable<NavScreen2.Persona3Quest> { Persona3QuestScreen(navController) }
     /** DMO 유니온 화면 **/
     composable<NavScreen2.DmoUnion> { DmoUnionScreen(navController) }
+    /** DMO 유니온 상세 화면 **/
+    composable<NavScreen2.DmoUnionDetail> { DmoUnionDetailScreen(navController) }
 }
 
 /** 달력 관련 화면 **/

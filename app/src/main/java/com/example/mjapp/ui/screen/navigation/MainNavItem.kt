@@ -195,6 +195,9 @@ sealed interface NavScreen2 {
     data object DmoUnion: NavScreen2
 
     @Serializable
+    data class DmoUnionDetail(val id: Int): NavScreen2
+
+    @Serializable
     data object Schedule: NavScreen2
 
     @Serializable
